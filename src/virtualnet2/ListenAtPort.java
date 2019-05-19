@@ -1,13 +1,13 @@
 package virtualnet2;
 
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
-import java.util.HashMap;
-import java.util.Iterator;
-import virtualnet2.Router;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import virtualnet2.RoutingTable;
 import virtualnet2.SendRoutingTable;
 import virtualnet2.Updater;
@@ -20,80 +20,93 @@ import virtualnet2.Updater;
  */
 public class ListenAtPort extends Thread {
 
-    DatagramSocket socket;
+    InetAddress recieveipAddress;
+    int recieveport;
+
+    Socket socket;
+    ServerSocket serversocket;
+
     RoutingTable routingTable;//the one recieved
-    InetAddress recievedrouterInetAddress;//tb3 lrouter le ba3at
-    int recievedrouterPort;
+
+    private RoutingService rs;
+    private int i = 0;
 
     public ListenAtPort(int port) {
+
+//        this.routerport = port;
+//        this.routeripAddress = ipAddress;
         try {
-            //Creating datagram socket
-
-            System.out.println("--" + port + " i am created");
-
-            socket = new DatagramSocket(port);
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            //Creating server socket
+            serversocket = new ServerSocket(port);
+        } catch (IOException ex) {
+            Logger.getLogger(ListenAtPort.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
     @Override
     public void run() {
-        DatagramPacket packet1;
-        //  keep receiving packets
+        try {
+
+            socket = serversocket.accept();
+
+            rs = RoutingService.getInstance();
+
+        } catch (IOException ex) {
+            Logger.getLogger(ListenAtPort.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         while (true) {
-            try {
-                //recieve the hint message which is either request update or delete
-                byte[] data1 = new byte[500];
-                packet1 = new DatagramPacket(data1, data1.length);
-                socket.receive(packet1);
-                String datafrompacket = new String(packet1.getData(), 0, packet1.getLength());
 
-                //if its comming after a request or an update recieve after it a routing table
-                if (datafrompacket.equalsIgnoreCase("Request") || datafrompacket.equalsIgnoreCase("Update")) {
+            //if my routing table has been formed send the response 
+            if (!rs.isEmptyTable()) {
+                if (i == 0) {
+                    i++;
+                    new SendRoutingTable(socket).start();
+                }
 
-                    //if my routing table is formed send the response 
-                    if (!Router.myRoutingTable.isEmptyTable()) {
-                        SendRoutingTable sendingroutingtablethread = new SendRoutingTable(Router.neighbors, socket);
-                        sendingroutingtablethread.start();
+                try {
+                    //recieve routing table
+                    routingTable = recieveRoutingTable();
+                    recieveipAddress = socket.getInetAddress();
+
+                    //gets the port of which the router sent the RT  from.
+                    for (Neighbor n : rs.getNeighbors()) {
+                        if (n.neighborAddress.equals(recieveipAddress)) {
+                            recieveport = n.neighborPort;
+                        }
                     }
-                    //store the second received packet into byte array
-                    byte[] buffer = new byte[1024];
-                    DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-                    socket.receive(packet);
-                    byte[] data = packet.getData();
-
-                    // get byte date into ObjectInputStream
-                    ByteArrayInputStream in = new ByteArrayInputStream(data);
-                    ObjectInputStream is = new ObjectInputStream(in);
-
-                    // get RoutingTable object which is reccieved
-                    routingTable = (RoutingTable) is.readObject();
-                    //"Routing table received from " + packet.getAddress().getHostAddress()
 
                     System.out.print("\n");
-                    routingTable.printTable("Recieved from " + packet.getPort() + " ");
+                    routingTable.printTable("Recieved from " + recieveport + " ");
                     System.out.println("\n");
 
                     // Check if this routing table's object needs to be updated
-                    recievedrouterInetAddress = packet.getAddress();
+                    new Updater(routingTable, recieveipAddress, recieveport, socket).start();
 
-                    recievedrouterPort = packet.getPort();
-
-                    Updater updaterthread = new Updater(routingTable, recievedrouterInetAddress, recievedrouterPort, socket);
-
-                }//else if a failure was noticed from a certain neighbor
-                else if (datafrompacket.equalsIgnoreCase("Failure")) {
-                    System.out.println("failure it is");
-                    //  InetAddress FailedNode = packet1.getAddress();
-                    //  Router.myRoutingTable.deleteEntry(FailedNode);
-                    //  Router.sendFailure(FailedNode);
+//                }//else if a failure was noticed from a certain neighbor
+//                else if (datafrompacket.equalsIgnoreCase("Failure")) {
+//                    System.out.println("failure it is");
+//                    //  InetAddress FailedNode = packet1.getAddress();
+//                    //  Router.myRoutingTable.deleteEntry(FailedNode);
+//                    //  Router.sendFailure(FailedNode);
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+                } catch (IOException ex) {
+                    Logger.getLogger(ListenAtPort.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(ListenAtPort.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
     }
 
+    private RoutingTable recieveRoutingTable() throws IOException, ClassNotFoundException {
+        ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+        ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+        // get RoutingTable object which is reccieved
+        return routingTable = (RoutingTable) ois.readObject();
+    }
 }

@@ -22,33 +22,6 @@ public class RoutingTable implements Serializable {
     }
 
     /*
-	 * This method adds an entry into the routing table
-	 * @param destSubnet
-	 * 			destination subnet IP address
-	 * @param nextHop
-	 * 			nextHop IP address
-	 * @param cost
-	 * 			Cost to reach the destination
-     */
-    public void addEntry(InetAddress destIp, int nextHop, int cost) {
-        routingEntries.put(destIp, new TableInfo(nextHop, cost));
-    }
-
-    /*
-     * This method checks if the routing table is formed and filled or not yet
-     */
-    public boolean isEmptyTable() {
-        return routingEntries.isEmpty();
-    }
-
-    /*
-     * This method delets an entry from the routing table
-     */
-    public void deleteEntry(InetAddress destIp) {
-        routingEntries.remove(destIp);
-    }
-
-    /*
 	 * This method prints the routing table entries
      */
     public void printTable(String hint) {

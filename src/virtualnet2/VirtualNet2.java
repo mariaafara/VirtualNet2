@@ -19,7 +19,7 @@ public class VirtualNet2 {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws InterruptedException, UnknownHostException {
-   ArrayList<Neighbor> r1n = new ArrayList<>();
+        ArrayList<Neighbor> r1n = new ArrayList<>();
         ArrayList<Integer> r1p = new ArrayList<>();
         // InetAddress r1i = InetAddress.getByName("1.1.1.1");
 
@@ -47,12 +47,12 @@ public class VirtualNet2 {
         // r3p.add(3331);
         // r3p.add(3332);
         //trying something
-        Router r1 = new Router(InetAddress.getLocalHost(), 1111, r1n);
-        Thread.sleep(30000);
-        Router r2 = new Router(InetAddress.getLocalHost(), 2222, r2n);
-//          r2.start();
+        //  Router r1 = new Router(InetAddress.getLocalHost(), 1111, r1n);
+        // Thread.sleep(30000);
+        // Router r2 = new Router(InetAddress.getLocalHost(), 2222, r2n);
+        //r2.start();
         //Router r3 = new Router(r3i, r3n, r3p);
         //r3.start();   
     }
-    
+
 }
