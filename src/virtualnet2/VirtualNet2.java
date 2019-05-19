@@ -20,6 +20,7 @@ public class VirtualNet2 {
      */
     public static void main(String[] args) throws InterruptedException, UnknownHostException {
         ArrayList<Neighbor> r1n = new ArrayList<>();
+        ////////////////////////////////////
         ArrayList<Integer> r1p = new ArrayList<>();
         // InetAddress r1i = InetAddress.getByName("1.1.1.1");
 
