@@ -1,11 +1,9 @@
 package virtualnet2;
 
-import virtualnet2.Neighbor;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import virtualnet2.RoutingTable;
 
 /**
@@ -25,43 +23,32 @@ import virtualnet2.RoutingTable;
  */
 public class Router {
 
-    RoutingTable myRoutingTable;
     InetAddress ipAddress;
-    DatagramSocket socket;
-    ArrayList<Integer> ports;
 
+    ArrayList<Integer> ports;
+    private Port p;
 
     /*
      * Constructor 
      */
-    public Router() {
+    public Router() throws UnknownHostException {
+        this.ipAddress = InetAddress.getLocalHost();
+    }
+
+    public Router(InetAddress ipAddress) {
+
+        // Assign the ip 
+        this.ipAddress = ipAddress;
 
     }
 
-    public Router(InetAddress ipAddress, ArrayList<Integer> ports) {
-        try {
-            // Assign the ip and ports
-            this.ipAddress = ipAddress;
-
-            this.ports = ports;
-
-            for (int i = 0; i < ports.size(); i++) {
-
-                new ListenAtPort(ports.get(i)).start();
-
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void initializePort(int port) {
+        ports.add(port);
+        p = Port.getInstance(port);
     }
 
-    public void initiaizeListenAtPorts(ArrayList<Integer> ports) {
-        for (int i = 0; i < ports.size(); i++) {
-
-            new ListenAtPort(ports.get(i)).start();
-
-        }
+    public void addPortConnection(InetAddress inetAddress,int port) {
+        p.setConnection(inetAddress, port);
     }
 
     public InetAddress getIpAddress() {

@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  *
  * @author maria afara
  */
-public class Updater extends Thread {
+public class RoutingTableUpdate extends Thread {
 
     private RoutingTable recievedroutingtable;
     InetAddress recievedrouterip;
@@ -26,7 +26,7 @@ public class Updater extends Thread {
     private Socket socket;
     private RoutingService rs;
 
-    public Updater(RoutingTable recievedroutingtable, InetAddress recievedrouterip, int recievedrouterPort, Socket socket) {
+    public RoutingTableUpdate(RoutingTable recievedroutingtable, InetAddress recievedrouterip, int recievedrouterPort, Socket socket) {
 
         this.recievedroutingtable = recievedroutingtable;
         this.recievedrouterip = recievedrouterip;
@@ -43,7 +43,7 @@ public class Updater extends Thread {
         try {
             checkForUpdates();
         } catch (SocketException ex) {
-            Logger.getLogger(Updater.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RoutingTableUpdate.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -60,11 +60,11 @@ public class Updater extends Thread {
             int destCost;
 
             // Iterate through the neighbor's routing table
-            Iterator<HashMap.Entry<InetAddress, TableInfo>> routingEntriesIterator = recievedroutingtable.routingEntries.entrySet().iterator();
+            Iterator<HashMap.Entry<InetAddress, RoutingTableInfo>> routingEntriesIterator = recievedroutingtable.routingEntries.entrySet().iterator();
 
             while (routingEntriesIterator.hasNext()) {
                 //fetching routing table as pairs
-                HashMap.Entry<InetAddress, TableInfo> pair = (HashMap.Entry<InetAddress, TableInfo>) routingEntriesIterator.next();
+                HashMap.Entry<InetAddress, RoutingTableInfo> pair = (HashMap.Entry<InetAddress, RoutingTableInfo>) routingEntriesIterator.next();
                 destAddress = (InetAddress) pair.getKey();
 
                 //"Checking if my routing table has an entry for "  destAddress.getHostAddress()
@@ -93,7 +93,7 @@ public class Updater extends Thread {
             //If yes send updates to all neighbors
             if (isUpdated) {
                 rs.getRoutingTable().printTable("After Update");
-                new SendRoutingTable(socket).start();
+                new RoutingTableSend(socket).start();
 
             }
         }

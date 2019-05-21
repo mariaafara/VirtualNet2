@@ -12,21 +12,21 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import virtualnet2.SendRoutingTable;
+import virtualnet2.RoutingTableSend;
 
 /**
  *
  * @author maria afara
  */
-public class BroadcastRouitngTable extends Thread {
+public class RouitngTableBroadcast extends Thread {
 
     private RoutingService rs;
-    InetAddress routerAddress;
+    //InetAddress routerAddress;
     ArrayList<Socket> sockets;
 
-    public BroadcastRouitngTable(InetAddress routerAddress) throws SocketException {
+    public RouitngTableBroadcast() throws SocketException {
 
-        this.routerAddress = routerAddress;
+        //this.routerAddress = routerAddress;
 
         rs = RoutingService.getInstance();
 
@@ -41,9 +41,9 @@ public class BroadcastRouitngTable extends Thread {
 
         for (Neighbor n : rs.getNeighbors()) {
             try {
-                sockets.add(new Socket(routerAddress, n.neighborPort));
+                sockets.add(new Socket(n.neighborAddress, n.neighborPort));
             } catch (IOException ex) {
-                Logger.getLogger(BroadcastRouitngTable.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(RouitngTableBroadcast.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         //for the first time lzm tb3t request lal neighs ino yb3tula lrt 
@@ -51,13 +51,13 @@ public class BroadcastRouitngTable extends Thread {
         while (true) {
             try {
                 for (int i = 0; i < sockets.size(); i++) {
-                    new SendRoutingTable(sockets.get(i)).start();
+                    new RoutingTableSend(sockets.get(i)).start();
                 }
 
                 Thread.sleep(60000);
 
             } catch (InterruptedException ex) {
-                Logger.getLogger(BroadcastRouitngTable.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(RouitngTableBroadcast.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 

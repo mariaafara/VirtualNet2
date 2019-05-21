@@ -18,14 +18,14 @@ import java.util.Iterator;
  *
  * @author maria afara
  */
-public class SendRoutingTable extends Thread {
+public class RoutingTableSend extends Thread {
 
     private static Socket socket;
     private RoutingService rs;
 
     static int i = 0;
 
-    public SendRoutingTable(Socket socket) {
+    public RoutingTableSend(Socket socket) {
 
         this.socket = socket;
         rs = RoutingService.getInstance();

@@ -67,7 +67,7 @@ public class RoutingService {
 	 * @param cost = Cost to reach the destination
      */
     public void addEntry(InetAddress destIp, int nextHop, int cost) {
-        routingTable.routingEntries.put(destIp, new TableInfo(nextHop, cost));
+        routingTable.routingEntries.put(destIp, new RoutingTableInfo(nextHop, cost));
     }
 
     /*
@@ -88,7 +88,7 @@ public class RoutingService {
 	 * this method updates cost to a given destination and its next hop
      */
     public void updateRoute(InetAddress destNtwk, int nxthopIp, int cost) {
-        TableInfo ti = new TableInfo(nxthopIp, cost);
+        RoutingTableInfo ti = new RoutingTableInfo(nxthopIp, cost);
         routingTable.routingEntries.put(destNtwk, ti);
     }
 
@@ -110,9 +110,9 @@ public class RoutingService {
 	 * @param routerAddress = InetAddress of the router that is establishing the connection
 	 * @param neighborport = Port at which the connection is linked
      */
-    public Socket establishConxWithNeihbor(InetAddress routerAddress, int neighborport) throws IOException {
+    public Socket establishConxWithNeihbor(InetAddress neighborAddress, int neighborport) throws IOException {
 
-        return new Socket(routerAddress, neighborport);
+        return new Socket(neighborAddress, neighborport);
 
     }
 
@@ -120,9 +120,9 @@ public class RoutingService {
         *This method start broadcasting the router's routing table 
         *@parm routerAddress = it takes its own ip address
      */
-    public void startRouting(InetAddress routerAddress) throws SocketException {
+    public void startRouting() throws SocketException {
         
-        new BroadcastRouitngTable(routerAddress).start();
+        new RouitngTableBroadcast().start();
         
     }
 

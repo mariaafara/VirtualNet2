@@ -6,12 +6,12 @@ import java.io.Serializable;
  *
  * @author maria afara
  */
-public class TableInfo implements Serializable {
+public class RoutingTableInfo implements Serializable {
 
     int nextHop;
     int cost;
 
-    public TableInfo(int nextHop, int cost) {
+    public RoutingTableInfo(int nextHop, int cost) {
         this.nextHop = nextHop;
         this.cost = cost;
     }

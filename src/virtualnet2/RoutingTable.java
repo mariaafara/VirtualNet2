@@ -11,11 +11,11 @@ import java.util.Iterator;
  */
 public class RoutingTable implements Serializable {
 
-    HashMap<InetAddress, TableInfo> routingEntries;
+    HashMap<InetAddress, RoutingTableInfo> routingEntries;
 
     public RoutingTable() {
         try {
-            routingEntries = new HashMap<InetAddress, TableInfo>();
+            routingEntries = new HashMap<InetAddress, RoutingTableInfo>();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -28,7 +28,7 @@ public class RoutingTable implements Serializable {
         // creating iterator for HashMap 
         synchronized (this) {
 
-            Iterator<HashMap.Entry<InetAddress, TableInfo>> routingEntriesIterator = routingEntries.entrySet().iterator();
+            Iterator<HashMap.Entry<InetAddress, RoutingTableInfo>> routingEntriesIterator = routingEntries.entrySet().iterator();
             InetAddress destAddress;
 
             System.out.print("---------------------------------   Routing Table " + hint + " -----------------------------------" + "\n");
@@ -37,9 +37,9 @@ public class RoutingTable implements Serializable {
             System.out.print("---------------------|------------------|-----------------------|---------------|------------------------" + "\n");
             while (routingEntriesIterator.hasNext()) {
 
-                HashMap.Entry<InetAddress, TableInfo> pair = (HashMap.Entry<InetAddress, TableInfo>) routingEntriesIterator.next();
+                HashMap.Entry<InetAddress, RoutingTableInfo> pair = (HashMap.Entry<InetAddress, RoutingTableInfo>) routingEntriesIterator.next();
                 destAddress = (InetAddress) pair.getKey();
-                TableInfo destForwardingInfo = (TableInfo) pair.getValue();
+                RoutingTableInfo destForwardingInfo = (RoutingTableInfo) pair.getValue();
 
                 System.out.print("---------------------|\t" + destAddress.getHostAddress() + "\t|\t");//bs ntb3 linet address btbi3to 3m berj3 forword slash bas destAddress.getHostName() 3m trj3 aw2et msln one.one.one.
                 System.out.print("" + destForwardingInfo.nextHop + "\t\t|\t  ");

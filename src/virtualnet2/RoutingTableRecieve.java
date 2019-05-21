@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package virtualnet2;
 
 import java.io.IOException;
@@ -8,53 +13,32 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import virtualnet2.RoutingTable;
-import virtualnet2.SendRoutingTable;
-import virtualnet2.Updater;
 
 /**
- * This class listens on given port for incoming routing table information or
- * forwarding message from neighbors
  *
  * @author maria afara
  */
-public class ListenAtPort extends Thread {
+public class RoutingTableRecieve extends Thread {
 
     InetAddress recieveipAddress;
     int recieveport;
 
     Socket socket;
-    ServerSocket serversocket;
 
     RoutingTable routingTable;//the one recieved
 
     private RoutingService rs;
     private int i = 0;
 
-    public ListenAtPort(int port) {
+    public RoutingTableRecieve(Socket socket) {
 
-//        this.routerport = port;
-//        this.routeripAddress = ipAddress;
-        try {
-            //Creating server socket
-            serversocket = new ServerSocket(port);
-        } catch (IOException ex) {
-            Logger.getLogger(ListenAtPort.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        this.socket = socket;
+        rs = RoutingService.getInstance();
 
     }
 
     @Override
     public void run() {
-        try {
-
-            socket = serversocket.accept();
-
-            rs = RoutingService.getInstance();
-
-        } catch (IOException ex) {
-            Logger.getLogger(ListenAtPort.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
         while (true) {
 
@@ -62,27 +46,28 @@ public class ListenAtPort extends Thread {
             if (!rs.isEmptyTable()) {
                 if (i == 0) {
                     i++;
-                    new SendRoutingTable(socket).start();
+                    new RoutingTableSend(socket).start();
                 }
 
                 try {
                     //recieve routing table
-                    routingTable = recieveRoutingTable();
-                    recieveipAddress = socket.getInetAddress();
-
                     //gets the port of which the router sent the RT  from.
-                    for (Neighbor n : rs.getNeighbors()) {
-                        if (n.neighborAddress.equals(recieveipAddress)) {
-                            recieveport = n.neighborPort;
-                        }
-                    }
+                    routingTable = recieveRoutingTable();
+                    ////wrong wrong hl ip wl portmsh la router le b3tet hol lal st2blet
+                    recieveipAddress = socket.getInetAddress();
+                    recieveport = socket.getPort();
 
+//                    for (Neighbor n : rs.getNeighbors()) {
+//                        if (n.neighborAddress.equals(recieveipAddress)) {
+//                            recieveport = n.neighborPort;
+//                        }
+//                    }
                     System.out.print("\n");
                     routingTable.printTable("Recieved from " + recieveport + " ");
                     System.out.println("\n");
 
                     // Check if this routing table's object needs to be updated
-                    new Updater(routingTable, recieveipAddress, recieveport, socket).start();
+                    new RoutingTableUpdate(routingTable, recieveipAddress, recieveport, socket).start();
 
 //                }//else if a failure was noticed from a certain neighbor
 //                else if (datafrompacket.equalsIgnoreCase("Failure")) {
@@ -95,9 +80,9 @@ public class ListenAtPort extends Thread {
 //                e.printStackTrace();
 //            }
                 } catch (IOException ex) {
-                    Logger.getLogger(ListenAtPort.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(PortConnectionWait.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(ListenAtPort.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(PortConnectionWait.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
