@@ -52,8 +52,8 @@ public class PortConnectionWait extends Thread {
                     objectOutputStream.writeBoolean(true);
                 } else {
 
-                    Socket s = p.getSocket();
-                    objectOutputStream = new ObjectOutputStream(s.getOutputStream());
+                   // Socket s = p.getSocket();
+                    objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
                     objectOutputStream.writeBoolean(false);
                     //khabera eno port taken cannot be connected to
 
