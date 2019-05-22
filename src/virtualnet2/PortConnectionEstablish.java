@@ -7,10 +7,8 @@ package virtualnet2;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,38 +20,37 @@ public class PortConnectionEstablish extends Thread {
 
     private Port p;
     Socket socket;
+    int port;
+    InetAddress ip;
 
-    public PortConnectionEstablish(int port) {
-        p = Port.getInstance(port);
+    public PortConnectionEstablish(InetAddress ip, int port, Port p) {
+        this.port = port;
+        this.p = p;
+        this.ip = ip;
     }
 
     @Override
     public void run() {
         //  ObjectOutputStream objectOutputStream = null;
         ObjectInputStream objectInputStream = null;
-        while (true) {
-            //iza b3d ma fi cnx wfi cnx t7dadet bda tn3mal 
-            if (!p.connectionEstablished && !p.getConnection().isEmpty()) {
+        if (!p.connectionEstablished) {
 
-                for (HashMap.Entry<InetAddress, Integer> entry : p.getConnection().entrySet()) {
-
-                    try {
-                        socket = new Socket(entry.getKey(), entry.getValue());
-                        objectInputStream = new ObjectInputStream(socket.getInputStream());
-                        boolean bool = objectInputStream.readBoolean();
-                        if (bool) {
-                            p.setSocket(socket);
-                            p.setconnectionEstablished(true);
-                        } else {
-                            p.resetConnection();
-                            //cannot connect to  this cnx
-                        }
-
-                    } catch (IOException ex) {
-                        Logger.getLogger(PortConnectionEstablish.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+            try {
+                socket = new Socket(ip, port);
+                objectInputStream = new ObjectInputStream(socket.getInputStream());
+                boolean bool = objectInputStream.readBoolean();
+                if (bool) {
+                    p.setSocket(socket);
+                    p.setconnectionEstablished(true);
+                } else {
+                    System.out.println("Sorry connction already established with thid destination");
+                    //cannot connect to  this cnx
                 }
+
+            } catch (IOException ex) {
+                Logger.getLogger(PortConnectionEstablish.class.getName()).log(Level.SEVERE, null, ex);
             }
+
         }
     }
 }

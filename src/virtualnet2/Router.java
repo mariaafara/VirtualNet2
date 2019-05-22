@@ -1,10 +1,8 @@
 package virtualnet2;
 
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import virtualnet2.RoutingTable;
+import java.util.HashMap;
 
 /**
  * Router Class
@@ -25,12 +23,13 @@ public class Router {
 
     InetAddress ipAddress;
 
-    ArrayList<Integer> ports;
+    HashMap<Integer,Port> ports;//kel port 3ndo thread port khas fi
     private Port p;
 
     /*
      * Constructor 
      */
+    
     public Router() throws UnknownHostException {
         this.ipAddress = InetAddress.getLocalHost();
     }
@@ -43,13 +42,15 @@ public class Router {
     }
 
     public void initializePort(int port) {
-        ports.add(port);
-        p = Port.getInstance(port);
+        if(ports.containsKey(port)){
+            System.out.println("This port exists");
+            return;
+        }
+        ports.put(port,new Port(port));
+        
     }
 
-    public void addPortConnection(InetAddress inetAddress,int port) {
-        p.setConnection(inetAddress, port);
-    }
+   
 
     public InetAddress getIpAddress() {
         return ipAddress;
@@ -59,12 +60,5 @@ public class Router {
         this.ipAddress = ipAddress;
     }
 
-    public ArrayList<Integer> getPorts() {
-        return ports;
-    }
-
-    public void setPorts(ArrayList<Integer> ports) {
-        this.ports = ports;
-    }
 
 }

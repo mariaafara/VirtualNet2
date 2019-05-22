@@ -1,16 +1,11 @@
 package virtualnet2;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import virtualnet2.RoutingTable;
-import virtualnet2.RoutingTableSend;
-import virtualnet2.RoutingTableUpdate;
 
 /**
  * This class listens on given port for incoming connection
@@ -23,12 +18,13 @@ public class PortConnectionWait extends Thread {
     private Port p;
     Socket socket;
 
-    public PortConnectionWait(int port) {
+    public PortConnectionWait(int port,Port p) {
 
         try {
             //Creating server socket
             serversocket = new ServerSocket(port);
-            p = Port.getInstance(port);
+            this.p =p;
+            
         } catch (IOException ex) {
             Logger.getLogger(PortConnectionWait.class.getName()).log(Level.SEVERE, null, ex);
         }
