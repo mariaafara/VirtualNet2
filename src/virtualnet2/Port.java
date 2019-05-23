@@ -17,12 +17,13 @@ public class Port extends Thread {
 
     boolean connectionEstablished;
     Socket socket;
-    int port;
+    static int port;
     PortConnectionWait portConnectionWait;
     PortConnectionEstablish portConnectionEstablish;
+   // final Object lockInput = new Object();
 
     public Port(int port) {
-        System.out.println("Port " +port+" initialized");
+        System.out.println("Port " + port + " initialized");
         this.connectionEstablished = false;
         this.port = port;
         this.socket = null;
@@ -54,7 +55,10 @@ public class Port extends Thread {
 
     }
 
-    public void connect(InetAddress inetAddress, int port) {
-        new PortConnectionEstablish(inetAddress, port, this).start();
+    public void connect(int port, InetAddress neighborAddress, int neighborport) {
+        System.out.println("*****");
+        System.out.println("in connect method in port class ");
+        PortConnectionEstablish pce = new PortConnectionEstablish(port, neighborAddress, neighborport, this);
+        pce.start();
     }
 }

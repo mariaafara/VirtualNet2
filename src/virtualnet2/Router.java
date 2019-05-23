@@ -19,7 +19,7 @@ import java.util.HashMap;
  * @author maria afara
  *
  */
-public class Router {
+public class Router extends Thread {
 
     //fi oset neighbors 
     InetAddress ipAddress;
@@ -31,6 +31,16 @@ public class Router {
     /*
      * Constructor 
      */
+    @Override
+    public void run() {
+
+        super.run();
+        while (true) {
+
+        }
+
+    }
+
     public Router() throws UnknownHostException {
         this.ipAddress = InetAddress.getLocalHost();
         connections = new HashMap<Integer, Neighbor>();
@@ -55,8 +65,8 @@ public class Router {
             }
             Neighbor newNeighbor = new Neighbor(neighboraddress, neighborport);
             connections.put(port, newNeighbor);
-            System.out.println("1connection is initialized at port "+ port+" with neighb= "+ neighboraddress+" , "+ neighborport);
-            getPorts().get(port).connect(neighboraddress, neighborport);
+            System.out.println("1connection is initialized at port " + port + " with neighb= " + neighboraddress + " , " + neighborport);
+            getPorts().get(port).connect(port, neighboraddress, neighborport);
         }
     }
 
@@ -66,8 +76,9 @@ public class Router {
                 System.out.println("This port exists");
                 return;
             }
-
-            portsConxs.put(port, new Port(port));
+            Port portclass = new Port(port);
+            portsConxs.put(port, portclass);
+            portclass.start();
         }
 
     }

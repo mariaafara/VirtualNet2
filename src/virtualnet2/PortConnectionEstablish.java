@@ -23,31 +23,43 @@ public class PortConnectionEstablish extends Thread {
     Socket socket;
     int port;
     InetAddress ip;
+    int myport;
 
-    public PortConnectionEstablish(InetAddress ip, int port, Port p) {
+    public PortConnectionEstablish(int myport, InetAddress ip, int port, Port p) {
+
+        System.out.println("*****");
+        System.out.println("myport is " + myport);
         this.port = port;
+        this.myport = myport;
         this.p = p;
         this.ip = ip;
     }
 
     @Override
     public void run() {
-        //  ObjectOutputStream objectOutputStream = null;
-        ObjectInputStream objectInputStream = null;
-        
-        if (!p.connectionEstablished) {
+
+        boolean bool;
+        if (!p.isconnectionEstablished()) {
 
             try {
+                System.out.println("---------");
                 socket = new Socket(ip, port);
-                //3m b3tlo m3 min lconnection
-                ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-                objectOutputStream.writeObject(new Neighbor(ip, port));
+                System.out.println("---------");
+
+//**********
+                    ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+                    System.out.println("---------");
+                    bool = objectInputStream.readBoolean();
                 
-                objectInputStream = new ObjectInputStream(socket.getInputStream());
-                boolean bool = objectInputStream.readBoolean();
+//                    objectInputStream.close();
+                System.out.println(bool + " was recieved");
+
                 if (bool) {
                     p.setSocket(socket);
                     p.setconnectionEstablished(true);
+                    //3m b3tlo m3 min lconnection
+                    ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                    objectOutputStream.writeObject(new Neighbor(ip, myport));
                 } else {
                     System.out.println("Sorry connction already established with this destination");
                     //cannot connect to  this cnx

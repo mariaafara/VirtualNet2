@@ -1,13 +1,10 @@
 package virtualnet2;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,7 +38,7 @@ public class PortConnectionWait extends Thread {
 
     @Override
     public void run() {
-        System.out.println("still waiting for a connection");
+
         ObjectOutputStream objectOutputStream;
         while (true) {
             try {
@@ -51,18 +48,24 @@ public class PortConnectionWait extends Thread {
                 System.out.println("connection accepteed at port " + port);
 
                 if (!p.isconnectionEstablished()) {
-                    ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
 
-                    Neighbor neighbor = (Neighbor) objectInputStream.readObject();
                     //bdon synchronization
-                    Router.connections.put(port, neighbor);
-                    System.out.println("2connection is initialized at port " + port + " with neighb= " + neighbor.getNeighborAddress() + " , " + neighbor.getNeighborPort());
-
                     p.setSocket(socket);
                     p.setconnectionEstablished(true);
 
                     objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
                     objectOutputStream.writeBoolean(true);
+                    System.out.println("true was sent");
+                    System.out.println("---------");
+                    //**********
+                        ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+                        System.out.println("---------");
+                        Neighbor neighbor = (Neighbor) objectInputStream.readObject();
+
+                        System.out.println("---------");
+                        Router.connections.put(port, neighbor);
+                        System.out.println("2connection is initialized at port " + port + " with neighb= " + neighbor.getNeighborAddress() + " , " + neighbor.getNeighborPort());
+                   
                 } else {
 
                     // Socket s = p.getSocket();
