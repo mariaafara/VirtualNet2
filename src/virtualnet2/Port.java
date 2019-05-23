@@ -7,6 +7,7 @@ package virtualnet2;
 
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.HashMap;
 
 /**
  *
@@ -17,7 +18,6 @@ public class Port extends Thread {
     boolean connectionEstablished;
     Socket socket;
     int port;
-
     PortConnectionWait portConnectionWait;
     PortConnectionEstablish portConnectionEstablish;
 
@@ -29,19 +29,19 @@ public class Port extends Thread {
 
     }
 
-    public boolean isconnectionEstablished() {
+    synchronized public boolean isconnectionEstablished() {
         return connectionEstablished;
     }
 
-    public void setconnectionEstablished(boolean connectionEstablished) {
+    synchronized public void setconnectionEstablished(boolean connectionEstablished) {
         this.connectionEstablished = connectionEstablished;
     }
 
-    public Socket getSocket() {
+    synchronized public Socket getSocket() {
         return socket;
     }
 
-    public void setSocket(Socket socket) {
+    synchronized public void setSocket(Socket socket) {
         this.socket = socket;
     }
 
@@ -50,6 +50,7 @@ public class Port extends Thread {
 
         super.run();
         portConnectionWait.start();
+
     }
 
     public void connect(InetAddress inetAddress, int port) {

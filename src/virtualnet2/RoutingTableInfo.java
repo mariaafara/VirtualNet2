@@ -34,6 +34,8 @@ public class RoutingTableInfo implements Serializable {
 
     @Override
     public String toString() {
-        return "TableInfo{" + "nextHop=" + nextHop + ", cost=" + cost + '}';
+        synchronized (this) {
+            return "TableInfo{" + "nextHop=" + nextHop + ", cost=" + cost + '}';
+        }
     }
 }

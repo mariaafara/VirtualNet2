@@ -21,18 +21,16 @@ import java.util.logging.Logger;
 public class RoutingTableUpdate extends Thread {
 
     private RoutingTable recievedroutingtable;
-    InetAddress recievedrouterip;
     private int recievedrouterPort;
     private Socket socket;
     private RoutingService rs;
 
-    public RoutingTableUpdate(RoutingTable recievedroutingtable, InetAddress recievedrouterip, int recievedrouterPort, Socket socket) {
+    public RoutingTableUpdate(RoutingTable recievedroutingtable, int recievedrouterPort, Socket socket, RoutingService rs) {
 
         this.recievedroutingtable = recievedroutingtable;
-        this.recievedrouterip = recievedrouterip;
         this.recievedrouterPort = recievedrouterPort;
         this.socket = socket;
-        rs = RoutingService.getInstance();
+        this.rs = rs;
     }
 
     /*
@@ -77,7 +75,7 @@ public class RoutingTableUpdate extends Thread {
                     //"Cost for this destination in received routing table is "  pair.getValue().cost
                     if (destCost > (1 + pair.getValue().cost)) {
                         //which is smaller than my cost for the destination
-                        rs.updateRoute(destAddress, recievedrouterPort, 1 + pair.getValue().cost);
+                        rs.updateEntry(destAddress, recievedrouterPort, 1 + pair.getValue().cost);
 
                         isUpdated = true;
 
@@ -93,7 +91,7 @@ public class RoutingTableUpdate extends Thread {
             //If yes send updates to all neighbors
             if (isUpdated) {
                 rs.getRoutingTable().printTable("After Update");
-                new RoutingTableSend(socket).start();
+                new RoutingTableSend(socket,rs).start();
 
             }
         }

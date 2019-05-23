@@ -10,6 +10,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import virtualnet2.RoutingTableSend;
@@ -18,17 +19,14 @@ import virtualnet2.RoutingTableSend;
  *
  * @author maria afara
  */
-public class RouitngTableBroadcast extends Thread {
+public class RoutingTableBroadcast extends Thread {
 
     private RoutingService rs;
-    //InetAddress routerAddress;
-    ArrayList<Socket> sockets;
 
-    public RouitngTableBroadcast() throws SocketException {
+    public RoutingTableBroadcast(RoutingService rs) throws SocketException {
 
         //this.routerAddress = routerAddress;
-
-        rs = RoutingService.getInstance();
+        this.rs = rs;
 
     }
 
@@ -39,26 +37,19 @@ public class RouitngTableBroadcast extends Thread {
     @Override
     public void run() {
 
-        for (Neighbor n : rs.getNeighbors()) {
-            try {
-                sockets.add(new Socket(n.neighborAddress, n.neighborPort));
-            } catch (IOException ex) {
-                Logger.getLogger(RouitngTableBroadcast.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
         //for the first time lzm tb3t request lal neighs ino yb3tula lrt 
         //l2elonn b3den btb3t le 2ela wbtsh8el ltimer
         while (true) {
             try {
-                for (int i = 0; i < sockets.size(); i++) {
-                    new RoutingTableSend(sockets.get(i)).start();
+                for (HashMap.Entry<Integer, Port> entry : rs.getPortsConxs().entrySet()) {
+
+                    new RoutingTableSend(entry.getValue().getSocket(),rs).start();
                 }
-
                 Thread.sleep(60000);
-
             } catch (InterruptedException ex) {
-                Logger.getLogger(RouitngTableBroadcast.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(RoutingTableBroadcast.class.getName()).log(Level.SEVERE, null, ex);
             }
+
         }
 
     }

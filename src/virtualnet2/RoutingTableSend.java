@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -25,10 +26,10 @@ public class RoutingTableSend extends Thread {
 
     static int i = 0;
 
-    public RoutingTableSend(Socket socket) {
+    public RoutingTableSend(Socket socket, RoutingService rs) {
 
         this.socket = socket;
-        rs = RoutingService.getInstance();
+        this.rs = rs;
 
     }
 
@@ -40,13 +41,10 @@ public class RoutingTableSend extends Thread {
 
         // publish routing table here.
         System.out.println("SendingRoutingTable");
-        Iterator<Neighbor> neighborIterator = rs.getNeighbors().iterator();
+        for (HashMap.Entry<Integer, Neighbor> entry : rs.getConnections().entrySet()) {
 
-        while (neighborIterator.hasNext()) {
-
-            Neighbor nextNeighbor = neighborIterator.next();
             //send myRoutingTable to neighbor
-            sendRoutingTable(rs.getRoutingTable(), nextNeighbor.neighborAddress, nextNeighbor.neighborPort);
+            sendRoutingTable(rs.getRoutingTable(), entry.getValue().neighborAddress, entry.getValue().neighborPort);
 
         }
 

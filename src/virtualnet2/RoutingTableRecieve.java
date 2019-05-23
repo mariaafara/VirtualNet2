@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,7 +21,6 @@ import java.util.logging.Logger;
  */
 public class RoutingTableRecieve extends Thread {
 
-    InetAddress recieveipAddress;
     int recieveport;
 
     Socket socket;
@@ -29,11 +29,12 @@ public class RoutingTableRecieve extends Thread {
 
     private RoutingService rs;
     private int i = 0;
+    private int port;
 
-    public RoutingTableRecieve(Socket socket) {
-
+    public RoutingTableRecieve(int port, Socket socket, RoutingService rs) {
+        this.port = port;
         this.socket = socket;
-        rs = RoutingService.getInstance();
+        this.rs = rs;
 
     }
 
@@ -42,32 +43,25 @@ public class RoutingTableRecieve extends Thread {
 
         while (true) {
 
-            //if my routing table has been formed send the response 
-            if (!rs.isEmptyTable()) {
-                if (i == 0) {
-                    i++;
-                    new RoutingTableSend(socket).start();
-                }
+            try { //recieve routing table
+                routingTable = recieveRoutingTable();
 
-                try {
-                    //recieve routing table
+                //if my routing table has been formed send the response
+                if (!rs.isEmptyTable()) {
+                    if (i == 0) {
+                        i++;
+                        new RoutingTableSend(socket, rs).start();
+                    }
+
                     //gets the port of which the router sent the RT  from.
-                    routingTable = recieveRoutingTable();
-                    ////wrong wrong hl ip wl portmsh la router le b3tet hol lal st2blet
-                    recieveipAddress = socket.getInetAddress();
-                    recieveport = socket.getPort();
+                    recieveport = rs.getConnections().get(port).getNeighborPort();
 
-//                    for (Neighbor n : rs.getNeighbors()) {
-//                        if (n.neighborAddress.equals(recieveipAddress)) {
-//                            recieveport = n.neighborPort;
-//                        }
-//                    }
                     System.out.print("\n");
                     routingTable.printTable("Recieved from " + recieveport + " ");
                     System.out.println("\n");
 
-                    // Check if this routing table's object needs to be updated
-                    new RoutingTableUpdate(routingTable, recieveipAddress, recieveport, socket).start();
+// Check if this routing table's object needs to be updated
+                    new RoutingTableUpdate(routingTable, recieveport, socket, rs).start();
 
 //                }//else if a failure was noticed from a certain neighbor
 //                else if (datafrompacket.equalsIgnoreCase("Failure")) {
@@ -79,11 +73,11 @@ public class RoutingTableRecieve extends Thread {
 //            } catch (Exception e) {
 //                e.printStackTrace();
 //            }
-                } catch (IOException ex) {
-                    Logger.getLogger(PortConnectionWait.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(PortConnectionWait.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            } catch (IOException ex) {
+                Logger.getLogger(RoutingTableRecieve.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(RoutingTableRecieve.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -94,4 +88,5 @@ public class RoutingTableRecieve extends Thread {
         // get RoutingTable object which is reccieved
         return routingTable = (RoutingTable) ois.readObject();
     }
+
 }
