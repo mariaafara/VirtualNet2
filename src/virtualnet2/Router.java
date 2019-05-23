@@ -24,9 +24,9 @@ public class Router {
     //fi oset neighbors 
     InetAddress ipAddress;
 
-    HashMap<Integer, Port> portsConxs;//kel port 3ndo thread port khas fi
+    static HashMap<Integer, Port> portsConxs;//kel port 3ndo thread port khas fi
 
-    HashMap<Integer, Neighbor> connections;//each port with its directy connected to it
+    static HashMap<Integer, Neighbor> connections;//each port with its directy connected to it
 
     /*
      * Constructor 
@@ -35,6 +35,7 @@ public class Router {
         this.ipAddress = InetAddress.getLocalHost();
         connections = new HashMap<Integer, Neighbor>();
         portsConxs = new HashMap<Integer, Port>();
+        System.out.println("connections and portsConxs are created");
     }
 
     public Router(InetAddress ipAddress) {
@@ -54,6 +55,8 @@ public class Router {
             }
             Neighbor newNeighbor = new Neighbor(neighboraddress, neighborport);
             connections.put(port, newNeighbor);
+            System.out.println("1connection is initialized at port "+ port+" with neighb= "+ neighboraddress+" , "+ neighborport);
+            getPorts().get(port).connect(neighboraddress, neighborport);
         }
     }
 
@@ -77,6 +80,14 @@ public class Router {
         return portsConxs;
     }
 
+//    public void connect(int myport, InetAddress inetAddress, int port) {
+//        //tayeb wbrke lnetwork l3m b3ml 3le connect ma mwjud
+//        if (!portsConxs.containsKey(port)) {
+//            System.out.println("This port does not exists");
+//            return;
+//        }
+//        getPorts().get(myport).connect(inetAddress, port);
+//    }
     public InetAddress getIpAddress() {
         return ipAddress;
     }

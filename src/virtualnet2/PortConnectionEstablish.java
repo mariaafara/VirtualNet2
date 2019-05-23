@@ -43,7 +43,7 @@ public class PortConnectionEstablish extends Thread {
                     p.setSocket(socket);
                     p.setconnectionEstablished(true);
                 } else {
-                    System.out.println("Sorry connction already established with thid destination");
+                    System.out.println("Sorry connction already established with this destination");
                     //cannot connect to  this cnx
                 }
 

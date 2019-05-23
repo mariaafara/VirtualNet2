@@ -22,6 +22,7 @@ public class Port extends Thread {
     PortConnectionEstablish portConnectionEstablish;
 
     public Port(int port) {
+        System.out.println("Port " +port+" initialized");
         this.connectionEstablished = false;
         this.port = port;
         this.socket = null;
