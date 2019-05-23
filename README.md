@@ -55,5 +55,15 @@
 
 6.If it's own routing table was updated in any case send it to all neighbors
                                   
-                                 
+**Class PortConnectionWait Thread**
+
+1.Keeps waiting to recieve a socket connection at a certain port
+if this port is not already assigned with a connection
+the connectoin is establised successfuly and saved and send a true flag to inform that the connection succeded and waits to recieve the neighbor which requested the connection and save it 
+if it was already reserved send false flag to inform that the port is already connected
+
+**Class PortConnectionEstablish Thread**
+
+1.Request a connection at a certain port with a neighbor
+if it recieves a true flag thus the connection is available it saves the connection and send its self
                                    
