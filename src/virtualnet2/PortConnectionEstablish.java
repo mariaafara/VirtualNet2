@@ -7,6 +7,7 @@ package virtualnet2;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -33,10 +34,15 @@ public class PortConnectionEstablish extends Thread {
     public void run() {
         //  ObjectOutputStream objectOutputStream = null;
         ObjectInputStream objectInputStream = null;
+        
         if (!p.connectionEstablished) {
 
             try {
                 socket = new Socket(ip, port);
+                //3m b3tlo m3 min lconnection
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                objectOutputStream.writeObject(new Neighbor(ip, port));
+                
                 objectInputStream = new ObjectInputStream(socket.getInputStream());
                 boolean bool = objectInputStream.readBoolean();
                 if (bool) {
