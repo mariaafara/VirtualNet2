@@ -41,21 +41,20 @@ public class RoutingTableSend extends Thread {
 
         // publish routing table here.
         System.out.println("SendingRoutingTable");
-        for (HashMap.Entry<Integer, Neighbor> entry : rs.getConnections().entrySet()) {
+        ///  for (HashMap.Entry<Integer, Neighbor> entry : rs.getConnections().entrySet()) {
 
-            //send myRoutingTable to neighbor
-            sendRoutingTable(rs.getRoutingTable(), entry.getValue().neighborAddress, entry.getValue().neighborPort);
+        //send myRoutingTable to neighbor
+        sendRoutingTable(rs.getRoutingTable());//, entry.getValue().neighborAddress, entry.getValue().neighborPort);
 
-        }
-
+        // }
     }
 
     /*
-        * This method sends given routing table to given i p and port via t c p protocol
+        * This method sends given routing table 
      */
-    private void sendRoutingTable(RoutingTable rt, InetAddress ip, int port) {
+    private void sendRoutingTable(RoutingTable rt) {
         try {
-            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            //  ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
 
             oos.writeObject(rt);
@@ -66,33 +65,5 @@ public class RoutingTableSend extends Thread {
 
     }
 
-    /*
-     * This method sends the failed node 
-    
-     */
-//    private void sendFailure(InetAddress FailedNode) {
-//        DatagramPacket packet1;
-//        byte[] data;
-//        data = (new String(FailedNode + "")).getBytes();
-//        DatagramPacket packet;
-//        byte[] data1;
-//        data1 = (new String("Failure")).getBytes();
-//        //("Sending failed node  to neighbors.");
-//        Iterator<Neighbor> neighborIterator = neighbors.iterator();
-//        try {
-//            while (neighborIterator.hasNext()) {
-//
-//                //send failure keyword first as a hint
-//                Neighbor nextNeighbor = neighborIterator.next();
-//                packet1 = new DatagramPacket(data1, data1.length, nextNeighbor.neighborAddress, nextNeighbor.neighborPort);
-//                socket.send(packet1);
-//                //send failed node after it
-//                packet = new DatagramPacket(data, data.length, nextNeighbor.neighborAddress, nextNeighbor.neighborPort);
-//                socket.send(packet);
-//
-//            }
-//        } catch (IOException ex) {
-//            Logger.getLogger(Router.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
+  
 }

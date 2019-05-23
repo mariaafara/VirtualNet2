@@ -38,11 +38,12 @@ public class RoutingService extends Thread {
     public void run() {
 
         super.run();
+        
         FillRoutingTable();
-        //allow to recieve routing table at each port
+        //allow to recieve objects at each port
         for (HashMap.Entry<Integer, Port> entry : portsConxs.entrySet()) {
 
-            new RoutingTableRecieve(entry.getKey(), entry.getValue().getSocket(), this);
+            new Reciever(entry.getKey(), entry.getValue().getSocket(), this);
         }
         try {
             new RoutingTableBroadcast(this).start();

@@ -91,7 +91,10 @@ public class RoutingTableUpdate extends Thread {
             //If yes send updates to all neighbors
             if (isUpdated) {
                 rs.getRoutingTable().printTable("After Update");
-                new RoutingTableSend(socket,rs).start();
+                for (HashMap.Entry<Integer, Port> entry : rs.getPortsConxs().entrySet()) {
+
+                    new RoutingTableSend(entry.getValue().getSocket(), rs).start();
+                }
 
             }
         }
