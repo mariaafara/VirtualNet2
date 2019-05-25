@@ -21,8 +21,9 @@ public class VirtualNet2 {
     public static void main(String[] args) throws InterruptedException, UnknownHostException {
 
        //f2();
-       f1();
-       
+          f3();
+       // f1();
+
     }
 
     static void f1() throws UnknownHostException, InterruptedException {
@@ -34,8 +35,10 @@ public class VirtualNet2 {
         router1.initializePort(1112);
         // router1.initializePort(1111);
         //Thread.sleep(1500);
-        router1.initializeConnection(1111, InetAddress.getLocalHost(), 2222);
-        Thread.sleep(10000);
+        // Thread.sleep(5000);
+        System.out.println("*before routing");
+        // Thread.sleep(5000);
+
         router1.initializeRoutingProtocol();
     }
 
@@ -43,7 +46,23 @@ public class VirtualNet2 {
         Router router2 = new Router();
         router2.start();
         router2.initializePort(2222);
-        Thread.sleep(10000);
+        router2.initializeConnection(2222, InetAddress.getLocalHost(), 1111);
+
+        System.out.println("*before routing");
+        //  Thread.sleep(5000);
+
         router2.initializeRoutingProtocol();
+    }
+
+    static void f3() throws UnknownHostException, InterruptedException {
+        Router router3 = new Router();
+        router3.start();
+        router3.initializePort(3333);
+        router3.initializeConnection(3333, InetAddress.getLocalHost(), 1112);
+
+        System.out.println("*before routing");
+        // Thread.sleep(5000);
+
+        router3.initializeRoutingProtocol();
     }
 }

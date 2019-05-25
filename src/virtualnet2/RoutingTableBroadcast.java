@@ -17,12 +17,13 @@ import virtualnet2.RoutingTableSend;
  */
 public class RoutingTableBroadcast extends Thread {
 
-    private RoutingService rs;
+    PortConxs portConxs;
+    RoutingTable routingTable;
 
-    public RoutingTableBroadcast(RoutingService rs) throws SocketException {
+    public RoutingTableBroadcast(PortConxs portConxs, RoutingTable routingTable) throws SocketException {
 
-        //this.routerAddress = routerAddress;
-        this.rs = rs;
+        this.portConxs = portConxs;
+        this.routingTable = routingTable;
 
     }
 
@@ -37,13 +38,13 @@ public class RoutingTableBroadcast extends Thread {
         //l2elonn b3den btb3t le 2ela wbtsh8el ltimer
         while (true) {
             try {
-                for (HashMap.Entry<Integer, Port> entry : rs.getPortsConxs().entrySet()) {
-                //    System.out.println("socket in broadcast" + entry.getValue().getSocket());
+                for (HashMap.Entry<Integer, Port> entry : portConxs.getPortsConxs().entrySet()) {
+                    //    System.out.println("socket in broadcast" + entry.getValue().getSocket());
                     if (entry.getValue().isconnectionEstablished()) {
-                        new RoutingTableSend(entry.getValue().getSocket(), rs).start();
+                        new RoutingTableSend(entry.getValue().getSocket(), routingTable).start();
                     }
                 }
-                Thread.sleep(60000);
+                Thread.sleep(30000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(RoutingTableBroadcast.class.getName()).log(Level.SEVERE, null, ex);
             }

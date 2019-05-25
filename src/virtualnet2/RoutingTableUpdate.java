@@ -23,14 +23,16 @@ public class RoutingTableUpdate extends Thread {
     private RoutingTable recievedroutingtable;
     private int recievedrouterPort;
     private Socket socket;
-    private RoutingService rs;
+    private RoutingTable rt;
+    private PortConxs portConxs;
 
-    public RoutingTableUpdate(RoutingTable recievedroutingtable, int recievedrouterPort, Socket socket, RoutingService rs) {
+    public RoutingTableUpdate(RoutingTable recievedroutingtable, int recievedrouterPort, Socket socket, PortConxs portConxs, RoutingTable rt) {
 
         this.recievedroutingtable = recievedroutingtable;
         this.recievedrouterPort = recievedrouterPort;
         this.socket = socket;
-        this.rs = rs;
+        this.rt = rt;
+        this.portConxs = portConxs;
     }
 
     /*
@@ -49,8 +51,8 @@ public class RoutingTableUpdate extends Thread {
 	 * This method checks if it's own routing table needs to be updated
      */
     public void checkForUpdates() throws SocketException {
-
-        synchronized (rs.routingTable) {
+///aw 3alock
+        synchronized (this) {
             System.out.println("In check for updates method");
 
             boolean isUpdated = false;
@@ -67,15 +69,15 @@ public class RoutingTableUpdate extends Thread {
 
                 //"Checking if my routing table has an entry for "  destAddress.getHostAddress()
                 //Client.myRoutingTable.routingEntries.containsKey(destAddress) ? true or false
-                if (rs.getRoutingTable().routingEntries.containsKey(destAddress)) {
+                if (rt.getRoutingTable().routingEntries.containsKey(destAddress)) {
 
-                    destCost = rs.getRoutingTable().routingEntries.get(destAddress).cost;
+                    destCost = rt.getRoutingTable().routingEntries.get(destAddress).cost;
 
                     //"Cost for this destination in my routing table is "  destCost
                     //"Cost for this destination in received routing table is "  pair.getValue().cost
                     if (destCost > (1 + pair.getValue().cost)) {
                         //which is smaller than my cost for the destination
-                        rs.updateEntry(destAddress, recievedrouterPort, 1 + pair.getValue().cost);
+                        rt.updateEntry(destAddress, recievedrouterPort, 1 + pair.getValue().cost);
 
                         isUpdated = true;
 
@@ -84,16 +86,16 @@ public class RoutingTableUpdate extends Thread {
                 } else//it does not contain it so add it 
                 {
 
-                    rs.addEntry(destAddress, pair.getValue().nextHop, pair.getValue().cost + 1);
+                    rt.addEntry(destAddress, pair.getValue().nextHop, pair.getValue().cost + 1);
                 }
             }
 
             //If yes send updates to all neighbors
             if (isUpdated) {
-                rs.getRoutingTable().printTable("After Update");
-                for (HashMap.Entry<Integer, Port> entry : rs.getPortsConxs().entrySet()) {
+                rt.getRoutingTable().printTable("After Update");
+                for (HashMap.Entry<Integer, Port> entry : portConxs.getPortsConxs().entrySet()) {
 
-                    new RoutingTableSend(entry.getValue().getSocket(), rs).start();
+                    new RoutingTableSend(entry.getValue().getSocket(), rt).start();
                 }
 
             }

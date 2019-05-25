@@ -27,17 +27,22 @@ public class RoutingTableRecieve extends Thread {
 
     RoutingTable routingTable;//the one recieved
 
-    private RoutingService rs;
+    private RoutingTable rt;
     private int i = 0;
     private int port;
-    
-    Object recievedObject;
 
-    public RoutingTableRecieve(Object recievedObject, int port, Socket socket, RoutingService rs) {
+    Object recievedObject;
+    Connections connections;
+    PortConxs portConxs;
+
+    public RoutingTableRecieve(Object recievedObject, int port, Socket socket, PortConxs portConxs, Connections connections, RoutingTable rt) {
+        System.out.println("routing table recieve initialized");
         this.port = port;
         this.socket = socket;
-        this.rs = rs;
+        this.rt = rt;
         this.recievedObject = recievedObject;
+        this.connections = connections;
+        this.portConxs = portConxs;
     }
 
     @Override
@@ -47,27 +52,27 @@ public class RoutingTableRecieve extends Thread {
         routingTable = recieveRoutingTable(recievedObject);
 
         //if my routing table has been formed send the response
-        if (!rs.isEmptyTable()) {
+        if (!rt.isEmptyTable()) {
             if (i == 0) {
                 i++;
-                new RoutingTableSend(socket, rs).start();
+                new RoutingTableSend(socket, rt).start();
             }
 
             //gets the port of which the router sent the RT  from.
-            recieveport = rs.getConnections().get(port).getNeighborPort();
+            recieveport = connections.getNeighbor(port).getNeighborPort();
 
             System.out.print("\n");
             routingTable.printTable("Recieved from " + recieveport + " ");
             System.out.println("\n");
 
             // Check if this routing table's object needs to be updated
-            new RoutingTableUpdate(routingTable, recieveport, socket, rs).start();
+            new RoutingTableUpdate(routingTable, recieveport, socket,portConxs, rt).start();
 
         }
 
     }
 
-    private RoutingTable recieveRoutingTable(Object recievedObject)  {
+    private RoutingTable recieveRoutingTable(Object recievedObject) {
 
         return routingTable = (RoutingTable) recievedObject;
     }

@@ -18,12 +18,13 @@ public class FailedNodeRecieve extends Thread {
 
     FailedNode fn;//the one recieved
     Object recievedObject;
-    private RoutingService rs;
+    private RoutingTable rt;
+    PortConxs portConxs;
 
-    public FailedNodeRecieve(Object recievedObject, Socket socket, RoutingService rs) {
+    public FailedNodeRecieve(Object recievedObject, Socket socket, PortConxs portConxs, RoutingTable rt) {
 
         this.socket = socket;
-        this.rs = rs;
+        this.rt = rt;
         this.recievedObject = recievedObject;
     }
 
@@ -31,15 +32,15 @@ public class FailedNodeRecieve extends Thread {
     public void run() {
 
         fn = recieveFailedNode(recievedObject);
-        rs.deleteEntry(fn.getInetaddress());
+        rt.deleteEntry(fn.getInetaddress());
 
         //delete entry then send ne routing table
-        for (HashMap.Entry<Integer, Port> entry : rs.getPortsConxs().entrySet()) {
+        for (HashMap.Entry<Integer, Port> entry : portConxs.getPortsConxs().entrySet()) {
 
-            new RoutingTableSend(entry.getValue().getSocket(), rs).start();
+            new RoutingTableSend(entry.getValue().getSocket(), rt).start();
         }
         System.out.print("\n");
-        rs.routingTable.printTable("After Deleting Failed Node  ");
+        rt.printTable("After Deleting Failed Node  ");
         System.out.println("\n");
 
     }

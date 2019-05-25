@@ -19,15 +19,16 @@ public class PortConnectionEstablish extends Thread {
     int port;
     InetAddress ip;
     int myport;
+    Connections connections;
+    RoutingTable rt;
 
-    public PortConnectionEstablish(int myport, InetAddress ip, int port, Port p) {
-
-        System.out.println("*****");
-        System.out.println("myport is " + myport);
+    public PortConnectionEstablish(int myport, InetAddress ip, int port, Port p, Connections connections, RoutingTable rt) {
         this.port = port;
         this.myport = myport;
         this.p = p;
         this.ip = ip;
+        this.connections = connections;
+        this.rt = rt;
     }
 
     @Override
@@ -37,19 +38,15 @@ public class PortConnectionEstablish extends Thread {
         if (!p.isconnectionEstablished()) {
 
             try {
-                System.out.println("---------");
+                System.out.println("*connection is being established");
                 socket = new Socket(ip, port);
-                System.out.println("myport " + socket.getLocalPort() + "destport " + socket.getPort());
+                System.out.println("*socket : myport " + socket.getLocalPort() + " destport " + socket.getPort());
 
-                System.out.println("---------");
-
-//**********
                 ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-                System.out.println("---------");
+
                 bool = objectInputStream.readBoolean();
 
-//                    objectInputStream.close();
-                System.out.println(bool + " was recieved");
+                System.out.println("*" + bool + " was recieved");
 
                 if (bool) {
                     p.setSocket(socket);
@@ -57,8 +54,14 @@ public class PortConnectionEstablish extends Thread {
                     //3m b3tlo m3 min lconnection
                     ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
                     objectOutputStream.writeObject(new Neighbor(ip, myport));
+                    Neighbor newNeighbor = new Neighbor(ip, port);
+                    connections.addNeighbor(port, newNeighbor);
+                    rt.addEntry(ip, port, 1);
+                    rt.printTable("after add");
+                    System.out.println("*connection is initialized at port " + myport + " with neighb = " + ip + " , " + port);
+
                 } else {
-                    System.out.println("Sorry connction already established with this destination");
+                    System.out.println("*Sorry connction already established with this destination");
                     //cannot connect to  this cnx
                 }
 

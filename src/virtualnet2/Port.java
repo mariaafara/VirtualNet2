@@ -15,38 +15,49 @@ import java.util.HashMap;
  */
 public class Port extends Thread {
 
+    Connections connections;
     boolean connectionEstablished;
     Socket socket;
     int port;
     PortConnectionWait portConnectionWait;
     PortConnectionEstablish portConnectionEstablish;
-    final Object lockInput = new Object();
 
-    public Port(int port) {
-        System.out.println("Port " + port + " initialized");
+    final Object lockconnectionEstablished = new Object();
+    final Object lockSocket = new Object();
+    RoutingTable rt;
+
+    public Port(int port, Connections connections, RoutingTable rt) {
+        System.out.println("*Port " + port + " initialized");
         this.connectionEstablished = false;
         this.port = port;
         this.socket = null;
-        portConnectionWait = new PortConnectionWait(port, this);
-
+        this.rt = rt;
+        portConnectionWait = new PortConnectionWait(port, this, connections, rt);
+        this.connections = connections;
     }
 
     public boolean isconnectionEstablished() {
-        synchronized(lockInput){
+        synchronized (lockconnectionEstablished) {
             return connectionEstablished;
         }
     }
 
-    synchronized public void setconnectionEstablished(boolean connectionEstablished) {
-        this.connectionEstablished = connectionEstablished;
+    public void setconnectionEstablished(boolean connectionEstablished) {
+        synchronized (lockconnectionEstablished) {
+            this.connectionEstablished = connectionEstablished;
+        }
     }
 
-    synchronized public Socket getSocket() {
-        return socket;
+    public Socket getSocket() {
+        synchronized (lockSocket) {
+            return socket;
+        }
     }
 
-    synchronized public void setSocket(Socket socket) {
-        this.socket = socket;
+    public void setSocket(Socket socket) {
+        synchronized (lockSocket) {
+            this.socket = socket;
+        }
     }
 
     @Override
@@ -58,9 +69,8 @@ public class Port extends Thread {
     }
 
     public void connect(int port, InetAddress neighborAddress, int neighborport) {
-        System.out.println("*****");
-        System.out.println("in connect method in port class ");
-        PortConnectionEstablish pce = new PortConnectionEstablish(port, neighborAddress, neighborport, this);
+
+        PortConnectionEstablish pce = new PortConnectionEstablish(port, neighborAddress, neighborport, this, connections, rt);
         pce.start();
     }
 }

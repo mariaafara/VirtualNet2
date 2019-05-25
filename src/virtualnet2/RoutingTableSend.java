@@ -6,13 +6,8 @@
 package virtualnet2;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * this service sends routing table to all the directly connected neighbors
@@ -21,15 +16,15 @@ import java.util.Iterator;
  */
 public class RoutingTableSend extends Thread {
 
-    private  Socket socket;
-    private RoutingService rs;
+    private Socket socket;
+    private RoutingTable rt;
 
     static int i = 0;
 
-    public RoutingTableSend(Socket socket, RoutingService rs) {
+    public RoutingTableSend(Socket socket, RoutingTable rt) {
 
         this.socket = socket;
-        this.rs = rs;
+        this.rt = rt;
 
     }
 
@@ -40,24 +35,24 @@ public class RoutingTableSend extends Thread {
     public void run() {
 
         // publish routing table here.
-        System.out.println("SendingRoutingTable");
-        ///  for (HashMap.Entry<Integer, Neighbor> entry : rs.getConnections().entrySet()) {
+        System.out.println("*SendingRoutingTable");
 
+        rt.getRoutingTable().printTable("Sending");
         //send myRoutingTable to neighbor
-        sendRoutingTable(rs.getRoutingTable());//, entry.getValue().neighborAddress, entry.getValue().neighborPort);
+        sendRoutingTable(rt.getRoutingTable());
 
-        // }
     }
-
+    
     /*
         * This method sends given routing table 
      */
-    private void sendRoutingTable(RoutingTable rt) {
+    private void sendRoutingTable(RoutingTable RT) {
+
         try {
             //  ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
 
-            oos.writeObject(rt);
+            oos.writeObject(RT);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -65,5 +60,4 @@ public class RoutingTableSend extends Thread {
 
     }
 
-  
 }

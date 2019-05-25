@@ -23,11 +23,12 @@ public class Router extends Thread {
 
     //fi oset neighbors 
     InetAddress ipAddress;
+    public RoutingTable routingTable;
 
-    static HashMap<Integer, Port> portsConxs;//kel port 3ndo thread port khas fi
+    final Object lockRouter = new Object();
+    Connections connections;
+    PortConxs portConxs;
 
-    static HashMap<Integer, Neighbor> connections;//each port with its directy connected to it
-   
     /*
      * Constructor 
      */
@@ -42,64 +43,51 @@ public class Router extends Thread {
     }
 
     public Router() throws UnknownHostException {
+        connections = new Connections();
+        portConxs = new PortConxs();
+
+        routingTable = new RoutingTable();
         this.ipAddress = InetAddress.getLocalHost();
-        connections = new HashMap<Integer, Neighbor>();
-        portsConxs = new HashMap<Integer, Port>();
-        System.out.println("connections and portsConxs are created");
+
     }
 
     public Router(InetAddress ipAddress) {
+        connections = new Connections();
+        portConxs = new PortConxs();
+        routingTable = new RoutingTable();
 
-        // Assign the ip 
         this.ipAddress = ipAddress;
-        connections = new HashMap<Integer, Neighbor>();
-        portsConxs = new HashMap<Integer, Port>();
 
     }
 
     public void initializeConnection(int port, InetAddress neighboraddress, int neighborport) {
         synchronized (this) {
-            if (!portsConxs.containsKey(port)) {
-                System.out.println("This port does not exists");
+            if (!portConxs.containsPort(port)) {
+                System.out.println("*This port does not exists");
                 return;
             }
-            Neighbor newNeighbor = new Neighbor(neighboraddress, neighborport);
-          //////////hon lmshle dymn 3m bzida in mshe lcnx aw mamshe so a lezm hon
-            connections.put(port, newNeighbor);
-            System.out.println("1connection is initialized at port " + port + " with neighb= " + neighboraddress + " , " + neighborport);
-            getPorts().get(port).connect(port, neighboraddress, neighborport);
+            portConxs.getPortInstance(port).connect(port, neighboraddress, neighborport);
         }
     }
 
     public void initializePort(int port) {
         synchronized (this) {
-            if (portsConxs.containsKey(port)) {
-                System.out.println("This port exists");
+            if (portConxs.containsPort(port)) {
+                System.out.println("*This port exists");
                 return;
             }
-            Port portclass = new Port(port);
-            portsConxs.put(port, portclass);
+            Port portclass = new Port(port,connections,routingTable);
+            portConxs.addPort(port, portclass);
             portclass.start();
         }
 
     }
 
     public void initializeRoutingProtocol() {
-        new RoutingService(portsConxs, connections).start();
+
+        new RoutingService(portConxs,connections,routingTable).start();
     }
 
-    synchronized public HashMap<Integer, Port> getPorts() {
-        return portsConxs;
-    }
-
-//    public void connect(int myport, InetAddress inetAddress, int port) {
-//        //tayeb wbrke lnetwork l3m b3ml 3le connect ma mwjud
-//        if (!portsConxs.containsKey(port)) {
-//            System.out.println("This port does not exists");
-//            return;
-//        }
-//        getPorts().get(myport).connect(inetAddress, port);
-//    }
     public InetAddress getIpAddress() {
         return ipAddress;
     }

@@ -19,17 +19,22 @@ public class Reciever extends Thread {
 
     private Socket socket;
 
-    private RoutingService rs;
+    private RoutingTable rt;
 
     private int port;
 
     private Object recievedObject;
     ObjectInputStream ois;
+    Connections connections;
+    PortConxs portConxs;
 
-    public Reciever(int port, Socket socket, RoutingService rs) {
+    public Reciever(int port, Socket socket, PortConxs portConx, Connections connections, RoutingTable rt) {
+        System.out.println("*reciever initialized");
         this.port = port;
         this.socket = socket;
-        this.rs = rs;
+        this.rt = rt;
+        this.connections = connections;
+        this.portConxs = portConxs;
 
     }
 
@@ -39,11 +44,14 @@ public class Reciever extends Thread {
             ois = new ObjectInputStream(socket.getInputStream());
 
             while (true) {
+                System.out.println("*waiting to recieve object");
                 recievedObject = ois.readObject();
                 if (recievedObject instanceof RoutingTable) {
-                    new RoutingTableRecieve(recievedObject, port, socket, rs).start();
+                    System.out.println("*recieved routing table");
+
+                    new RoutingTableRecieve(recievedObject, port, socket, portConxs,connections, rt).start();
                 } else if (recievedObject instanceof FailedNode) {
-                    new FailedNodeRecieve(recievedObject, socket, rs).start();
+                    new FailedNodeRecieve(recievedObject, socket,portConxs, rt).start();
                 }
             }
         } catch (IOException ex) {
