@@ -56,8 +56,11 @@ public class PortConnectionEstablish extends Thread {
                     objectOutputStream.writeObject(new Neighbor(ip, myport));
                     Neighbor newNeighbor = new Neighbor(ip, port);
                     connections.addNeighbor(port, newNeighbor);
-                    rt.addEntry(ip, port, 1);
-                    rt.printTable("after add");
+                    //rt.addEntry(ip, port, 1);
+                    rt.addEntry(port, port, 1);
+
+                    
+                    rt.printTable("**after add**");
                     System.out.println("*connection is initialized at port " + myport + " with neighb = " + ip + " , " + port);
 
                 } else {

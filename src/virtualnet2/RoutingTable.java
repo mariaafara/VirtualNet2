@@ -11,12 +11,16 @@ import java.util.Iterator;
  */
 public class RoutingTable implements Serializable {
 
-    HashMap<InetAddress, RoutingTableInfo> routingEntries;
+//    HashMap<InetAddress, RoutingTableInfo> routingEntries;
+    HashMap<Integer, RoutingTableInfo> routingEntries;
+
     transient final Object lockRoutingTable = new Object();
 
     public RoutingTable() {
         try {
-            routingEntries = new HashMap<InetAddress, RoutingTableInfo>();
+//            routingEntries = new HashMap<InetAddress, RoutingTableInfo>();
+            routingEntries = new HashMap<Integer, RoutingTableInfo>();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -25,11 +29,7 @@ public class RoutingTable implements Serializable {
     /*
          * This method return the routing table of this client
      */
-    public RoutingTable getRoutingTable() {
-        synchronized (lockRoutingTable) {
-            return this;
-        }
-    }
+  
 
     /*
 	 * This method adds an entry into the routing table
@@ -39,7 +39,14 @@ public class RoutingTable implements Serializable {
      */
     public void addEntry(InetAddress destIp, int nextHop, int cost) {
         synchronized (lockRoutingTable) {
-            
+
+            //   this.routingEntries.put(destIp, new RoutingTableInfo(nextHop, cost));
+        }
+    }
+
+    public void addEntry(int destIp, int nextHop, int cost) {
+        synchronized (lockRoutingTable) {
+
             this.routingEntries.put(destIp, new RoutingTableInfo(nextHop, cost));
         }
     }
@@ -68,6 +75,13 @@ public class RoutingTable implements Serializable {
     public void updateEntry(InetAddress destNtwk, int nxthopIp, int cost) {
         synchronized (lockRoutingTable) {
             RoutingTableInfo ti = new RoutingTableInfo(nxthopIp, cost);
+            //   this.routingEntries.put(destNtwk, ti);
+        }
+    }
+
+    public void updateEntry(int destNtwk, int nxthopIp, int cost) {
+        synchronized (lockRoutingTable) {
+            RoutingTableInfo ti = new RoutingTableInfo(nxthopIp, cost);
             this.routingEntries.put(destNtwk, ti);
         }
     }
@@ -79,20 +93,25 @@ public class RoutingTable implements Serializable {
         // creating iterator for HashMap 
         synchronized (this) {
 
-            Iterator<HashMap.Entry<InetAddress, RoutingTableInfo>> routingEntriesIterator = routingEntries.entrySet().iterator();
-            InetAddress destAddress;
+//            Iterator<HashMap.Entry<InetAddress, RoutingTableInfo>> routingEntriesIterator = routingEntries.entrySet().iterator();
+            Iterator<HashMap.Entry<Integer, RoutingTableInfo>> routingEntriesIterator = routingEntries.entrySet().iterator();
 
+//            InetAddress destAddress;
+            int destAddress;
             System.out.print("---------------------------------   Routing Table " + hint + " -----------------------------------" + "\n");
             System.out.print("---------------------|------------------|-----------------------|---------------|------------------------" + "\n");
             System.out.print("---------------------|\tDest Network \t|\tNext Hop Port\t|\tCost\t|------------------------" + "\n");
             System.out.print("---------------------|------------------|-----------------------|---------------|------------------------" + "\n");
             while (routingEntriesIterator.hasNext()) {
 
-                HashMap.Entry<InetAddress, RoutingTableInfo> pair = (HashMap.Entry<InetAddress, RoutingTableInfo>) routingEntriesIterator.next();
-                destAddress = (InetAddress) pair.getKey();
-                RoutingTableInfo destForwardingInfo = (RoutingTableInfo) pair.getValue();
+//                HashMap.Entry<InetAddress, RoutingTableInfo> pair = (HashMap.Entry<InetAddress, RoutingTableInfo>) routingEntriesIterator.next();
+                HashMap.Entry<Integer, RoutingTableInfo> pair = (HashMap.Entry<Integer, RoutingTableInfo>) routingEntriesIterator.next();
 
-                System.out.print("---------------------|\t" + destAddress.getHostAddress() + "\t|\t");//bs ntb3 linet address btbi3to 3m berj3 forword slash bas destAddress.getHostName() 3m trj3 aw2et msln one.one.one.
+//                destAddress = (InetAddress) pair.getKey();
+                destAddress = (Integer) pair.getKey();
+                RoutingTableInfo destForwardingInfo = (RoutingTableInfo) pair.getValue();
+//destAddress.getHostAddress()
+                System.out.print("---------------------|\t" + destAddress + "\t|\t");//bs ntb3 linet address btbi3to 3m berj3 forword slash bas destAddress.getHostName() 3m trj3 aw2et msln one.one.one.
                 System.out.print("" + destForwardingInfo.nextHop + "\t\t|\t  ");
                 System.out.print(destForwardingInfo.cost + " \t|------------------------");
                 System.out.println();

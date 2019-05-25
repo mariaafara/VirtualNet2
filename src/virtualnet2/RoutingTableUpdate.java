@@ -56,22 +56,29 @@ public class RoutingTableUpdate extends Thread {
             System.out.println("In check for updates method");
 
             boolean isUpdated = false;
-            InetAddress destAddress;
+            //InetAddress destAddress;
+            int destAddress;
+
             int destCost;
 
             // Iterate through the neighbor's routing table
-            Iterator<HashMap.Entry<InetAddress, RoutingTableInfo>> routingEntriesIterator = recievedroutingtable.routingEntries.entrySet().iterator();
+            // Iterator<HashMap.Entry<InetAddress, RoutingTableInfo>> routingEntriesIterator = recievedroutingtable.routingEntries.entrySet().iterator();
+            Iterator<HashMap.Entry<Integer, RoutingTableInfo>> routingEntriesIterator = recievedroutingtable.routingEntries.entrySet().iterator();
+            //  HashMap.Entry<InetAddress, RoutingTableInfo> pair = (HashMap.Entry<InetAddress, RoutingTableInfo>) routingEntriesIterator.next();
 
             while (routingEntriesIterator.hasNext()) {
                 //fetching routing table as pairs
-                HashMap.Entry<InetAddress, RoutingTableInfo> pair = (HashMap.Entry<InetAddress, RoutingTableInfo>) routingEntriesIterator.next();
-                destAddress = (InetAddress) pair.getKey();
+                //    HashMap.Entry<InetAddress, RoutingTableInfo> pair = (HashMap.Entry<InetAddress, RoutingTableInfo>) routingEntriesIterator.next();
+                HashMap.Entry<Integer, RoutingTableInfo> pair = (HashMap.Entry<Integer, RoutingTableInfo>) routingEntriesIterator.next();
+
+//                destAddress = (InetAddress) pair.getKey();
+                destAddress = (Integer) pair.getKey();
 
                 //"Checking if my routing table has an entry for "  destAddress.getHostAddress()
                 //Client.myRoutingTable.routingEntries.containsKey(destAddress) ? true or false
-                if (rt.getRoutingTable().routingEntries.containsKey(destAddress)) {
+                if (rt.routingEntries.containsKey(destAddress)) {
 
-                    destCost = rt.getRoutingTable().routingEntries.get(destAddress).cost;
+                    destCost = rt.routingEntries.get(destAddress).cost;
 
                     //"Cost for this destination in my routing table is "  destCost
                     //"Cost for this destination in received routing table is "  pair.getValue().cost
@@ -92,7 +99,7 @@ public class RoutingTableUpdate extends Thread {
 
             //If yes send updates to all neighbors
             if (isUpdated) {
-                rt.getRoutingTable().printTable("After Update");
+                rt.printTable("After Update");
                 for (HashMap.Entry<Integer, Port> entry : portConxs.getPortsConxs().entrySet()) {
 
                     new RoutingTableSend(entry.getValue().getSocket(), rt).start();

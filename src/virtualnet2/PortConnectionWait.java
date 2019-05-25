@@ -67,8 +67,10 @@ public class PortConnectionWait extends Thread {
                     Neighbor neighbor = (Neighbor) objectInputStream.readObject();
 
                     connections.addNeighbor(port, neighbor);
-                    rt.addEntry(neighbor.getNeighborAddress(), neighbor.getNeighborPort(), 1);
-                    rt.printTable("after add");
+                    rt.addEntry(neighbor.getNeighborPort(), neighbor.getNeighborPort(), 1);
+
+//                    rt.addEntry(neighbor.getNeighborAddress(), neighbor.getNeighborPort(), 1);
+                    rt.printTable("--after add--");
                     System.out.println("*connection is initialized at port " + port + " with neighb = " + neighbor.getNeighborAddress() + " , " + neighbor.getNeighborPort());
 
                 } else {

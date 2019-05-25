@@ -76,16 +76,17 @@ public class Router extends Thread {
                 System.out.println("*This port exists");
                 return;
             }
-            Port portclass = new Port(port,connections,routingTable);
+            Port portclass = new Port(port, connections, routingTable);
             portConxs.addPort(port, portclass);
             portclass.start();
         }
 
     }
+///wrong wrong wrong wrong
 
     public void initializeRoutingProtocol() {
 
-        new RoutingService(portConxs,connections,routingTable).start();
+        new RoutingService(portConxs, connections, routingTable).start();
     }
 
     public InetAddress getIpAddress() {

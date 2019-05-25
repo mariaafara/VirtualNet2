@@ -44,6 +44,9 @@ public class Port extends Thread {
 
     public void setconnectionEstablished(boolean connectionEstablished) {
         synchronized (lockconnectionEstablished) {
+            if (connectionEstablished) {
+                this.notifyAll();
+            }
             this.connectionEstablished = connectionEstablished;
         }
     }

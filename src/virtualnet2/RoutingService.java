@@ -43,8 +43,9 @@ public class RoutingService extends Thread {
 //        FillRoutingTable();
         //allow to recieve objects at each port
         for (HashMap.Entry<Integer, Port> entry : portConxs.getPortsConxs().entrySet()) {
-
-            new Reciever(entry.getKey(), entry.getValue().getSocket(),portConxs, connections, routingTable);
+            System.out.println("*run reciever for the port " + entry.getKey());
+       
+            new Reciever(entry.getKey(), entry.getValue().getSocket(), portConxs, connections, routingTable).start();
         }
         try {
             new RoutingTableBroadcast(portConxs, routingTable).start();
