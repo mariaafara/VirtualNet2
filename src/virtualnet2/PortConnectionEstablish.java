@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package virtualnet2;
 
 import java.io.IOException;
@@ -44,13 +39,15 @@ public class PortConnectionEstablish extends Thread {
             try {
                 System.out.println("---------");
                 socket = new Socket(ip, port);
+                System.out.println("myport " + socket.getLocalPort() + "destport " + socket.getPort());
+
                 System.out.println("---------");
 
 //**********
-                    ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-                    System.out.println("---------");
-                    bool = objectInputStream.readBoolean();
-                
+                ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+                System.out.println("---------");
+                bool = objectInputStream.readBoolean();
+
 //                    objectInputStream.close();
                 System.out.println(bool + " was recieved");
 

@@ -5,11 +5,7 @@
  */
 package virtualnet2;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,8 +38,10 @@ public class RoutingTableBroadcast extends Thread {
         while (true) {
             try {
                 for (HashMap.Entry<Integer, Port> entry : rs.getPortsConxs().entrySet()) {
-
-                    new RoutingTableSend(entry.getValue().getSocket(),rs).start();
+                //    System.out.println("socket in broadcast" + entry.getValue().getSocket());
+                    if (entry.getValue().isconnectionEstablished()) {
+                        new RoutingTableSend(entry.getValue().getSocket(), rs).start();
+                    }
                 }
                 Thread.sleep(60000);
             } catch (InterruptedException ex) {

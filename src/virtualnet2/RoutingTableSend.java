@@ -21,7 +21,7 @@ import java.util.Iterator;
  */
 public class RoutingTableSend extends Thread {
 
-    private static Socket socket;
+    private  Socket socket;
     private RoutingService rs;
 
     static int i = 0;

@@ -27,7 +27,7 @@ public class Router extends Thread {
     static HashMap<Integer, Port> portsConxs;//kel port 3ndo thread port khas fi
 
     static HashMap<Integer, Neighbor> connections;//each port with its directy connected to it
-
+   
     /*
      * Constructor 
      */
@@ -64,6 +64,7 @@ public class Router extends Thread {
                 return;
             }
             Neighbor newNeighbor = new Neighbor(neighboraddress, neighborport);
+          //////////hon lmshle dymn 3m bzida in mshe lcnx aw mamshe so a lezm hon
             connections.put(port, newNeighbor);
             System.out.println("1connection is initialized at port " + port + " with neighb= " + neighboraddress + " , " + neighborport);
             getPorts().get(port).connect(port, neighboraddress, neighborport);

@@ -17,10 +17,10 @@ public class Port extends Thread {
 
     boolean connectionEstablished;
     Socket socket;
-    static int port;
+    int port;
     PortConnectionWait portConnectionWait;
     PortConnectionEstablish portConnectionEstablish;
-   // final Object lockInput = new Object();
+    final Object lockInput = new Object();
 
     public Port(int port) {
         System.out.println("Port " + port + " initialized");
@@ -31,8 +31,10 @@ public class Port extends Thread {
 
     }
 
-    synchronized public boolean isconnectionEstablished() {
-        return connectionEstablished;
+    public boolean isconnectionEstablished() {
+        synchronized(lockInput){
+            return connectionEstablished;
+        }
     }
 
     synchronized public void setconnectionEstablished(boolean connectionEstablished) {

@@ -45,6 +45,8 @@ public class PortConnectionWait extends Thread {
                 System.out.println("still waiting for a connection");
 
                 socket = serversocket.accept();
+                System.out.println("myport " + socket.getLocalPort() + "destport " + socket.getPort());
+
                 System.out.println("connection accepteed at port " + port);
 
                 if (!p.isconnectionEstablished()) {
@@ -52,20 +54,21 @@ public class PortConnectionWait extends Thread {
                     //bdon synchronization
                     p.setSocket(socket);
                     p.setconnectionEstablished(true);
-
                     objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+//                    objectOutputStream.writeBoolean(true);
                     objectOutputStream.writeBoolean(true);
+                    objectOutputStream.flush();
                     System.out.println("true was sent");
                     System.out.println("---------");
                     //**********
-                        ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-                        System.out.println("---------");
-                        Neighbor neighbor = (Neighbor) objectInputStream.readObject();
+                    ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+                    System.out.println("---------");
+                    Neighbor neighbor = (Neighbor) objectInputStream.readObject();
 
-                        System.out.println("---------");
-                        Router.connections.put(port, neighbor);
-                        System.out.println("2connection is initialized at port " + port + " with neighb= " + neighbor.getNeighborAddress() + " , " + neighbor.getNeighborPort());
-                   
+                    System.out.println("---------");
+                    Router.connections.put(port, neighbor);
+                    System.out.println("2connection is initialized at port " + port + " with neighb= " + neighbor.getNeighborAddress() + " , " + neighbor.getNeighborPort());
+
                 } else {
 
                     // Socket s = p.getSocket();
