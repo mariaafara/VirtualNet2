@@ -13,7 +13,7 @@ public class PortConxs {
 
     public PortConxs() {
         portsConxs = new HashMap<Integer, Port>();
-        System.out.println("*portsConxs is created");
+        //System.out.println("*portsConxs is created");
     }
 
     synchronized public HashMap<Integer, Port> getPortsConxs() {

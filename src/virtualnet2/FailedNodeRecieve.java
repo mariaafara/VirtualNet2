@@ -37,7 +37,7 @@ public class FailedNodeRecieve extends Thread {
         for (HashMap.Entry<Integer, RoutingTableInfo> entry : rt.routingEntries.entrySet()) {
 
             if (entry.getValue().cost == 1) {
-                new RoutingTableSend(entry.getValue().portclass.getSocket(), rt).start();
+            //    new RoutingTableSend(entry.getValue().portclass.getSocket(), rt).start();
             }
         }
         System.out.print("\n");

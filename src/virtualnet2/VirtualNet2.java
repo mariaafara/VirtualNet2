@@ -41,9 +41,9 @@ public class VirtualNet2 {
     }
 
     static void f2() throws UnknownHostException, InterruptedException {
-        Router router2 = new Router();
+        Router router2 = new Router(); 
         router2.start();
-       // router2.initializePort(2222);
+       // router12.initializePort(2222);
        // router2.initializeConnection(2222, InetAddress.getLocalHost(), 1111);
 
         //  System.out.println("*before routing");

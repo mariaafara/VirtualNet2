@@ -5,6 +5,9 @@
  */
 package virtualnet2;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.HashMap;
@@ -15,7 +18,6 @@ import java.util.HashMap;
  */
 public class Port extends Thread {
 
-   
     boolean connectionEstablished;
     Socket socket;
     int myport;
@@ -24,16 +26,24 @@ public class Port extends Thread {
 
     final Object lockconnectionEstablished = new Object();
     final Object lockSocket = new Object();
+    final Object lockOos = new Object();
+    final Object lockOis = new Object();
+
     RoutingTable rt;
+    ObjectInputStream ois;
+    ObjectOutputStream oos;
 
     public Port(int myport, RoutingTable rt) {
+
         System.out.println("*Port " + myport + " initialized");
+
         this.connectionEstablished = false;
         this.myport = myport;
         this.socket = null;
         this.rt = rt;
         portConnectionWait = new PortConnectionWait(myport, this, rt);
-        
+        this.ois = null;
+        this.oos = null;
     }
 
     public boolean isconnectionEstablished() {
@@ -44,22 +54,61 @@ public class Port extends Thread {
 
     public void setconnectionEstablished(boolean connectionEstablished) {
         synchronized (lockconnectionEstablished) {
-            if (connectionEstablished) {
-                this.notifyAll();
-            }
             this.connectionEstablished = connectionEstablished;
+//            if (connectionEstablished) {
+//                this.notifyAll();
+//            }
+
         }
     }
 
     public Socket getSocket() {
+        // System.out.println("*in getScoket method1");
+        // System.out.println("*socket in reciever local= " + socket.getLocalPort() + " port=" + socket.getPort());
+
         synchronized (lockSocket) {
+            //    System.out.println("*in getScoket method2");
             return socket;
         }
     }
 
-    public void setSocket(Socket socket) {
+    public void setSocket(Socket socket) throws IOException {
+        System.out.println("in setScoket method2 for port " + myport + " before snchronized");
+
         synchronized (lockSocket) {
             this.socket = socket;
+            System.out.println("*2*in setScoket method2 for port " + myport + " after ");
+
+            //System.out.println("*2*in setScoket method2 for port " + myport + " after snchronized after streams");
+        }
+    }
+
+    public void setStreams(ObjectInputStream ois, ObjectOutputStream oos) {
+        setOis(ois);
+        setOos(oos);
+    }
+
+    public ObjectInputStream getOis() {
+        synchronized (lockOos) {
+            return ois;
+        }
+    }
+
+    public void setOis(ObjectInputStream ois) {
+        synchronized (lockOis) {
+            this.ois = ois;
+        }
+    }
+
+    public ObjectOutputStream getOos() {
+        synchronized (lockOos) {
+            return oos;
+        }
+    }
+
+    public void setOos(ObjectOutputStream oos) {
+        synchronized (lockOis) {
+            this.oos = oos;
         }
     }
 

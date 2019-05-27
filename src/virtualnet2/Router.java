@@ -111,8 +111,9 @@ public class Router extends Thread {
 ///wrong wrong wrong wrong
 
     public void initializeRoutingProtocol() {
-
-        new RoutingService( routingTable).start();
+       
+        new RoutingService(routingTable).start();
+         System.out.println("*initializeRoutingProtocol");
     }
 
     public InetAddress getIpAddress() {

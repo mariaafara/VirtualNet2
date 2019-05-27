@@ -11,8 +11,8 @@ public class RoutingTableInfo implements Serializable {
     int nextHop;
     int cost;
     int port;
-    Port portclass;
-    boolean activated;
+    transient Port portclass;
+    transient boolean activated;
 
     public RoutingTableInfo(int nextHop, int cost, int port, Port portclass, boolean activated) {
         this.nextHop = nextHop;

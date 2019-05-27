@@ -36,42 +36,52 @@ public class PortConnectionEstablish extends Thread {
     public void run() {
 
         boolean bool;
-//        if (!p.isconnectionEstablished()) {
+        if (!p.isconnectionEstablished()) {
 
-        try {
-            rt.printTable("**Checking**");
-            System.out.println("*establishing connection with ip=" + neighborip + " port=" + neighborport);
-            socket = new Socket(neighborip, neighborport);
-            System.out.println("*socket : myport " + socket.getLocalPort() + " destport " + socket.getPort());
+            try {
 
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-            objectOutputStream.writeObject(new Neighbor(InetAddress.getLocalHost(), myport));
-            System.out.println("*sending my self as a neighbor to ip=" + InetAddress.getLocalHost() + " port=" + myport);
+                System.out.println("*establishing connection with ip=" + neighborip + " port=" + neighborport);
+                socket = new Socket(neighborip, neighborport);
+                System.out.println("*socket : myport " + socket.getLocalPort() + " destport " + socket.getPort());
 
-            ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-            bool = objectInputStream.readBoolean();
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                objectOutputStream.writeObject(new Neighbor(InetAddress.getLocalHost(), myport));
 
-            System.out.println("*" + bool + " was recieved");
+                System.out.println("*sending my self as a neighbor to ip=" + InetAddress.getLocalHost() + " port=" + myport);
 
-            if (bool) {
-                rt.activateEntry(neighborport);
-                p.setSocket(socket);
-                p.setconnectionEstablished(true);
-                System.out.println("*connection is established at port " + myport + " with neighb = " + neighborip + " , " + neighborport);
+                ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+                bool = objectInputStream.readBoolean();
 
-                //rt.addEntry(ip, port, 1 ,myport, p, true);
-                rt.addEntry(neighborport, neighborport, 1, myport, p, true);
+                System.out.println("*" + bool + " was recieved");
 
-            } else {
-                System.out.println("*waiting a connection from " + neighborport);
+                if (bool) {
+                    rt.activateEntry(neighborport);
+                    p.setSocket(socket);
+                    p.setStreams(objectInputStream, objectOutputStream);
 
-                socket.close();
+                    p.setconnectionEstablished(true);
+                    System.out.println("*connection is established at port " + myport + " with neighb = " + neighborip + " , " + neighborport);
+//rt.addEntry(ip, port, 1 ,myport, p, true);
+                    rt.addEntry(neighborport, neighborport, 1, myport, p, true);
+                    rt.printTable("--after add true--");
+                } else {
+                    //rt.addEntry(ip, port, 1 ,myport, p, true);
+                    rt.addEntry(neighborport, neighborport, 1, myport, p, false);
+
+                    System.out.println("*waiting a connection from " + neighborport);
+                    //  rt.printTable("**Checking**");
+                    rt.printTable("--after add false--");
+                    socket.close();
+                }
+
+            } catch (IOException ex) {
+                Logger.getLogger(PortConnectionEstablish.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-        } catch (IOException ex) {
-            Logger.getLogger(PortConnectionEstablish.class.getName()).log(Level.SEVERE, null, ex);
+        } else {
+            //already exist a conx at this port
+            //and i have to implement a methode to delete the old conx
+            System.out.println("*you have to delete the old connection");
         }
-
     }
-//    }
 }

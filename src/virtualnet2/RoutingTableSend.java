@@ -16,14 +16,14 @@ import java.net.Socket;
  */
 public class RoutingTableSend extends Thread {
 
-    private Socket socket;
+    private ObjectOutputStream oos;
     private RoutingTable rt;
 
     static int i = 0;
 
-    public RoutingTableSend(Socket socket, RoutingTable rt) {
+    public RoutingTableSend(ObjectOutputStream oos, RoutingTable rt) {
 
-        this.socket = socket;
+        this.oos = oos;
         this.rt = rt;
 
     }
@@ -50,11 +50,9 @@ public class RoutingTableSend extends Thread {
 
         try {
             //  ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-
             oos.writeObject(RT);
             oos.flush();
-            
+            oos.reset();
 
         } catch (IOException e) {
             e.printStackTrace();

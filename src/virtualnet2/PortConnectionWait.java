@@ -20,7 +20,7 @@ public class PortConnectionWait extends Thread {
     Socket socket;
     String msg;
     int myport;
-   
+
     RoutingTable rt;
 
     public PortConnectionWait(int myport, Port p, RoutingTable rt) {
@@ -31,7 +31,7 @@ public class PortConnectionWait extends Thread {
             serversocket = new ServerSocket(myport);
             this.p = p;
             this.myport = myport;
-          
+
             this.rt = rt;
         } catch (IOException ex) {
             Logger.getLogger(PortConnectionWait.class.getName()).log(Level.SEVERE, null, ex);
@@ -49,9 +49,8 @@ public class PortConnectionWait extends Thread {
                 System.out.println("*port " + myport + " still waiting for a connection");
 
                 socket = serversocket.accept();
-                
-                rt.printTable("**Checking**");
-                
+
+                // rt.printTable("**Checking**");
                 System.out.println("*socket :myport " + socket.getLocalPort() + " destport " + socket.getPort());
 
                 System.out.println("*connection accepteed at port " + myport);
@@ -62,27 +61,27 @@ public class PortConnectionWait extends Thread {
                 objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 
                 if (rt.isExistandNotActive(neighbor.neighborPort)) {
-
+                    System.out.println("before activateEntry");
                     rt.activateEntry(neighbor.neighborPort);
+                    System.out.println("after activateEntry and before set socket");
                     p.setSocket(socket);
-                    p.setconnectionEstablished(true);
+                    p.setStreams(objectInputStream, objectOutputStream);
+                    System.out.println("after setSocket");
 
+                    p.setconnectionEstablished(true);
                     objectOutputStream.writeBoolean(true);
                     objectOutputStream.flush();
 
                     System.out.println("*true was sent");
 
                 } else {
-                    //rt.addEntry(neighbor.getNeighborAddress(), neighbor.getNeighborPort(), 1, port, p, false);
-                    rt.addEntry(neighbor.getNeighborPort(), neighbor.getNeighborPort(), 1, myport, p, false);
+
                     objectOutputStream.writeBoolean(false);
                     objectOutputStream.flush();
 
                     System.out.println("*false was sent");
-                    System.out.println("*my turn to establish the connection on my side with port " + myport );
+                    System.out.println("*my turn to establish the connection on my side with port " + myport);
 
-                   
-                    rt.printTable("--after add--");
                     socket.close();
                 }
 

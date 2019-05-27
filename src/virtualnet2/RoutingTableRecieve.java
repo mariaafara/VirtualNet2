@@ -23,21 +23,23 @@ public class RoutingTableRecieve extends Thread {
 
     int recieveport;
 
-    Socket socket;
+    ObjectInputStream ois;
+    ObjectOutputStream oos;
 
     RoutingTable routingTable;//the one recieved
 
     private RoutingTable rt;
-    private int i = 0;
+    private static int i = 0;
     private int port;
 
     Object recievedObject;
 
-    public RoutingTableRecieve(Object recievedObject, int port, Socket socket, RoutingTable rt) {
-    
+    public RoutingTableRecieve(Object recievedObject, int port, ObjectInputStream ois, ObjectOutputStream oos, RoutingTable rt) {
+
         System.out.println("routing table recieve initialized");
         this.port = port;
-        this.socket = socket;
+        this.ois = ois;
+        this.oos = oos;
         this.rt = rt;
         this.recievedObject = recievedObject;
 
@@ -53,19 +55,18 @@ public class RoutingTableRecieve extends Thread {
         if (!rt.isEmptyTable()) {
             if (i == 0) {
                 i++;
-                new RoutingTableSend(socket, rt).start();
+                //System.out.println("");
+                new RoutingTableSend(oos, rt).start();
             }
 
-            //gets the port of which the router sent the RT  from.
-//            recieveport = connections.getNeighbor(port).getNeighborPort();
-            recieveport = rt.getNextHop(port);
+    
 
             System.out.print("\n");
             routingTable.printTable("Recieved from " + recieveport + " ");
             System.out.println("\n");
 
             // Check if this routing table's object needs to be updated
-            new RoutingTableUpdate(routingTable, recieveport, socket, rt).start();
+            new RoutingTableUpdate(routingTable, port, oos, rt).start();
 
         }
 

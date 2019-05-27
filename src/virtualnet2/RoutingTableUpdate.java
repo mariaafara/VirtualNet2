@@ -5,6 +5,7 @@
  */
 package virtualnet2;
 
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
@@ -21,15 +22,16 @@ import java.util.logging.Logger;
 public class RoutingTableUpdate extends Thread {
 
     private RoutingTable recievedroutingtable;
-    private int recievedrouterPort;
-    private Socket socket;
+    private int myport;
+    private ObjectOutputStream oos;
     private RoutingTable rt;
+    int recievedport;
 
-    public RoutingTableUpdate(RoutingTable recievedroutingtable, int recievedrouterPort, Socket socket, RoutingTable rt) {
+    public RoutingTableUpdate(RoutingTable recievedroutingtable, int myport, ObjectOutputStream oos, RoutingTable rt) {
 
         this.recievedroutingtable = recievedroutingtable;
-        this.recievedrouterPort = recievedrouterPort;
-        this.socket = socket;
+        this.myport = myport;
+        this.oos = oos;
         this.rt = rt;
 
     }
@@ -59,6 +61,9 @@ public class RoutingTableUpdate extends Thread {
             int destAddress;
 
             int destCost;
+            //gets the port of which the router sent the RT  from.
+//            recieveport = connections.getNeighbor(port).getNeighborPort();
+            recievedport = rt.getNextHop(myport);
 
             // Iterate through the neighbor's routing table
             // Iterator<HashMap.Entry<InetAddress, RoutingTableInfo>> routingEntriesIterator = recievedroutingtable.routingEntries.entrySet().iterator();
@@ -83,7 +88,7 @@ public class RoutingTableUpdate extends Thread {
                     //"Cost for this destination in received routing table is "  pair.getValue().cost
                     if (destCost > (1 + pair.getValue().cost)) {
                         //which is smaller than my cost for the destination
-                        rt.updateEntry(destAddress, recievedrouterPort, 1 + pair.getValue().cost);
+                        rt.updateEntry(destAddress, myport, 1 + pair.getValue().cost);
 
                         isUpdated = true;
 
@@ -91,8 +96,9 @@ public class RoutingTableUpdate extends Thread {
 
                 } else//it does not contain it so add it 
                 {
+//////////////////////???????/////////////////////////////////
 
-                    //rt.addEntry(destAddress, pair.getValue().nextHop, pair.getValue().cost + 1);
+             //       rt.addEntry(destAddress, pair.getValue().nextHop, pair.getValue().cost + 1, myport, ?,true);
                 }
             }
 
@@ -102,7 +108,7 @@ public class RoutingTableUpdate extends Thread {
                 for (HashMap.Entry<Integer, RoutingTableInfo> entry : rt.routingEntries.entrySet()) {
 
                     if (entry.getValue().cost == 1) {
-                        new RoutingTableSend(entry.getValue().portclass.getSocket(), rt).start();
+                        new RoutingTableSend(oos, rt).start();
                     }
                 }
 

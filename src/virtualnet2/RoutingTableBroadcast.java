@@ -5,8 +5,11 @@
  */
 package virtualnet2;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.SocketException;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import virtualnet2.RoutingTableSend;
@@ -20,11 +23,11 @@ public class RoutingTableBroadcast extends Thread {
     // PortConxs portConxs;
     RoutingTable routingTable;
 
-    public RoutingTableBroadcast(RoutingTable routingTable) throws SocketException {
+    public RoutingTableBroadcast(RoutingTable routingTable) {
 
         //this.portConxs = portConxs;
         this.routingTable = routingTable;
-
+        System.out.println("*in broadcast constructor");
     }
 
     /*
@@ -38,15 +41,37 @@ public class RoutingTableBroadcast extends Thread {
         //l2elonn b3den btb3t le 2ela wbtsh8el ltimer
         while (true) {
             try {
+                System.out.println("*in broadcast infinte loop");
+
                 for (HashMap.Entry<Integer, RoutingTableInfo> entry : routingTable.routingEntries.entrySet()) {
 
-                    if ( entry.getValue().cost==1 && entry.getValue().portclass.isconnectionEstablished()) {
-                        new RoutingTableSend(entry.getValue().portclass.getSocket(), routingTable).start();
+                    System.out.println("*in broadcast before  RoutingTableSend");
+                    if (entry.getValue().cost == 1 && entry.getValue().portclass.isconnectionEstablished()) {
+                        new RoutingTableSend(entry.getValue().portclass.getOos(), routingTable).start();
+                        System.out.println("*in broadcast after RoutingTableSend ");
                     }
-                }
-            //    System.out.println("socket in broadcast" + entry.getValue().getSocket());
 
-                Thread.sleep(30000);
+                }
+                //    System.out.println("socket in broadcast" + entry.getValue().getSocket());
+                System.out.println("***********");
+
+                System.out.println("*before sleep");
+                System.out.println("***********");
+
+                long startTime = System.currentTimeMillis();
+
+                /* ... the code being measured starts ... */
+                // sleep for 5 seconds
+                //  TimeUnit.SECONDS.sleep(5);
+                Thread.sleep(69000);
+                /* ... the code being measured ends ... */
+                long endTime = System.currentTimeMillis();
+
+                long timeElapsed = endTime - startTime;
+                System.out.println("***********");
+
+                System.out.println("*after sleep " + timeElapsed);
+                System.out.println("***********");
 
             } catch (InterruptedException ex) {
                 Logger.getLogger(RoutingTableBroadcast.class.getName()).log(Level.SEVERE, null, ex);
