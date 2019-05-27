@@ -20,8 +20,8 @@ public class VirtualNet2 {
      */
     public static void main(String[] args) throws InterruptedException, UnknownHostException {
 
-     //f2();
-       //f3();
+      //f2();
+        //f3();
       f1();
 
     }
@@ -31,38 +31,32 @@ public class VirtualNet2 {
         router1.start();
 
         //  Thread.sleep(3000);
-        router1.initializePort(1111);
-        router1.initializePort(1112);
+        //router1.initializePort(1111);
+        //router1.initializePort(1112);
         // router1.initializePort(1111);
         //Thread.sleep(1500);
-        // Thread.sleep(5000);
-        System.out.println("*before routing");
-        // Thread.sleep(5000);
 
-        router1.initializeRoutingProtocol();
+        //   System.out.println("*before routing");
+        // router1.initializeRoutingProtocol();
     }
 
     static void f2() throws UnknownHostException, InterruptedException {
         Router router2 = new Router();
         router2.start();
-        router2.initializePort(2222);
-        router2.initializeConnection(2222, InetAddress.getLocalHost(), 1111);
+       // router2.initializePort(2222);
+       // router2.initializeConnection(2222, InetAddress.getLocalHost(), 1111);
 
-        System.out.println("*before routing");
-        //  Thread.sleep(5000);
-
-        router2.initializeRoutingProtocol();
+        //  System.out.println("*before routing");
+        // router2.initializeRoutingProtocol();
     }
 
     static void f3() throws UnknownHostException, InterruptedException {
         Router router3 = new Router();
         router3.start();
-        router3.initializePort(3333);
-        router3.initializeConnection(3333, InetAddress.getLocalHost(), 1112);
+      //  router3.initializePort(3333);
+        //router3.initializeConnection(3333, InetAddress.getLocalHost(), 1112);
 
-        System.out.println("*before routing");
-        Thread.sleep(5000);
-
-        router3.initializeRoutingProtocol();
+        //System.out.println("*before routing");
+        // router3.initializeRoutingProtocol();
     }
 }

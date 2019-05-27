@@ -10,10 +10,16 @@ public class RoutingTableInfo implements Serializable {
 
     int nextHop;
     int cost;
+    int port;
+    Port portclass;
+    boolean activated;
 
-    public RoutingTableInfo(int nextHop, int cost) {
+    public RoutingTableInfo(int nextHop, int cost, int port, Port portclass, boolean activated) {
         this.nextHop = nextHop;
         this.cost = cost;
+        this.port = port;
+        this.portclass = portclass;
+        this.activated = activated;
     }
 
     public int getNextHop() {
@@ -30,6 +36,30 @@ public class RoutingTableInfo implements Serializable {
 
     public void setCost(int cost) {
         this.cost = cost;
+    }
+
+    public boolean isActivated() {
+        return activated;
+    }
+
+    public void setActivated(boolean activated) {
+        this.activated = activated;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public Port getPortclass() {
+        return portclass;
+    }
+
+    public void setPortclass(Port portclass) {
+        this.portclass = portclass;
     }
 
     @Override

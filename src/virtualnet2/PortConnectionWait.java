@@ -19,19 +19,19 @@ public class PortConnectionWait extends Thread {
     private Port p;
     Socket socket;
     String msg;
-    int port;
-    Connections connections;
+    int myport;
+   
     RoutingTable rt;
 
-    public PortConnectionWait(int port, Port p, Connections connections, RoutingTable rt) {
+    public PortConnectionWait(int myport, Port p, RoutingTable rt) {
 
         try {
             //Creating server socket
-            System.out.println("*Port " + port + " waiting for a conx");
-            serversocket = new ServerSocket(port);
+            System.out.println("*port " + myport + " waiting for a conx");
+            serversocket = new ServerSocket(myport);
             this.p = p;
-            this.port = port;
-            this.connections = connections;
+            this.myport = myport;
+          
             this.rt = rt;
         } catch (IOException ex) {
             Logger.getLogger(PortConnectionWait.class.getName()).log(Level.SEVERE, null, ex);
@@ -45,42 +45,47 @@ public class PortConnectionWait extends Thread {
         ObjectOutputStream objectOutputStream;
         while (true) {
             try {
-                System.out.println("*Port " + port + " still waiting for a connection");
+
+                System.out.println("*port " + myport + " still waiting for a connection");
 
                 socket = serversocket.accept();
+                
+                rt.printTable("**Checking**");
+                
                 System.out.println("*socket :myport " + socket.getLocalPort() + " destport " + socket.getPort());
 
-                System.out.println("*connection accepteed at port " + port);
+                System.out.println("*connection accepteed at port " + myport);
 
-                if (!p.isconnectionEstablished()) {
+                ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+                Neighbor neighbor = (Neighbor) objectInputStream.readObject();
+                //neighbor.neighborPort is the next hop 
+                objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 
+                if (rt.isExistandNotActive(neighbor.neighborPort)) {
+
+                    rt.activateEntry(neighbor.neighborPort);
                     p.setSocket(socket);
                     p.setconnectionEstablished(true);
-                    objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 
                     objectOutputStream.writeBoolean(true);
                     objectOutputStream.flush();
+
                     System.out.println("*true was sent");
 
-                    ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-
-                    Neighbor neighbor = (Neighbor) objectInputStream.readObject();
-
-                    connections.addNeighbor(port, neighbor);
-                    rt.addEntry(neighbor.getNeighborPort(), neighbor.getNeighborPort(), 1);
-
-//                    rt.addEntry(neighbor.getNeighborAddress(), neighbor.getNeighborPort(), 1);
-                    rt.printTable("--after add--");
-                    System.out.println("*connection is initialized at port " + port + " with neighb = " + neighbor.getNeighborAddress() + " , " + neighbor.getNeighborPort());
-
                 } else {
-
-                    objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                    //rt.addEntry(neighbor.getNeighborAddress(), neighbor.getNeighborPort(), 1, port, p, false);
+                    rt.addEntry(neighbor.getNeighborPort(), neighbor.getNeighborPort(), 1, myport, p, false);
                     objectOutputStream.writeBoolean(false);
                     objectOutputStream.flush();
-                    //khabera eno port taken cannot be connected to
 
+                    System.out.println("*false was sent");
+                    System.out.println("*my turn to establish the connection on my side with port " + myport );
+
+                   
+                    rt.printTable("--after add--");
+                    socket.close();
                 }
+
             } catch (IOException ex) {
                 Logger.getLogger(PortConnectionWait.class.getName()).log(Level.SEVERE, null, ex);
             } catch (ClassNotFoundException ex) {

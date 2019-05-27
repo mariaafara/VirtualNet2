@@ -16,18 +16,19 @@ public class PortConnectionEstablish extends Thread {
 
     private Port p;
     Socket socket;
-    int port;
-    InetAddress ip;
+    int neighborport;
+    InetAddress neighborip;
     int myport;
-    Connections connections;
+
     RoutingTable rt;
 
-    public PortConnectionEstablish(int myport, InetAddress ip, int port, Port p, Connections connections, RoutingTable rt) {
-        this.port = port;
+    public PortConnectionEstablish(int myport, InetAddress neighborip, int neighborport, Port p, RoutingTable rt) {
+
+        this.neighborport = neighborport;
         this.myport = myport;
         this.p = p;
-        this.ip = ip;
-        this.connections = connections;
+        this.neighborip = neighborip;
+
         this.rt = rt;
     }
 
@@ -35,43 +36,42 @@ public class PortConnectionEstablish extends Thread {
     public void run() {
 
         boolean bool;
-        if (!p.isconnectionEstablished()) {
+//        if (!p.isconnectionEstablished()) {
 
-            try {
-                System.out.println("*connection is being established");
-                socket = new Socket(ip, port);
-                System.out.println("*socket : myport " + socket.getLocalPort() + " destport " + socket.getPort());
+        try {
+            rt.printTable("**Checking**");
+            System.out.println("*establishing connection with ip=" + neighborip + " port=" + neighborport);
+            socket = new Socket(neighborip, neighborport);
+            System.out.println("*socket : myport " + socket.getLocalPort() + " destport " + socket.getPort());
 
-                ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+            objectOutputStream.writeObject(new Neighbor(InetAddress.getLocalHost(), myport));
+            System.out.println("*sending my self as a neighbor to ip=" + InetAddress.getLocalHost() + " port=" + myport);
 
-                bool = objectInputStream.readBoolean();
+            ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+            bool = objectInputStream.readBoolean();
 
-                System.out.println("*" + bool + " was recieved");
+            System.out.println("*" + bool + " was recieved");
 
-                if (bool) {
-                    p.setSocket(socket);
-                    p.setconnectionEstablished(true);
-                    //3m b3tlo m3 min lconnection
-                    ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-                    objectOutputStream.writeObject(new Neighbor(ip, myport));
-                    Neighbor newNeighbor = new Neighbor(ip, port);
-                    connections.addNeighbor(port, newNeighbor);
-                    //rt.addEntry(ip, port, 1);
-                    rt.addEntry(port, port, 1);
+            if (bool) {
+                rt.activateEntry(neighborport);
+                p.setSocket(socket);
+                p.setconnectionEstablished(true);
+                System.out.println("*connection is established at port " + myport + " with neighb = " + neighborip + " , " + neighborport);
 
-                    
-                    rt.printTable("**after add**");
-                    System.out.println("*connection is initialized at port " + myport + " with neighb = " + ip + " , " + port);
+                //rt.addEntry(ip, port, 1 ,myport, p, true);
+                rt.addEntry(neighborport, neighborport, 1, myport, p, true);
 
-                } else {
-                    System.out.println("*Sorry connction already established with this destination");
-                    //cannot connect to  this cnx
-                }
+            } else {
+                System.out.println("*waiting a connection from " + neighborport);
 
-            } catch (IOException ex) {
-                Logger.getLogger(PortConnectionEstablish.class.getName()).log(Level.SEVERE, null, ex);
+                socket.close();
             }
 
+        } catch (IOException ex) {
+            Logger.getLogger(PortConnectionEstablish.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
+//    }
 }

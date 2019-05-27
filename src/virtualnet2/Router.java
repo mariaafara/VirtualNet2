@@ -1,8 +1,12 @@
 package virtualnet2;
+//localtest2
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.HashMap;
+import java.util.Scanner;
+import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Router Class
@@ -26,7 +30,7 @@ public class Router extends Thread {
     public RoutingTable routingTable;
 
     final Object lockRouter = new Object();
-    Connections connections;
+
     PortConxs portConxs;
 
     /*
@@ -36,14 +40,36 @@ public class Router extends Thread {
     public void run() {
 
         super.run();
-        while (true) {
+        Scanner scn = new Scanner(System.in);
+        System.out.println("enter nbr ports...");
+        int nb = Integer.parseInt(scn.nextLine());
 
+        for (int i = 0; i < nb; i++) {
+            System.out.println("enter a port...");
+            initializePort(Integer.parseInt(scn.nextLine()));
+        }
+        for (int i = 0; i < nb; i++) {
+            try {
+                System.out.println("enter to establish connection...");
+                String line = scn.nextLine();
+                StringTokenizer st = new StringTokenizer(line, ":");
+                int myport = Integer.parseInt(st.nextToken());
+                int nexthop = Integer.parseInt(st.nextToken());
+                initializeConnection(myport, InetAddress.getLocalHost(), nexthop);
+            } catch (UnknownHostException ex) {
+                Logger.getLogger(Router.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        if (scn.nextLine().equals("start")) {
+            initializeRoutingProtocol();
+        }
+        while (true) {
         }
 
     }
 
     public Router() throws UnknownHostException {
-        connections = new Connections();
+
         portConxs = new PortConxs();
 
         routingTable = new RoutingTable();
@@ -52,7 +78,7 @@ public class Router extends Thread {
     }
 
     public Router(InetAddress ipAddress) {
-        connections = new Connections();
+
         portConxs = new PortConxs();
         routingTable = new RoutingTable();
 
@@ -76,7 +102,7 @@ public class Router extends Thread {
                 System.out.println("*This port exists");
                 return;
             }
-            Port portclass = new Port(port, connections, routingTable);
+            Port portclass = new Port(port, routingTable);
             portConxs.addPort(port, portclass);
             portclass.start();
         }
@@ -86,7 +112,7 @@ public class Router extends Thread {
 
     public void initializeRoutingProtocol() {
 
-        new RoutingService(portConxs, connections, routingTable).start();
+        new RoutingService( routingTable).start();
     }
 
     public InetAddress getIpAddress() {

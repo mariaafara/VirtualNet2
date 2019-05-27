@@ -15,6 +15,7 @@ public class RoutingTable implements Serializable {
     HashMap<Integer, RoutingTableInfo> routingEntries;
 
     transient final Object lockRoutingTable = new Object();
+    transient final Object lockPortconxs = new Object();
 
     public RoutingTable() {
         try {
@@ -29,25 +30,55 @@ public class RoutingTable implements Serializable {
     /*
          * This method return the routing table of this client
      */
-  
-
-    /*
+ /*
 	 * This method adds an entry into the routing table
 	 * @param destIP = destination  IP address
 	 * @param nextHop = nextHop IP address
 	 * @param cost = Cost to reach the destination
      */
-    public void addEntry(InetAddress destIp, int nextHop, int cost) {
+    public void addEntry(InetAddress destIp, int nextHop, int cost, int myport, Port portclass, boolean activated) {
         synchronized (lockRoutingTable) {
 
-            //   this.routingEntries.put(destIp, new RoutingTableInfo(nextHop, cost));
+            //  this.routingEntries.put(destIp, new RoutingTableInfo(nextHop, cost,myport, portclass, activated));
         }
     }
 
-    public void addEntry(int destIp, int nextHop, int cost) {
+    public void addEntry(int destIp, int nextHop, int cost, int myport, Port portclass, boolean activated) {
         synchronized (lockRoutingTable) {
 
-            this.routingEntries.put(destIp, new RoutingTableInfo(nextHop, cost));
+            this.routingEntries.put(destIp, new RoutingTableInfo(nextHop, cost, myport, portclass, activated));
+        }
+    }
+
+    public int getNextHop(int myport) {
+        synchronized (lockRoutingTable) {
+            int senderport = 0;//???
+            for (HashMap.Entry<Integer, RoutingTableInfo> entry : routingEntries.entrySet()) {
+
+                if (entry.getValue().port == myport) {
+                    senderport = entry.getValue().nextHop;
+                }
+            }
+
+            return senderport;
+        }
+    }
+
+    public void activateEntry(int nexthop) {
+        for (HashMap.Entry<Integer, RoutingTableInfo> entry : routingEntries.entrySet()) {
+
+            if (entry.getValue().nextHop == nexthop) {
+                entry.getValue().setActivated(true);
+            }
+        }
+    }
+
+    public void deactivateEntry(int nexthop) {
+        for (HashMap.Entry<Integer, RoutingTableInfo> entry : routingEntries.entrySet()) {
+
+            if (entry.getValue().nextHop == nexthop) {
+                entry.getValue().setActivated(false);
+            }
         }
     }
 
@@ -74,15 +105,62 @@ public class RoutingTable implements Serializable {
      */
     public void updateEntry(InetAddress destNtwk, int nxthopIp, int cost) {
         synchronized (lockRoutingTable) {
-            RoutingTableInfo ti = new RoutingTableInfo(nxthopIp, cost);
+            //  RoutingTableInfo ti = new RoutingTableInfo(nxthopIp, cost);
             //   this.routingEntries.put(destNtwk, ti);
+            this.routingEntries.get(destNtwk).setCost(cost);
+            this.routingEntries.get(destNtwk).setNextHop(nxthopIp);
         }
     }
+//this method updates the cost and next hop used when updating routing table only
 
     public void updateEntry(int destNtwk, int nxthopIp, int cost) {
         synchronized (lockRoutingTable) {
-            RoutingTableInfo ti = new RoutingTableInfo(nxthopIp, cost);
-            this.routingEntries.put(destNtwk, ti);
+            this.routingEntries.get(destNtwk).setCost(cost);
+            this.routingEntries.get(destNtwk).setNextHop(nxthopIp);
+
+        }
+    }
+
+//this method checks if it contains its port
+    public boolean containsPort(int port) {
+        synchronized (lockPortconxs) {
+            boolean contains = false;
+            for (HashMap.Entry<Integer, RoutingTableInfo> entry : routingEntries.entrySet()) {
+
+                if (entry.getValue().port == port) {
+                    contains = true;
+                }
+            }
+
+            return contains;
+        }
+    }
+
+    public boolean containsNextHop(int port) {
+        synchronized (lockPortconxs) {
+            boolean contains = false;
+            for (HashMap.Entry<Integer, RoutingTableInfo> entry : routingEntries.entrySet()) {
+
+                if (entry.getValue().nextHop == port) {
+                    contains = true;
+                }
+            }
+
+            return contains;
+        }
+    }
+
+    public boolean isExistandNotActive(int port) {
+        synchronized (lockPortconxs) {
+            boolean contains = false;
+            for (HashMap.Entry<Integer, RoutingTableInfo> entry : routingEntries.entrySet()) {
+
+                if (entry.getValue().nextHop == port && !entry.getValue().activated) {
+                    contains = true;
+                }
+            }
+
+            return contains;
         }
     }
 

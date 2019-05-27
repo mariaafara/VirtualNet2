@@ -24,15 +24,14 @@ public class RoutingTableUpdate extends Thread {
     private int recievedrouterPort;
     private Socket socket;
     private RoutingTable rt;
-    private PortConxs portConxs;
 
-    public RoutingTableUpdate(RoutingTable recievedroutingtable, int recievedrouterPort, Socket socket, PortConxs portConxs, RoutingTable rt) {
+    public RoutingTableUpdate(RoutingTable recievedroutingtable, int recievedrouterPort, Socket socket, RoutingTable rt) {
 
         this.recievedroutingtable = recievedroutingtable;
         this.recievedrouterPort = recievedrouterPort;
         this.socket = socket;
         this.rt = rt;
-        this.portConxs = portConxs;
+
     }
 
     /*
@@ -93,16 +92,18 @@ public class RoutingTableUpdate extends Thread {
                 } else//it does not contain it so add it 
                 {
 
-                    rt.addEntry(destAddress, pair.getValue().nextHop, pair.getValue().cost + 1);
+                    //rt.addEntry(destAddress, pair.getValue().nextHop, pair.getValue().cost + 1);
                 }
             }
 
             //If yes send updates to all neighbors
             if (isUpdated) {
                 rt.printTable("After Update");
-                for (HashMap.Entry<Integer, Port> entry : portConxs.getPortsConxs().entrySet()) {
+                for (HashMap.Entry<Integer, RoutingTableInfo> entry : rt.routingEntries.entrySet()) {
 
-                    new RoutingTableSend(entry.getValue().getSocket(), rt).start();
+                    if (entry.getValue().cost == 1) {
+                        new RoutingTableSend(entry.getValue().portclass.getSocket(), rt).start();
+                    }
                 }
 
             }

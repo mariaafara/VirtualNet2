@@ -21,15 +21,14 @@ import java.util.logging.Logger;
  */
 public class RoutingService extends Thread {
 
-    private PortConxs portConxs;
+    //private PortConxs portConxs;
     RoutingTable routingTable;
-    Connections connections;
 
-    public RoutingService(PortConxs portConxs, Connections connections, RoutingTable routingTable) {
+    public RoutingService(RoutingTable routingTable) {
 
-        this.portConxs = portConxs;
+        //  this.portConxs = portConxs;
         this.routingTable = routingTable;
-        this.connections = connections;
+
     }
 
     /*
@@ -39,30 +38,25 @@ public class RoutingService extends Thread {
     public void run() {
 
         super.run();
-
-//        FillRoutingTable();
-        //allow to recieve objects at each port
-        for (HashMap.Entry<Integer, Port> entry : portConxs.getPortsConxs().entrySet()) {
-            System.out.println("*run reciever for the port " + entry.getKey());
-       
-            new Reciever(entry.getKey(), entry.getValue().getSocket(), portConxs, connections, routingTable).start();
-        }
         try {
-            new RoutingTableBroadcast(portConxs, routingTable).start();
+            //sar kel port 3ndo sender w reciever
+            //allow to recieve objects at each port
+            for (HashMap.Entry<Integer, RoutingTableInfo> entry : routingTable.routingEntries.entrySet()) {
+
+                //fina bala lcondition kermel bel awal bs neighbors mwjudin bl table
+                if (entry.getValue().cost == 1) {
+                    System.out.println("*socket in reciever local= " + entry.getValue().portclass.getSocket().getLocalPort()+" port="+entry.getValue().portclass.getSocket().getPort());
+
+                    System.out.println("*run reciever for the port " + entry.getKey());
+                    new Reciever(entry.getKey(), entry.getValue().portclass.getSocket(), routingTable).start();
+                }
+            }
+
+            new RoutingTableBroadcast(routingTable).start();
+
         } catch (SocketException ex) {
             Logger.getLogger(RoutingService.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-//   
-//    public void FillRoutingTable() {
-//
-//        // adding the directly  connected neighbors to the routing table i.e forming it
-//        for (HashMap.Entry<Integer, Neighbor> entry : connections.entrySet()) {
-//            System.out.println("adrs "+entry.getValue().neighborAddress+" entry.getValue().neighborPort");
-//            addEntry(entry.getValue().neighborAddress, entry.getValue().neighborPort, 1);
-//        }
-//
-//        routingTable.printTable("    Once Created   ");
-//    }
 }

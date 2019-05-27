@@ -15,10 +15,10 @@ import java.util.HashMap;
  */
 public class Port extends Thread {
 
-    Connections connections;
+   
     boolean connectionEstablished;
     Socket socket;
-    int port;
+    int myport;
     PortConnectionWait portConnectionWait;
     PortConnectionEstablish portConnectionEstablish;
 
@@ -26,14 +26,14 @@ public class Port extends Thread {
     final Object lockSocket = new Object();
     RoutingTable rt;
 
-    public Port(int port, Connections connections, RoutingTable rt) {
-        System.out.println("*Port " + port + " initialized");
+    public Port(int myport, RoutingTable rt) {
+        System.out.println("*Port " + myport + " initialized");
         this.connectionEstablished = false;
-        this.port = port;
+        this.myport = myport;
         this.socket = null;
         this.rt = rt;
-        portConnectionWait = new PortConnectionWait(port, this, connections, rt);
-        this.connections = connections;
+        portConnectionWait = new PortConnectionWait(myport, this, rt);
+        
     }
 
     public boolean isconnectionEstablished() {
@@ -73,7 +73,7 @@ public class Port extends Thread {
 
     public void connect(int port, InetAddress neighborAddress, int neighborport) {
 
-        PortConnectionEstablish pce = new PortConnectionEstablish(port, neighborAddress, neighborport, this, connections, rt);
+        PortConnectionEstablish pce = new PortConnectionEstablish(port, neighborAddress, neighborport, this, rt);
         pce.start();
     }
 }

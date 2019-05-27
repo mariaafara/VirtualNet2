@@ -32,17 +32,15 @@ public class RoutingTableRecieve extends Thread {
     private int port;
 
     Object recievedObject;
-    Connections connections;
-    PortConxs portConxs;
 
-    public RoutingTableRecieve(Object recievedObject, int port, Socket socket, PortConxs portConxs, Connections connections, RoutingTable rt) {
+    public RoutingTableRecieve(Object recievedObject, int port, Socket socket, RoutingTable rt) {
+    
         System.out.println("routing table recieve initialized");
         this.port = port;
         this.socket = socket;
         this.rt = rt;
         this.recievedObject = recievedObject;
-        this.connections = connections;
-        this.portConxs = portConxs;
+
     }
 
     @Override
@@ -59,14 +57,15 @@ public class RoutingTableRecieve extends Thread {
             }
 
             //gets the port of which the router sent the RT  from.
-            recieveport = connections.getNeighbor(port).getNeighborPort();
+//            recieveport = connections.getNeighbor(port).getNeighborPort();
+            recieveport = rt.getNextHop(port);
 
             System.out.print("\n");
             routingTable.printTable("Recieved from " + recieveport + " ");
             System.out.println("\n");
 
             // Check if this routing table's object needs to be updated
-            new RoutingTableUpdate(routingTable, recieveport, socket,portConxs, rt).start();
+            new RoutingTableUpdate(routingTable, recieveport, socket, rt).start();
 
         }
 
