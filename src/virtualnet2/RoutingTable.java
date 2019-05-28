@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /**
+ * this class represents the routing table which is a hash map
  *
  * @author maria afara
  */
@@ -14,6 +15,7 @@ public class RoutingTable implements Serializable {
 //    HashMap<InetAddress, RoutingTableInfo> routingEntries;
 //    HashMap<Integer, RoutingTableInfo> routingEntries;
     HashMap<String, RoutingTableInfo> routingEntries;
+    //transient krmel ma ynb3to lobjects manon serilizable kmn 
     transient final Object lockRoutingTable = new Object();
     transient final Object lockPortconxs = new Object();
 
@@ -226,10 +228,10 @@ public class RoutingTable implements Serializable {
 
 //            InetAddress destAddress;
             String destAddress;
-            System.out.print("---------------------------------   Routing Table " + hint + " ---------------------------------------------------------" + "\n");
-            System.out.print("---------------------|------------------|-----------------------|---------------|--------------|--------------|------" + "\n");
-            System.out.print("---------------------|\tDest Network \t|\tNext Hop Port\t|\tCost\t| myport\t|Activated\t|-----------------------------" + "\n");
-            System.out.print("---------------------|------------------|-----------------------|---------------|--------------|---------------|---" + "\n");
+            System.out.print("----------------   Routing Table " + hint + " -----------------------------------------" + "\n");
+            System.out.print("-----------|----------------|----------------|---------|----------|-------------|------" + "\n");
+            System.out.print("-----------|  Dest Network  |  Next Hop Port |   Cost  |  myport  |  Activated  |------" + "\n");
+            System.out.print("-----------|----------------|----------------|---------|----------|-------------|------" + "\n");
 
             while (routingEntriesIterator.hasNext()) {
 
@@ -240,16 +242,16 @@ public class RoutingTable implements Serializable {
                 destAddress = (String) pair.getKey();
                 RoutingTableInfo destForwardingInfo = (RoutingTableInfo) pair.getValue();
 //destAddress.getHostAddress()
-                System.out.print("---------------------|\t" + destAddress + "\t\t|\t");//bs ntb3 linet address btbi3to 3m berj3 forword slash bas destAddress.getHostName() 3m trj3 aw2et msln one.one.one.
-                System.out.print("" + destForwardingInfo.nextHop + "\t\t|\t  ");
-                System.out.print(destForwardingInfo.cost + " \t|\t ");
-                System.out.print(destForwardingInfo.port + " \t|\t  ");
-                System.out.print(destForwardingInfo.activated + "\t \t|------------------------------------------");
+                System.out.print("-----------|\t" + destAddress + "\t    |\t");//bs ntb3 linet address btbi3to 3m berj3 forword slash bas destAddress.getHostName() 3m trj3 aw2et msln one.one.one.
+                System.out.print(" " + destForwardingInfo.nextHop + "\t    |    ");
+                System.out.print(destForwardingInfo.cost + "      |   ");
+                System.out.print(destForwardingInfo.port + "   |    ");
+                System.out.print(destForwardingInfo.activated + "\t|------");
 
                 System.out.println();
             }
-            System.out.print("---------------------|------------------|-----------------------|---------------|----------------|-----------------|-------------" + "\n");
-            System.out.print("------------------------------------------------------------------------------------------------------------------------------" + "\n");
+            System.out.print("-----------|----------------|----------------|---------|----------|-------------|------" + "\n");
+            System.out.print("---------------------------------------------------------------------------------------" + "\n");
 
         }
     }
