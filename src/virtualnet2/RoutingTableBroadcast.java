@@ -43,7 +43,7 @@ public class RoutingTableBroadcast extends Thread {
             try {
                 System.out.println("*in broadcast infinte loop");
 
-                for (HashMap.Entry<Integer, RoutingTableInfo> entry : routingTable.routingEntries.entrySet()) {
+                for (HashMap.Entry<String, RoutingTableInfo> entry : routingTable.routingEntries.entrySet()) {
 
                     System.out.println("*in broadcast before  RoutingTableSend");
                     if (entry.getValue().cost == 1 && entry.getValue().portclass.isconnectionEstablished()) {

@@ -125,4 +125,10 @@ public class Port extends Thread {
         PortConnectionEstablish pce = new PortConnectionEstablish(port, neighborAddress, neighborport, this, rt);
         pce.start();
     }
+
+    public void connect(int port, String neighname, InetAddress neighborAddress, int neighborport) {
+
+        PortConnectionEstablish pce = new PortConnectionEstablish(port, neighname, neighborAddress, neighborport, this, rt);
+        pce.start();
+    }
 }

@@ -61,9 +61,14 @@ public class PortConnectionWait extends Thread {
                 objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 
                 if (rt.isExistandNotActive(neighbor.neighborPort)) {
+
                     System.out.println("before activateEntry");
                     rt.activateEntry(neighbor.neighborPort);
                     System.out.println("after activateEntry and before set socket");
+                    System.out.println("\n");
+                    rt.printTable("--after add activation--");
+                    System.out.println("\n");
+
                     p.setSocket(socket);
                     p.setStreams(objectInputStream, objectOutputStream);
                     System.out.println("after setSocket");

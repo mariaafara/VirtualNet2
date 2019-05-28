@@ -20,21 +20,21 @@ public class Reciever extends Thread {
 
     ObjectInputStream ois = null;
     ObjectOutputStream oos = null;
+
     private RoutingTable rt;
 
     private int port;
 
     private Object recievedObject;
 
-    //   PortConxs portConxs;
-    public Reciever(int port, ObjectInputStream ois, ObjectOutputStream oos, RoutingTable rt) {
+    public Reciever(String myname, int myport, ObjectInputStream ois, ObjectOutputStream oos, RoutingTable rt) {
+
         System.out.println("*reciever initialized");
-        this.port = port;
+        this.port = myport;
         this.ois = ois;
         this.oos = oos;
         this.rt = rt;
-        // System.out.println("*socket in reciever local= " + socket.getLocalPort() + " port=" + socket.getPort());
-        //  this.portConxs = portConxs;
+        ///router name aw ip ....n2sa 
 
     }
 
@@ -49,8 +49,9 @@ public class Reciever extends Thread {
 
                 System.out.println("*waiting to recieve object   " + i);
                 //System.out.println("*reciever* socket :myport " + socket.getLocalPort() + " destport " + socket.getPort());
-
+                //     
                 recievedObject = ois.readObject();
+                // ois.reset();
                 i++;
                 System.out.println("*recieved object =" + recievedObject);
                 if (recievedObject instanceof RoutingTable) {

@@ -18,6 +18,8 @@ public class PortConnectionEstablish extends Thread {
     Socket socket;
     int neighborport;
     InetAddress neighborip;
+    String neighname;
+
     int myport;
 
     RoutingTable rt;
@@ -27,8 +29,18 @@ public class PortConnectionEstablish extends Thread {
         this.neighborport = neighborport;
         this.myport = myport;
         this.p = p;
-        this.neighborip = neighborip;
+        //   this.neighborip = neighborip;
 
+        this.rt = rt;
+    }
+
+    public PortConnectionEstablish(int myport, String neighname, InetAddress neighborip, int neighborport, Port p, RoutingTable rt) {
+
+        this.neighborport = neighborport;
+        this.myport = myport;
+        this.p = p;
+        this.neighborip = neighborip;
+        this.neighname = neighname;
         this.rt = rt;
     }
 
@@ -55,21 +67,23 @@ public class PortConnectionEstablish extends Thread {
                 System.out.println("*" + bool + " was recieved");
 
                 if (bool) {
-                    rt.activateEntry(neighborport);
+                    //  rt.activateEntry(neighborport);
                     p.setSocket(socket);
                     p.setStreams(objectInputStream, objectOutputStream);
 
                     p.setconnectionEstablished(true);
-                    System.out.println("*connection is established at port " + myport + " with neighb = " + neighborip + " , " + neighborport);
-//rt.addEntry(ip, port, 1 ,myport, p, true);
-                    rt.addEntry(neighborport, neighborport, 1, myport, p, true);
+                    System.out.println("*connection is established at port " + myport + " with neighb = " + neighname + " , " + neighborport);
+                    //rt.addEntry(ip, port, 1 ,myport, p, true);
+                    rt.addEntry(neighname, neighborport, 1, myport, p, true);
+
                     rt.printTable("--after add true--");
                 } else {
                     //rt.addEntry(ip, port, 1 ,myport, p, true);
-                    rt.addEntry(neighborport, neighborport, 1, myport, p, false);
+                    rt.addEntry(neighname, neighborport, 1, myport, p, false);
 
                     System.out.println("*waiting a connection from " + neighborport);
                     //  rt.printTable("**Checking**");
+
                     rt.printTable("--after add false--");
                     socket.close();
                 }

@@ -34,7 +34,7 @@ public class FailedNodeRecieve extends Thread {
         rt.deleteEntry(fn.getInetaddress());
 
         //delete entry then send ne routing table
-        for (HashMap.Entry<Integer, RoutingTableInfo> entry : rt.routingEntries.entrySet()) {
+        for (HashMap.Entry<String, RoutingTableInfo> entry : rt.routingEntries.entrySet()) {
 
             if (entry.getValue().cost == 1) {
             //    new RoutingTableSend(entry.getValue().portclass.getSocket(), rt).start();

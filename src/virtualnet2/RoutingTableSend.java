@@ -19,8 +19,6 @@ public class RoutingTableSend extends Thread {
     private ObjectOutputStream oos;
     private RoutingTable rt;
 
-    static int i = 0;
-
     public RoutingTableSend(ObjectOutputStream oos, RoutingTable rt) {
 
         this.oos = oos;
@@ -50,9 +48,10 @@ public class RoutingTableSend extends Thread {
 
         try {
             //  ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+
             oos.writeObject(RT);
             oos.flush();
-            oos.reset();
+           // oos.reset();
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -5,9 +5,7 @@
  */
 package virtualnet2;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 
 /**
  *
@@ -36,7 +34,7 @@ public class VirtualNet2 {
         // router1.initializePort(1111);
         //Thread.sleep(1500);
 
-        //   System.out.println("*before routing");
+        //   Sy4stem.out.println("*before routing");
         // router1.initializeRoutingProtocol();
     }
 

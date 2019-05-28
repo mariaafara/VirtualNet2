@@ -25,8 +25,8 @@ import java.util.logging.Logger;
  */
 public class Router extends Thread {
 
-    //fi oset neighbors 
     InetAddress ipAddress;
+    String myname;
     public RoutingTable routingTable;
 
     final Object lockRouter = new Object();
@@ -41,24 +41,31 @@ public class Router extends Thread {
 
         super.run();
         Scanner scn = new Scanner(System.in);
-        System.out.println("enter nbr ports...");
+        System.out.println("enter name of router.............");
+        String name = scn.nextLine();
+        setMyname(name);
+        System.out.println("enter nbr ports..................");
         int nb = Integer.parseInt(scn.nextLine());
 
         for (int i = 0; i < nb; i++) {
-            System.out.println("enter a port...");
+            System.out.println("enter a port.................");
             initializePort(Integer.parseInt(scn.nextLine()));
         }
         for (int i = 0; i < nb; i++) {
+
             try {
-                System.out.println("enter to establish connection...");
+                System.out.println("enter to establish connection....(myport:neighname:nexthop).......");
                 String line = scn.nextLine();
                 StringTokenizer st = new StringTokenizer(line, ":");
                 int myport = Integer.parseInt(st.nextToken());
+                String neighname = st.nextToken();
                 int nexthop = Integer.parseInt(st.nextToken());
-                initializeConnection(myport, InetAddress.getLocalHost(), nexthop);
+
+                initializeConnection(myport, neighname, InetAddress.getLocalHost(), nexthop);
             } catch (UnknownHostException ex) {
                 Logger.getLogger(Router.class.getName()).log(Level.SEVERE, null, ex);
             }
+
         }
         if (scn.nextLine().equals("start")) {
             initializeRoutingProtocol();
@@ -73,17 +80,38 @@ public class Router extends Thread {
         portConxs = new PortConxs();
 
         routingTable = new RoutingTable();
+
         this.ipAddress = InetAddress.getLocalHost();
 
+        this.myname = myname;
     }
 
     public Router(InetAddress ipAddress) {
 
         portConxs = new PortConxs();
+
         routingTable = new RoutingTable();
 
         this.ipAddress = ipAddress;
 
+    }
+
+    public String getMyname() {
+        return myname;
+    }
+
+    public void setMyname(String myname) {
+        this.myname = myname;
+    }
+
+    public void initializeConnection(int port, String neighname, InetAddress neighboraddress, int neighborport) {
+        synchronized (this) {
+            if (!portConxs.containsPort(port)) {
+                System.out.println("*This port does not exists");
+                return;
+            }
+            portConxs.getPortInstance(port).connect(port, neighname, neighboraddress, neighborport);
+        }
     }
 
     public void initializeConnection(int port, InetAddress neighboraddress, int neighborport) {
@@ -111,9 +139,9 @@ public class Router extends Thread {
 ///wrong wrong wrong wrong
 
     public void initializeRoutingProtocol() {
-       
+
         new RoutingService(routingTable).start();
-         System.out.println("*initializeRoutingProtocol");
+        System.out.println("*initializeRoutingProtocol");
     }
 
     public InetAddress getIpAddress() {
