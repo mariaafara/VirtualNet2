@@ -1,67 +1,147 @@
 package virtualnet2;
+//localtest2
 
-import virtualnet2.Neighbor;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Iterator;
-import virtualnet2.RoutingTable;
+import java.net.UnknownHostException;
+import java.util.Scanner;
+import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Router Class
  *
  * @descrip This class represents a router. It has connections between different
  * routers and maybe p c s. once a router is created its i p and ports are
- * assigned to it .Then is start listing on its ports. after that when it
- * activates the routing protocol its own routing service instance is created
- * along with its routing table then Start assign the networks(directly
- * connected) : -add to its neighbors -add to its RT -open the t c p socket c n
- * x with neighbor's port After configuration of routing protocol is done start
- * broadcasting...
+ * assigned to it .Then is start listing and allowing connection on and to its
+ * ports. after that when it activates the routing protocol its own routing
+ * service instance is created along with its routing table then Start assign
+ * the networks(directly connected) : -add to its neighbors -add to its RT -open
+ * the t c p socket c n x with neighbor's port After configuration of routing
+ * protocol is done start broadcasting...
  *
  * @author maria afara
  *
  */
-public class Router {
+public class Router extends Thread {
 
-    RoutingTable myRoutingTable;
     InetAddress ipAddress;
-    DatagramSocket socket;
-    ArrayList<Integer> ports;
+    String myname;
+    public RoutingTable routingTable;
 
+    final Object lockRouter = new Object();
+
+    PortConxs portConxs;
 
     /*
      * Constructor 
      */
-    public Router() {
+    @Override
+    public void run() {
 
-    }
+        super.run();
+        Scanner scn = new Scanner(System.in);
+        System.out.println("enter name of router.............");
+        String name = scn.nextLine();
+        setMyname(name);
+        System.out.println("enter nbr ports..................");
+        int nb = Integer.parseInt(scn.nextLine());
 
-    public Router(InetAddress ipAddress, ArrayList<Integer> ports) {
-        try {
-            // Assign the ip and ports
-            this.ipAddress = ipAddress;
+        for (int i = 0; i < nb; i++) {
+            System.out.println("enter a port.................");
+            initializePort(Integer.parseInt(scn.nextLine()));
+        }
+        for (int i = 0; i < nb; i++) {
 
-            this.ports = ports;
+            try {
+                System.out.println("enter to establish connection....(myport:neighname:nexthop).......");
+                String line = scn.nextLine();
+                StringTokenizer st = new StringTokenizer(line, ":");
+                int myport = Integer.parseInt(st.nextToken());
+                String neighname = st.nextToken();
+                int nexthop = Integer.parseInt(st.nextToken());
 
-            for (int i = 0; i < ports.size(); i++) {
-
-                new ListenAtPort(ports.get(i)).start();
-
+                initializeConnection(myport, neighname, InetAddress.getLocalHost(), nexthop);
+            } catch (UnknownHostException ex) {
+                Logger.getLogger(Router.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        }
+        if (scn.nextLine().equals("start")) {
+            initializeRoutingProtocol();
+        }
+        while (true) {
+        }
+
+    }
+
+    public Router() throws UnknownHostException {
+
+        portConxs = new PortConxs();
+
+        routingTable = new RoutingTable();
+
+        this.ipAddress = InetAddress.getLocalHost();
+
+        this.myname = myname;
+    }
+
+    public Router(InetAddress ipAddress) {
+
+        portConxs = new PortConxs();
+
+        routingTable = new RoutingTable();
+
+        this.ipAddress = ipAddress;
+
+    }
+
+    public String getMyname() {
+        return myname;
+    }
+
+    public void setMyname(String myname) {
+        this.myname = myname;
+    }
+
+    public void initializeConnection(int port, String neighname, InetAddress neighboraddress, int neighborport) {
+        synchronized (this) {
+            if (!portConxs.containsPort(port)) {
+                System.out.println("*This port does not exists");
+                return;
+            }
+            portConxs.getPortInstance(port).connect(port, neighname, neighboraddress, neighborport);
         }
     }
 
-    public void initiaizeListenAtPorts(ArrayList<Integer> ports) {
-        for (int i = 0; i < ports.size(); i++) {
-
-            new ListenAtPort(ports.get(i)).start();
-
+    public void initializeConnection(int port, InetAddress neighboraddress, int neighborport) {
+        synchronized (this) {
+            if (!portConxs.containsPort(port)) {
+                System.out.println("*This port does not exists");
+                return;
+            }
+            portConxs.getPortInstance(port).connect(port, neighboraddress, neighborport);
         }
+    }
+
+    public void initializePort(int port) {
+        synchronized (this) {
+            if (portConxs.containsPort(port)) {
+                System.out.println("*This port exists");
+                return;
+            }
+            Port portclass = new Port(port, routingTable);
+            portConxs.addPort(port, portclass);
+            portclass.start();
+        }
+
+    }
+///wrong wrong wrong wrong
+
+    public void initializeRoutingProtocol() {
+
+        new RoutingService(routingTable).start();
+        System.out.println("*initializeRoutingProtocol");
     }
 
     public InetAddress getIpAddress() {
@@ -70,14 +150,6 @@ public class Router {
 
     public void setIpAddress(InetAddress ipAddress) {
         this.ipAddress = ipAddress;
-    }
-
-    public ArrayList<Integer> getPorts() {
-        return ports;
-    }
-
-    public void setPorts(ArrayList<Integer> ports) {
-        this.ports = ports;
     }
 
 }

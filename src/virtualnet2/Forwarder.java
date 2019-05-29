@@ -10,5 +10,7 @@ package virtualnet2;
  * @author maria afara
  */
 public class Forwarder extends Thread{
-    
+     @Override
+    public void run() {
+    }
 }

@@ -1,12 +1,13 @@
 package virtualnet2;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 
 /**
  *
  * @author maria afara
  */
-public class Neighbor {
+public class Neighbor implements Serializable{
 
     InetAddress neighborAddress;
     Integer neighborPort;

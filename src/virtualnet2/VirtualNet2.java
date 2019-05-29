@@ -5,9 +5,7 @@
  */
 package virtualnet2;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 
 /**
  *
@@ -19,42 +17,44 @@ public class VirtualNet2 {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws InterruptedException, UnknownHostException {
-        ArrayList<Neighbor> r1n = new ArrayList<>();
-        ////////////////////////////////////
-        ///////////////////////////////////
-        ArrayList<Integer> r1p = new ArrayList<>();
-        // InetAddress r1i = InetAddress.getByName("1.1.1.1");
 
-        ArrayList<Neighbor> r2n = new ArrayList<>();
-        ArrayList<Integer> r2p = new ArrayList<>();
-        //InetAddress r2i = InetAddress.getByName("2.2.2.2");
+      //f2();
+        //f3();
+      f1();
 
-        ArrayList<Neighbor> r3n = new ArrayList<>();
-        ArrayList<Integer> r3p = new ArrayList<>();
-        //InetAddress r3i = InetAddress.getByName("3.3.3.3");
-
-        r1n.add(new Neighbor(InetAddress.getLocalHost(), 2222));
-
-        //r1n.add(new Neighbor(r2i, 2221));
-        // r1n.add(new Neighbor(r3i, 3331));
-        r2n.add(new Neighbor(InetAddress.getLocalHost(), 1111));
-        // r2n.add(new Neighbor(r3i, 3332));
-        // r3n.add(new Neighbor(r2i, 2222));
-        //r3n.add(new Neighbor(r1i, 1112));
-        //r1p.add(1112);
-        r1p.add(1111);
-        // r2p.add(2221);
-        r2p.add(2222);
-
-        // r3p.add(3331);
-        // r3p.add(3332);
-        //trying something
-        //  Router r1 = new Router(InetAddress.getLocalHost(), 1111, r1n);
-        // Thread.sleep(30000);
-        // Router r2 = new Router(InetAddress.getLocalHost(), 2222, r2n);
-        //r2.start();
-        //Router r3 = new Router(r3i, r3n, r3p);
-        //r3.start();   
     }
 
+    static void f1() throws UnknownHostException, InterruptedException {
+        Router router1 = new Router();
+        router1.start();
+
+        //  Thread.sleep(3000);
+        //router1.initializePort(1111);
+        //router1.initializePort(1112);
+        // router1.initializePort(1111);
+        //Thread.sleep(1500);
+
+        //   Sy4stem.out.println("*before routing");
+        // router1.initializeRoutingProtocol();
+    }
+
+    static void f2() throws UnknownHostException, InterruptedException {
+        Router router2 = new Router(); 
+        router2.start();
+       // router12.initializePort(2222);
+       // router2.initializeConnection(2222, InetAddress.getLocalHost(), 1111);
+
+        //  System.out.println("*before routing");
+        // router2.initializeRoutingProtocol();
+    }
+
+    static void f3() throws UnknownHostException, InterruptedException {
+        Router router3 = new Router();
+        router3.start();
+      //  router3.initializePort(3333);
+        //router3.initializeConnection(3333, InetAddress.getLocalHost(), 1112);
+
+        //System.out.println("*before routing");
+        // router3.initializeRoutingProtocol();
+    }
 }
