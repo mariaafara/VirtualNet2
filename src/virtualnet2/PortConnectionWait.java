@@ -33,6 +33,7 @@ public class PortConnectionWait extends Thread {
             this.myport = myport;
 
             this.rt = rt;
+            
         } catch (IOException ex) {
             Logger.getLogger(PortConnectionWait.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -57,6 +58,7 @@ public class PortConnectionWait extends Thread {
 
                 ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
                 Neighbor neighbor = (Neighbor) objectInputStream.readObject();
+                
                 //neighbor.neighborPort is the next hop 
                 objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 
@@ -74,6 +76,7 @@ public class PortConnectionWait extends Thread {
                     System.out.println("after setSocket");
 
                     p.setconnectionEstablished(true);
+                    
                     objectOutputStream.writeBoolean(true);
                     objectOutputStream.flush();
 

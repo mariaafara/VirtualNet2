@@ -15,14 +15,14 @@ import java.util.logging.Logger;
 public class PortConnectionEstablish extends Thread {
 
     private Port p;
-    Socket socket;
-    int neighborport;
-    InetAddress neighborip;
-    String neighname;
+    private Socket socket;
+    private int neighborport;
+    private InetAddress neighborip;
+    private String neighname;
 
-    int myport;
+    private int myport;
 
-    RoutingTable rt;
+    private RoutingTable rt;
 
     public PortConnectionEstablish(int myport, InetAddress neighborip, int neighborport, Port p, RoutingTable rt) {
 
@@ -30,7 +30,6 @@ public class PortConnectionEstablish extends Thread {
         this.myport = myport;
         this.p = p;
         //   this.neighborip = neighborip;
-
         this.rt = rt;
     }
 

@@ -55,14 +55,17 @@ public class Reciever extends Thread {
                 i++;
                 System.out.println("*recieved object =" + recievedObject);
                 if (recievedObject instanceof RoutingTable) {
+
                     System.out.println("*recieved routing table");
 
                     new RoutingTableRecieve(recievedObject, port, ois, oos, rt).start();
+
                 } else if (recievedObject instanceof FailedNode) {
                     //        new FailedNodeRecieve(recievedObject, socket, rt).start();
                 } else {
                     System.out.println("*recieved unknown type of object " + recievedObject.getClass());
                 }
+
                 Thread.sleep(2000);
             }
         } catch (IOException ex) {
