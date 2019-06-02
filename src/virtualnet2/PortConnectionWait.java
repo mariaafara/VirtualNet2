@@ -20,10 +20,10 @@ public class PortConnectionWait extends Thread {
     Socket socket;
     String msg;
     int myport;
-
+    String myname;
     RoutingTable rt;
 
-    public PortConnectionWait(int myport, Port p, RoutingTable rt) {
+    public PortConnectionWait(String myname, int myport, Port p, RoutingTable rt) {
 
         try {
             //Creating server socket
@@ -31,9 +31,9 @@ public class PortConnectionWait extends Thread {
             serversocket = new ServerSocket(myport);
             this.p = p;
             this.myport = myport;
-
+            this.myname = myname;
             this.rt = rt;
-            
+
         } catch (IOException ex) {
             Logger.getLogger(PortConnectionWait.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -58,7 +58,7 @@ public class PortConnectionWait extends Thread {
 
                 ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
                 Neighbor neighbor = (Neighbor) objectInputStream.readObject();
-                
+
                 //neighbor.neighborPort is the next hop 
                 objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 
@@ -66,6 +66,7 @@ public class PortConnectionWait extends Thread {
 
                     System.out.println("before activateEntry");
                     rt.activateEntry(neighbor.neighborPort);
+
                     System.out.println("after activateEntry and before set socket");
                     System.out.println("\n");
                     rt.printTable("--after add activation--");
@@ -76,9 +77,12 @@ public class PortConnectionWait extends Thread {
                     System.out.println("after setSocket");
 
                     p.setconnectionEstablished(true);
-                    
+
                     objectOutputStream.writeBoolean(true);
                     objectOutputStream.flush();
+
+                    ///sar jehez yst2bel 
+                    new Reciever(myname, myport, p.getOis(), p.getOos(), rt).start();
 
                     System.out.println("*true was sent");
 

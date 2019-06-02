@@ -50,6 +50,10 @@ public class Reciever extends Thread {
                 System.out.println("*waiting to recieve object   " + i);
                 //System.out.println("*reciever* socket :myport " + socket.getLocalPort() + " destport " + socket.getPort());
                 //     
+                
+                //hon oset lcnctions
+                //iza packet jey mn netwrok 3nde ye w3mltlo estbalish bst2bla 
+                //iza wslne msg wl src mno directly cnnected 3lye mb3ml shi b2lomfina nst2bla
                 recievedObject = ois.readObject();
                 // ois.reset();
                 i++;
@@ -62,7 +66,9 @@ public class Reciever extends Thread {
 
                 } else if (recievedObject instanceof FailedNode) {
                     //        new FailedNodeRecieve(recievedObject, socket, rt).start();
-                } else {
+                }////reciev data 
+                
+                else {
                     System.out.println("*recieved unknown type of object " + recievedObject.getClass());
                 }
 

@@ -21,7 +21,7 @@ public class PortConnectionEstablish extends Thread {
     private String neighname;
 
     private int myport;
-
+    private String myname;
     private RoutingTable rt;
 
     public PortConnectionEstablish(int myport, InetAddress neighborip, int neighborport, Port p, RoutingTable rt) {
@@ -33,7 +33,8 @@ public class PortConnectionEstablish extends Thread {
         this.rt = rt;
     }
 
-    public PortConnectionEstablish(int myport, String neighname, InetAddress neighborip, int neighborport, Port p, RoutingTable rt) {
+    public PortConnectionEstablish(String myname, int myport, String neighname, InetAddress neighborip, int neighborport, Port p, RoutingTable rt) {
+        this.myname = this.myname;
 
         this.neighborport = neighborport;
         this.myport = myport;
@@ -73,12 +74,15 @@ public class PortConnectionEstablish extends Thread {
                     p.setconnectionEstablished(true);
                     System.out.println("*connection is established at port " + myport + " with neighb = " + neighname + " , " + neighborport);
                     //rt.addEntry(ip, port, 1 ,myport, p, true);
-                    rt.addEntry(neighname, neighborport, 1, myport, p, true);
+                    rt.addEntry(neighname, neighborport, 1, myport, p, true, false);
+
+                    ///sar jehez yst2bel 
+                    new Reciever(myname, myport, p.getOis(), p.getOos(), rt).start();
 
                     rt.printTable("--after add true--");
                 } else {
                     //rt.addEntry(ip, port, 1 ,myport, p, true);
-                    rt.addEntry(neighname, neighborport, 1, myport, p, false);
+                    rt.addEntry(neighname, neighborport, 1, myport, p, false, false);
 
                     System.out.println("*waiting a connection from " + neighborport);
                     //  rt.printTable("**Checking**");

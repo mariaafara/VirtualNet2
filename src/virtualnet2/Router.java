@@ -110,9 +110,10 @@ public class Router extends Thread {
                 System.out.println("*This port does not exists");
                 return;
             }
-            portConxs.getPortInstance(port).connect(port, neighname, neighboraddress, neighborport);
+            portConxs.getPortInstance(port).connect(myname, port, neighname, neighboraddress, neighborport);
         }
     }
+//ya name aw lip
 
     public void initializeConnection(int port, InetAddress neighboraddress, int neighborport) {
         synchronized (this) {
@@ -130,8 +131,10 @@ public class Router extends Thread {
                 System.out.println("*This port exists");
                 return;
             }
-            Port portclass = new Port(port, routingTable);
-            portConxs.addPort(port, portclass);
+            Port portclass = new Port(myname, port, routingTable);
+
+            portConxs.addPort(port, portclass);//3m syv 3ndee lport
+
             portclass.start();
         }
 
@@ -139,7 +142,8 @@ public class Router extends Thread {
 ///wrong wrong wrong wrong
 
     public void initializeRoutingProtocol() {
-
+        //hon!!!
+        ///   routingTable.establishEntry();
         new RoutingService(routingTable).start();
         System.out.println("*initializeRoutingProtocol");
     }

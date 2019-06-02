@@ -29,12 +29,23 @@ public class RoutingTable implements Serializable {
         }
     }
 
+    public void establishEntry() {
+        synchronized (lockRoutingTable) {
+            for (HashMap.Entry<String, RoutingTableInfo> entry : routingEntries.entrySet()) {
+
+//                if (entry.getValue().nextHop == nexthop) {
+//                    entry.getValue().setEstablished(true);
+//                }
+            }
+        }
+    }
+
     /*
          * This method return the routing table of this client
      */
  /*
 	 * This method adds an entry into the routing table
-	 * @param destIP = destination  IP address
+	 * @para synchronized (lockRoutingTable) {m destIP = destination  IP address
 	 * @param nextHop = nextHop IP address
 	 * @param cost = Cost to reach the destination
      */
@@ -45,10 +56,10 @@ public class RoutingTable implements Serializable {
         }
     }
 
-    public void addEntry(String routername, int nextHop, int cost, int myport, Port portclass, boolean activated) {
+    public void addEntry(String routername, int nextHop, int cost, int myport, Port portclass, boolean activated, boolean established) {
         synchronized (lockRoutingTable) {
 
-            this.routingEntries.put(routername, new RoutingTableInfo(nextHop, cost, myport, portclass, activated));
+            this.routingEntries.put(routername, new RoutingTableInfo(nextHop, cost, myport, portclass, activated, established));
         }
     }
 

@@ -98,7 +98,7 @@ public class RoutingTableUpdate extends Thread {
                     Port p = rt.getPortClass(myport);
                     recievedport = rt.getNextHop(myport);
 
-                    rt.addEntry(destAddress, recievedport, pair.getValue().cost + 1, myport, p, true);
+                    rt.addEntry(destAddress, recievedport, pair.getValue().cost + 1, myport, p, true,true);
                     isUpdated = true;
                     System.out.println("*updated");
                 }
