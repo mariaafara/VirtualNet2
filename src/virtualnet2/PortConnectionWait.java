@@ -1,5 +1,6 @@
 package virtualnet2;
 
+import sharedPackage.Neighbor;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

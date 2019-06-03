@@ -1,4 +1,4 @@
-package virtualnet2;
+package sharedPackage;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -9,8 +9,8 @@ import java.net.InetAddress;
  */
 public class Neighbor implements Serializable{
 
-    InetAddress neighborAddress;
-    Integer neighborPort;
+    public InetAddress neighborAddress;
+    public Integer neighborPort;
 
     public Neighbor(InetAddress neighborAddress, Integer neighborPort) {
         this.neighborAddress = neighborAddress;
