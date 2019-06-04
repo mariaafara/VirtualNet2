@@ -25,15 +25,14 @@ public class PortConnectionEstablish extends Thread {
     private String myname;
     private RoutingTable rt;
 
-    public PortConnectionEstablish(int myport, InetAddress neighborip, int neighborport, Port p, RoutingTable rt) {
-
-        this.neighborport = neighborport;
-        this.myport = myport;
-        this.p = p;
-        //   this.neighborip = neighborip;
-        this.rt = rt;
-    }
-
+//    public PortConnectionEstablish(int myport, InetAddress neighborip, int neighborport, Port p, RoutingTable rt) {
+//
+//        this.neighborport = neighborport;
+//        this.myport = myport;
+//        this.p = p;
+//        //   this.neighborip = neighborip;
+//        this.rt = rt;
+//    }
     public PortConnectionEstablish(String myname, int myport, String neighname, InetAddress neighborip, int neighborport, Port p, RoutingTable rt) {
 
         this.myname = this.myname;
@@ -81,7 +80,7 @@ public class PortConnectionEstablish extends Thread {
                     ///sar jehez yst2bel 
                     //lneigh name hon bs krmel locally tssing bs b3den bdo ysir ip
                     new Reciever(neighname, myname, myport, p.getOis(), p.getOos(), rt).start();
-
+                    System.out.println("\n*neig name\n " + neighname + "\n");
                     rt.printTable("--after add true--");
                 } else {
                     //rt.addEntry(ip, port, 1 ,myport, p, true);

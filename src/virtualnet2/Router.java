@@ -33,6 +33,8 @@ public class Router extends Thread {
     final Object lockRouter = new Object();
 
     PortConxs portConxs;
+    ArrayList<String> networks;
+    //   ArrayList<InetAddress> network;
 
     /*
      * Constructor 
@@ -69,7 +71,18 @@ public class Router extends Thread {
 
         }
         if (scn.nextLine().equals("start")) {
-            initializeRoutingProtocol();
+            while (true) {
+                System.out.println("enter a network :");
+                String s = scn.nextLine();
+                if (s.equals("end")) {
+                    System.out.println("end");
+                    initializeRoutingProtocol(networks);
+                    continue;
+                }
+                System.out.println("adding" + s);
+                networks.add(s);
+            }
+
         }
         while (true) {
         }
@@ -77,6 +90,8 @@ public class Router extends Thread {
     }
 
     public Router() throws UnknownHostException {
+
+        networks = new ArrayList<String>();
 
         portConxs = new PortConxs();
 
@@ -88,6 +103,8 @@ public class Router extends Thread {
     }
 
     public Router(InetAddress ipAddress) {
+
+        networks = new ArrayList<String>();
 
         portConxs = new PortConxs();
 
@@ -116,15 +133,15 @@ public class Router extends Thread {
     }
 //ya name aw lip
 
-    public void initializeConnection(int port, InetAddress neighboraddress, int neighborport) {
-        synchronized (this) {
-            if (!portConxs.containsPort(port)) {
-                System.out.println("*This port does not exists");
-                return;
-            }
-            portConxs.getPortInstance(port).connect(port, neighboraddress, neighborport);
-        }
-    }
+//    public void initializeConnection(int port, InetAddress neighboraddress, int neighborport) {
+//        synchronized (this) {
+//            if (!portConxs.containsPort(port)) {
+//                System.out.println("*This port does not exists");
+//                return;
+//            }
+//            portConxs.getPortInstance(port).connect(port, neighboraddress, neighborport);
+//        }
+//    }
 
     public void initializePort(int port) {
         synchronized (this) {
@@ -140,17 +157,19 @@ public class Router extends Thread {
         }
 
     }
-///wrong wrong wrong wrong
-  public void initializeRoutingProtocol() {
-        //hon!!!
-        ///   routingTable.establishEntry();
-        new RoutingService(routingTable).start();
-        System.out.println("*initializeRoutingProtocol");
-    }
-    public void initializeRoutingProtocol(ArrayList<InetAddress> networks) {
-        //hon!!!
-        ///   routingTable.establishEntry();
-        new RoutingService(routingTable).start();
+
+//    public void initializeRoutingProtocol() {
+//   
+//        new RoutingService(routingTable).start();
+//        System.out.println("*initializeRoutingProtocol");
+//    }
+//    public void initializeRoutingProtocol(ArrayList<InetAddress> networks) {
+//        new RoutingService(routingTable).start();
+//        System.out.println("*initializeRoutingProtocol");
+//    }
+    public void initializeRoutingProtocol(ArrayList<String> networks) {
+
+        new RoutingService(routingTable, networks).start();
         System.out.println("*initializeRoutingProtocol");
     }
 

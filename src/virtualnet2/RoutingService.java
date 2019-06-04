@@ -16,16 +16,25 @@ import java.util.HashMap;
  */
 public class RoutingService extends Thread {
 
-    ArrayList<InetAddress> networks;
+//    ArrayList<InetAddress> networks;
+    ArrayList<String> networks;
+
     RoutingTable routingTable;
 
-    public RoutingService(RoutingTable routingTable) {
-
-        this.routingTable = routingTable;
-
-    }
-
-    public RoutingService(RoutingTable routingTable, ArrayList<InetAddress> networks) {
+//    public RoutingService(RoutingTable routingTable) {
+//
+//        this.routingTable = routingTable;
+//
+//    }
+//
+//    public RoutingService(RoutingTable routingTable, ArrayList<InetAddress> networks) {
+//
+//        this.networks = networks;
+//
+//        this.routingTable = routingTable;
+//
+//    }
+    public RoutingService(RoutingTable routingTable, ArrayList<String> networks) {
 
         this.networks = networks;
 
@@ -43,6 +52,7 @@ public class RoutingService extends Thread {
         //establishing the routing protocol for  the networks 
         //assigned i.e allowing broadcasting and recieving routing table from only those networks
         for (int i = 0; i < networks.size(); i++) {
+            System.out.println("networks looop\n");
             routingTable.establishEntry(networks.get(i));
         }
 

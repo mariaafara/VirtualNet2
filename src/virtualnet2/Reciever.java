@@ -77,7 +77,7 @@ public class Reciever extends Thread {
 
                 System.out.println("*recieved object =" + recievedObject);
                 if (recievedObject instanceof RoutingTable) {
-                    if (rt.getEntry(neighname).isEstablished()) {
+                    if (rt.isEstablishedEntry(neighname)) {
 
                         System.out.println("*recieved routing table");
 

@@ -28,17 +28,19 @@ public class RoutingTable implements Serializable {
             e.printStackTrace();
         }
     }
+//if itcontain this network set the established boolean to true
+
+    public void establishEntry(String network) {
+        synchronized (lockRoutingTable) {
+            System.out.println("establish entry for " + network + "\n");
+            routingEntries.get(network).setEstablished(true);
+
+        }
+    }
 
     public void establishEntry(InetAddress network) {
         synchronized (lockRoutingTable) {
 
-            routingEntries.get(network).setEstablished(true);
-
-            //      for (HashMap.Entry<String, RoutingTableInfo> entry : routingEntries.entrySet()) {
-//                if (entry.getValue().nextHop == nexthop) {
-//                    entry.getValue().setEstablished(true);
-//                }
-            //   }
         }
     }
     //lezm yn3ml mtla 3l ip lal neighbor
@@ -46,6 +48,11 @@ public class RoutingTable implements Serializable {
 
     public RoutingTableInfo getEntry(String name) {
         return routingEntries.get(name);
+    }
+
+    public boolean isEstablishedEntry(String name) {
+        System.out.println("\n\nvirtualnet2.RoutingTable.isEstablishedEntry()\n" + routingEntries.get(name).isEstablished() + "\n");
+        return routingEntries.get(name).isEstablished();
     }
 
     /*
@@ -235,7 +242,43 @@ public class RoutingTable implements Serializable {
         }
     }
 
-    public void printTable(String hint) {
+//    public void printTable(String hint) {
+//        // creating iterator for HashMap 
+//        synchronized (this) {
+//
+////            Iterator<HashMap.Entry<InetAddress, RoutingTableInfo>> routingEntriesIterator = routingEntries.entrySet().iterator();
+//            Iterator<HashMap.Entry<String, RoutingTableInfo>> routingEntriesIterator = routingEntries.entrySet().iterator();
+//
+////            InetAddress destAddress;
+//            String destAddress;
+//            System.out.print("----------------   Routing Table " + hint + " -----------------------------------------" + "\n");
+//            System.out.print("-----------|----------------|----------------|---------|----------|-------------|------" + "\n");
+//            System.out.print("-----------|  Dest Network  |  Next Hop Port |   Cost  |  myport  |  Activated  |------" + "\n");
+//            System.out.print("-----------|----------------|----------------|---------|----------|-------------|------" + "\n");
+//
+//            while (routingEntriesIterator.hasNext()) {
+//
+////                HashMap.Entry<InetAddress, RoutingTableInfo> pair = (HashMap.Entry<InetAddress, RoutingTableInfo>) routingEntriesIterator.next();
+//                HashMap.Entry<String, RoutingTableInfo> pair = (HashMap.Entry<String, RoutingTableInfo>) routingEntriesIterator.next();
+//
+////                destAddress = (InetAddress) pair.getKey();
+//                destAddress = (String) pair.getKey();
+//                RoutingTableInfo destForwardingInfo = (RoutingTableInfo) pair.getValue();
+////destAddress.getHostAddress()
+//                System.out.print("-----------|\t" + destAddress + "\t    |\t");//bs ntb3 linet address btbi3to 3m berj3 forword slash bas destAddress.getHostName() 3m trj3 aw2et msln one.one.one.
+//                System.out.print(" " + destForwardingInfo.nextHop + "\t    |    ");
+//                System.out.print(destForwardingInfo.cost + "      |   ");
+//                System.out.print(destForwardingInfo.port + "   |    ");
+//                System.out.print(destForwardingInfo.activated + "\t|------");
+//
+//                System.out.println();
+//            }
+//            System.out.print("-----------|----------------|----------------|---------|----------|-------------|------" + "\n");
+//            System.out.print("---------------------------------------------------------------------------------------" + "\n");
+//
+//        }
+//    }
+       public void printTable(String hint) {
         // creating iterator for HashMap 
         synchronized (this) {
 
@@ -246,8 +289,8 @@ public class RoutingTable implements Serializable {
             String destAddress;
             System.out.print("----------------   Routing Table " + hint + " -----------------------------------------" + "\n");
             System.out.print("-----------|----------------|----------------|---------|----------|-------------|------" + "\n");
-            System.out.print("-----------|  Dest Network  |  Next Hop Port |   Cost  |  myport  |  Activated  |------" + "\n");
-            System.out.print("-----------|----------------|----------------|---------|----------|-------------|------" + "\n");
+            System.out.print("-----------|  Dest Network  |  Next Hop Port |   Cost  |  myport  |  Activated  |  Established |------" + "\n");
+            System.out.print("-----------|----------------|----------------|---------|----------|-------------|--------------|-" + "\n");
 
             while (routingEntriesIterator.hasNext()) {
 
@@ -262,11 +305,12 @@ public class RoutingTable implements Serializable {
                 System.out.print(" " + destForwardingInfo.nextHop + "\t    |    ");
                 System.out.print(destForwardingInfo.cost + "      |   ");
                 System.out.print(destForwardingInfo.port + "   |    ");
-                System.out.print(destForwardingInfo.activated + "\t|------");
+                 System.out.print(destForwardingInfo.activated + "   |    ");
+                System.out.print(destForwardingInfo.established + "\t|------");
 
                 System.out.println();
             }
-            System.out.print("-----------|----------------|----------------|---------|----------|-------------|------" + "\n");
+            System.out.print("-----------|----------------|----------------|---------|----------|-------------|------------|--" + "\n");
             System.out.print("---------------------------------------------------------------------------------------" + "\n");
 
         }

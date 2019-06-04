@@ -121,11 +121,11 @@ public class Port extends Thread {
 
     }
 
-    public void connect(int port, InetAddress neighborAddress, int neighborport) {
-
-        PortConnectionEstablish pce = new PortConnectionEstablish(port, neighborAddress, neighborport, this, rt);
-        pce.start();
-    }
+//    public void connect(int port, InetAddress neighborAddress, int neighborport) {
+//
+//        PortConnectionEstablish pce = new PortConnectionEstablish(port, neighborAddress, neighborport, this, rt);
+//        pce.start();
+//    }
 
     public void connect(String routername, int port, String neighname, InetAddress neighborAddress, int neighborport) {
 
