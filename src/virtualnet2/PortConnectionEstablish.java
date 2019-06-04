@@ -35,7 +35,7 @@ public class PortConnectionEstablish extends Thread {
 //    }
     public PortConnectionEstablish(String myname, int myport, String neighname, InetAddress neighborip, int neighborport, Port p, RoutingTable rt) {
 
-        this.myname = this.myname;
+        this.myname = myname;
         this.neighborport = neighborport;
         this.myport = myport;
         this.p = p;
@@ -58,7 +58,7 @@ public class PortConnectionEstablish extends Thread {
 /////hal2 ha 7ot lneigbor name msh lip bs later lezm 8ayeron la localhost[
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
                 // objectOutputStream.writeObject(new Neighbor(InetAddress.getLocalHost(), myport));
-                objectOutputStream.writeObject(new Neighbor(neighname, myport));
+                objectOutputStream.writeObject(new Neighbor(myname, myport));
 
                 System.out.println("*sending my self as a neighbor to ip=" + InetAddress.getLocalHost() + " port=" + myport);
 

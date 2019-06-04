@@ -47,12 +47,22 @@ public class RoutingTable implements Serializable {
 ///this method return the entryof the given  network or name
 
     public RoutingTableInfo getEntry(String name) {
-        return routingEntries.get(name);
+        synchronized (lockRoutingTable) {
+
+            return routingEntries.get(name);
+        }
     }
 
     public boolean isEstablishedEntry(String name) {
-        System.out.println("\n\nvirtualnet2.RoutingTable.isEstablishedEntry()\n" + routingEntries.get(name).isEstablished() + "\n");
-        return routingEntries.get(name).isEstablished();
+        synchronized (lockRoutingTable) {
+            if (routingEntries.containsKey(name)) {
+                System.out.println(name + " in routing table\n");
+            } else {
+                System.out.println(name + " not in routing table\n");
+            }
+
+            return routingEntries.get(name).isEstablished();
+        }
     }
 
     /*
@@ -278,7 +288,7 @@ public class RoutingTable implements Serializable {
 //
 //        }
 //    }
-       public void printTable(String hint) {
+    public void printTable(String hint) {
         // creating iterator for HashMap 
         synchronized (this) {
 
@@ -305,7 +315,7 @@ public class RoutingTable implements Serializable {
                 System.out.print(" " + destForwardingInfo.nextHop + "\t    |    ");
                 System.out.print(destForwardingInfo.cost + "      |   ");
                 System.out.print(destForwardingInfo.port + "   |    ");
-                 System.out.print(destForwardingInfo.activated + "   |    ");
+                System.out.print(destForwardingInfo.activated + "   |    ");
                 System.out.print(destForwardingInfo.established + "\t|------");
 
                 System.out.println();
