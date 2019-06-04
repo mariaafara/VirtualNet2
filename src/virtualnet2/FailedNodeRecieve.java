@@ -5,6 +5,8 @@
  */
 package virtualnet2;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.HashMap;
 
@@ -14,15 +16,12 @@ import java.util.HashMap;
  */
 public class FailedNodeRecieve extends Thread {
 
-    Socket socket;
-
     FailedNode fn;//the one recieved
     Object recievedObject;
     private RoutingTable rt;
 
-    public FailedNodeRecieve(Object recievedObject, Socket socket, RoutingTable rt) {
+    public FailedNodeRecieve(Object recievedObject, RoutingTable rt) {
 
-        this.socket = socket;
         this.rt = rt;
         this.recievedObject = recievedObject;
     }
@@ -31,7 +30,7 @@ public class FailedNodeRecieve extends Thread {
     public void run() {
 
         fn = recieveFailedNode(recievedObject);
-        
+
         rt.deleteEntry(fn.getInetaddress());
 
         //delete entry then send ne routing table

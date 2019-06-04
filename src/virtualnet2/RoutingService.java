@@ -1,5 +1,7 @@
 package virtualnet2;
 
+import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /*
@@ -8,17 +10,25 @@ import java.util.HashMap;
  * and open the template in the editor.
  */
 /**
+ * there is no need t use this thread anymore
  *
  * @author maria afara
  */
 public class RoutingService extends Thread {
 
-    //private PortConxs portConxs;
+    ArrayList<InetAddress> networks;
     RoutingTable routingTable;
 
     public RoutingService(RoutingTable routingTable) {
 
-        //  this.portConxs = portConxs;
+        this.routingTable = routingTable;
+
+    }
+
+    public RoutingService(RoutingTable routingTable, ArrayList<InetAddress> networks) {
+
+        this.networks = networks;
+
         this.routingTable = routingTable;
 
     }
@@ -30,6 +40,11 @@ public class RoutingService extends Thread {
     public void run() {
 
         super.run();
+        //establishing the routing protocol for  the networks 
+        //assigned i.e allowing broadcasting and recieving routing table from only those networks
+        for (int i = 0; i < networks.size(); i++) {
+            routingTable.establishEntry(networks.get(i));
+        }
 
         //sar kel port 3ndo sender w reciever
         //allow to recieve objects at each port
@@ -46,7 +61,7 @@ public class RoutingService extends Thread {
 //            }
 //        }
         System.out.println("*in RoutingService before broadcast");
-        
+
         new RoutingTableBroadcast(routingTable).start();
     }
 

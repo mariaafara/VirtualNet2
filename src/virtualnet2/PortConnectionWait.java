@@ -83,7 +83,7 @@ public class PortConnectionWait extends Thread {
                     objectOutputStream.flush();
 
                     ///sar jehez yst2bel 
-                    new Reciever(myname, myport, p.getOis(), p.getOos(), rt).start();
+                    new Reciever(neighbor.getNeighborname(), myname, myport, p.getOis(), p.getOos(), rt).start();
 
                     System.out.println("*true was sent");
 

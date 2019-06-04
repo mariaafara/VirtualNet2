@@ -3,6 +3,7 @@ package virtualnet2;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -140,8 +141,13 @@ public class Router extends Thread {
 
     }
 ///wrong wrong wrong wrong
-
-    public void initializeRoutingProtocol() {
+  public void initializeRoutingProtocol() {
+        //hon!!!
+        ///   routingTable.establishEntry();
+        new RoutingService(routingTable).start();
+        System.out.println("*initializeRoutingProtocol");
+    }
+    public void initializeRoutingProtocol(ArrayList<InetAddress> networks) {
         //hon!!!
         ///   routingTable.establishEntry();
         new RoutingService(routingTable).start();

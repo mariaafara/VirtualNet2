@@ -29,21 +29,26 @@ public class RoutingTable implements Serializable {
         }
     }
 
-    public void establishEntry() {
+    public void establishEntry(InetAddress network) {
         synchronized (lockRoutingTable) {
-            for (HashMap.Entry<String, RoutingTableInfo> entry : routingEntries.entrySet()) {
 
+            routingEntries.get(network).setEstablished(true);
+
+            //      for (HashMap.Entry<String, RoutingTableInfo> entry : routingEntries.entrySet()) {
 //                if (entry.getValue().nextHop == nexthop) {
 //                    entry.getValue().setEstablished(true);
 //                }
-            }
+            //   }
         }
+    }
+    //lezm yn3ml mtla 3l ip lal neighbor
+///this method return the entryof the given  network or name
+
+    public RoutingTableInfo getEntry(String name) {
+        return routingEntries.get(name);
     }
 
     /*
-         * This method return the routing table of this client
-     */
- /*
 	 * This method adds an entry into the routing table
 	 * @para synchronized (lockRoutingTable) {m destIP = destination  IP address
 	 * @param nextHop = nextHop IP address
