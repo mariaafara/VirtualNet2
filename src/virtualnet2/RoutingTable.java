@@ -53,6 +53,15 @@ public class RoutingTable implements Serializable {
         }
     }
 
+    public RoutingTableInfo getEntry(int  portDst) {
+        synchronized (lockRoutingTable) {
+          for (HashMap.Entry<String, RoutingTableInfo> entry : routingEntries.entrySet()) {
+              if(entry.getValue().getNextHop() == portDst)
+                  return entry.getValue();
+          }
+        }
+        return null;
+    }
     public boolean isEstablishedEntry(String name) {
         synchronized (lockRoutingTable) {
             if (routingEntries.containsKey(name)) {
