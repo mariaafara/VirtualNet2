@@ -21,10 +21,10 @@ public class PortConnectionWait extends Thread {
     Socket socket;
     String msg;
     int myport;
-    String myname;
+ 
     RoutingTable rt;
 
-    public PortConnectionWait(String myname, int myport, Port p, RoutingTable rt) {
+    public PortConnectionWait( int myport, Port p, RoutingTable rt) {
 
         try {
             //Creating server socket
@@ -32,7 +32,7 @@ public class PortConnectionWait extends Thread {
             serversocket = new ServerSocket(myport);
             this.p = p;
             this.myport = myport;
-            this.myname = myname;
+         
             this.rt = rt;
 
         } catch (IOException ex) {
@@ -63,10 +63,11 @@ public class PortConnectionWait extends Thread {
                 //neighbor.neighborPort is the next hop 
                 objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 
-                if (rt.isExistandNotActive(neighbor.neighborPort)) {
+                if (rt.isExistandNotActive(neighbor.neighborAddress,neighbor.neighborPort)) {
 
                     System.out.println("before activateEntry");
-                    rt.activateEntry(neighbor.neighborPort);
+                    System.out.println("\n*neigh @ and port* " +neighbor.neighborAddress+" "+neighbor.neighborPort);
+                    rt.activateEntry(neighbor.neighborAddress,neighbor.neighborPort);
 
                     System.out.println("after activateEntry and before set socket");
                     System.out.println("\n");
@@ -83,7 +84,7 @@ public class PortConnectionWait extends Thread {
                     objectOutputStream.flush();
 
                     ///sar jehez yst2bel 
-                    new Reciever(neighbor.getNeighborname(), myname, myport, p.getOis(), p.getOos(), rt).start();
+                    new Reciever(neighbor.getNeighborAddress(), neighbor.getNeighborPort(), myport, p.getOis(), p.getOos(), rt).start();
 
                     System.out.println("*true was sent");
 

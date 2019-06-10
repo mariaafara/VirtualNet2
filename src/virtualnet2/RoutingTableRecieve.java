@@ -55,7 +55,7 @@ public class RoutingTableRecieve extends Thread {
             recieveport = rt.getNextHop(port);
 
             System.out.print("\n");
-            routingTable.printTable("Recieved from " + recieveport + " ");
+            routingTable.printTable("Recieved from " + recieveport + " at port " + port);
             System.out.println("\n");
 
             // Check if this routing table's object needs to be updated

@@ -41,7 +41,7 @@ public class RoutingTableBroadcast extends Thread {
             try {
                 System.out.println("*in broadcast infinte loop");
 
-                for (HashMap.Entry<String, RoutingTableInfo> entry : routingTable.routingEntries.entrySet()) {
+                for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry : routingTable.routingEntries.entrySet()) {
 //fina bala condition lcost krml bel awal hne bs neighs bs iza static zydin shi afdl condion lcost krml hek
 //isconnection established tnt2kad eno boolean lactivtaed mn jhten true eno ltnen 3mlin lconnecion msh bs wa7d menon
 //l is established y3ne he lentry mn domn dekhlin bl routing protocol (le n3tet ka network bl configurations)

@@ -16,25 +16,10 @@ import java.util.HashMap;
  */
 public class RoutingService extends Thread {
 
-//    ArrayList<InetAddress> networks;
-    ArrayList<String> networks;
-
     RoutingTable routingTable;
+    ArrayList<RoutingTableKey> networks;
 
-//    public RoutingService(RoutingTable routingTable) {
-//
-//        this.routingTable = routingTable;
-//
-//    }
-//
-//    public RoutingService(RoutingTable routingTable, ArrayList<InetAddress> networks) {
-//
-//        this.networks = networks;
-//
-//        this.routingTable = routingTable;
-//
-//    }
-    public RoutingService(RoutingTable routingTable, ArrayList<String> networks) {
+    public RoutingService(RoutingTable routingTable, ArrayList< RoutingTableKey> networks) {
 
         this.networks = networks;
 
@@ -51,9 +36,13 @@ public class RoutingService extends Thread {
         super.run();
         //establishing the routing protocol for  the networks 
         //assigned i.e allowing broadcasting and recieving routing table from only those networks
+        //ktir important he shi 
+        ///Hon ma lezm n3ml establish la routing protocol la entry mana activated 
         for (int i = 0; i < networks.size(); i++) {
             System.out.println("networks looop\n");
-            routingTable.establishEntry(networks.get(i));
+            if (routingTable.routingEntries.get(networks.get(i)).activated) {
+                routingTable.establishEntry(networks.get(i));
+            }
         }
 
         //sar kel port 3ndo sender w reciever

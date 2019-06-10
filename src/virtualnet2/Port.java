@@ -34,7 +34,7 @@ public class Port extends Thread {
     ObjectInputStream ois;
     ObjectOutputStream oos;
 
-    public Port(String routername, int myport, RoutingTable rt) {
+    public Port( int myport, RoutingTable rt) {
 
         System.out.println("*Port " + myport + " initialized");
 
@@ -42,7 +42,7 @@ public class Port extends Thread {
         this.myport = myport;
         this.socket = null;
         this.rt = rt;
-        portConnectionWait = new PortConnectionWait(routername, myport, this, rt);
+        portConnectionWait = new PortConnectionWait( myport, this, rt);
         this.ois = null;
         this.oos = null;
     }
@@ -127,9 +127,9 @@ public class Port extends Thread {
 //        pce.start();
 //    }
 
-    public void connect(String routername, int port, String neighname, InetAddress neighborAddress, int neighborport) {
+    public void connect(int port, InetAddress neighborAddress, int neighborport) {
 
-        PortConnectionEstablish pce = new PortConnectionEstablish(routername, port, neighname, neighborAddress, neighborport, this, rt);
+        PortConnectionEstablish pce = new PortConnectionEstablish( port, neighborAddress, neighborport, this, rt);
         pce.start();
     }
 }

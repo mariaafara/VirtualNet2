@@ -30,9 +30,8 @@ public class Reciever extends Thread {
     private int port;
 
     private Object recievedObject;
-
+    int neighport;
     InetAddress neighip;
-    String neighname;
 
 //    public Reciever(InetAddress neighip, String myname, int myport, ObjectInputStream ois, ObjectOutputStream oos, RoutingTable rt) {
 //
@@ -45,15 +44,15 @@ public class Reciever extends Thread {
 //        ///router name aw ip ....n2sa 
 //
 //    }
-    public Reciever(String neighname, String myname, int myport, ObjectInputStream ois, ObjectOutputStream oos, RoutingTable rt) {
-
+    public Reciever(InetAddress neighip, int neighport, int myport, ObjectInputStream ois, ObjectOutputStream oos, RoutingTable rt) {
+        System.out.println("\n************\n");
         System.out.println("*reciever initialized");
         this.port = myport;
         this.ois = ois;
         this.oos = oos;
         this.rt = rt;
-        ///router name aw ip ....n2sa 
-        this.neighname = neighname;
+        this.neighip = neighip;
+        this.neighport = neighport;
     }
 
     @Override
@@ -65,7 +64,7 @@ public class Reciever extends Thread {
             int i = 1;
             while (true) {
 
-                System.out.println("*waiting to recieve object   " + i + " " + neighname);
+                System.out.println("*waiting to recieve object   " + i + "from " + neighport);
                 //System.out.println("*reciever* socket :myport " + socket.getLocalPort() + " destport " + socket.getPort());
                 //     
 
@@ -73,12 +72,12 @@ public class Reciever extends Thread {
                 //iza packet jey mn netwrok 3nde ye w3mltlo estbalish bst2bla 
                 //iza wslne msg wl src mno directly cnnected 3lye mb3ml shi b2lomfina nst2bla
                 recievedObject = ois.readObject();
-                
+
                 i++;
 
                 System.out.println("*recieved object =" + recievedObject);
                 if (recievedObject instanceof RoutingTable) {
-                    if (rt.isEstablishedEntry(neighname)) {
+                    if (rt.isEstablishedEntry(neighip, neighport)) {
 
                         System.out.println("*recieved routing table");
 

@@ -30,11 +30,12 @@ public class FailedNodeRecieve extends Thread {
     public void run() {
 
         fn = recieveFailedNode(recievedObject);
-
-        rt.deleteEntry(fn.getInetaddress());
+//hon bde 23ml delete lal entry le bel table 3nde le lkey le 2ela huwe l ip lal failed node
+//m3 w7ad n lportet le 2ela le huwe ha ykoun lnext hop bel nsbe ele m3 hay lnode
+        //   rt.deleteEntry(fn.getInetaddress());
 
         //delete entry then send ne routing table
-        for (HashMap.Entry<String, RoutingTableInfo> entry : rt.routingEntries.entrySet()) {
+        for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry : rt.routingEntries.entrySet()) {
 
             if (entry.getValue().cost == 1) {
                 new RoutingTableSend(entry.getValue().portclass.getOos(), rt).start();

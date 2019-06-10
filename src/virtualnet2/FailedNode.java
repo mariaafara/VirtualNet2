@@ -6,15 +6,18 @@
 package virtualnet2;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
 
 /**
  *
  * @author maria afara
  */
 public class FailedNode {
-    InetAddress inetaddress;
 
-    public FailedNode(InetAddress inetaddress) {
+    InetAddress inetaddress;
+    ArrayList<Integer> myports;
+
+    public FailedNode(InetAddress inetaddress, ArrayList<Integer> myports) {
         this.inetaddress = inetaddress;
     }
 
@@ -25,5 +28,5 @@ public class FailedNode {
     public void setInetaddress(InetAddress inetaddress) {
         this.inetaddress = inetaddress;
     }
-    
+
 }
