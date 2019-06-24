@@ -15,10 +15,20 @@ import java.util.ArrayList;
 public class FailedNode {
 
     InetAddress inetaddress;
-    ArrayList<Integer> myports;
-
-    public FailedNode(InetAddress inetaddress, ArrayList<Integer> myports) {
+    int port;
+////complete failed or entry 
+    //failedentry aw failedrouter
+    public FailedNode(InetAddress inetaddress, int port) {
         this.inetaddress = inetaddress;
+        this.port = port;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
     public InetAddress getInetaddress() {

@@ -27,12 +27,13 @@ public class Reciever extends Thread {
 
     private RoutingTable rt;
 
-    private int port;
+    private int myport;
 
     private Object recievedObject;
     int neighport;
     InetAddress neighip;
-
+    String neighhostname;
+    String myhostname;
 //    public Reciever(InetAddress neighip, String myname, int myport, ObjectInputStream ois, ObjectOutputStream oos, RoutingTable rt) {
 //
 //        System.out.println("*reciever initialized");
@@ -44,15 +45,18 @@ public class Reciever extends Thread {
 //        ///router name aw ip ....n2sa 
 //
 //    }
-    public Reciever(InetAddress neighip, int neighport, int myport, ObjectInputStream ois, ObjectOutputStream oos, RoutingTable rt) {
+
+    public Reciever(InetAddress neighip, String neighhostname, int neighport, int myport, String myhostname, ObjectInputStream ois, ObjectOutputStream oos, RoutingTable rt) {
         System.out.println("\n************\n");
         System.out.println("*reciever initialized");
-        this.port = myport;
+        this.myport = myport;
         this.ois = ois;
         this.oos = oos;
         this.rt = rt;
         this.neighip = neighip;
         this.neighport = neighport;
+        this.myhostname=myhostname;
+        this.neighhostname = neighhostname;
     }
 
     @Override
@@ -77,11 +81,11 @@ public class Reciever extends Thread {
 
                 System.out.println("*recieved object =" + recievedObject);
                 if (recievedObject instanceof RoutingTable) {
-                    if (rt.isEstablishedEntry(neighip, neighport)) {
+                    if (rt.isEstablishedEntry(neighip, neighhostname)) {
 
                         System.out.println("*recieved routing table");
 
-                        new RoutingTableRecieve(recievedObject, port, ois, oos, rt).start();
+                        new RoutingTableRecieve(recievedObject, myport,myhostname, ois, oos, rt).start();
                     }
                 } else if (recievedObject instanceof FailedNode) {
                     //lzm nt2kad hon iza lzm lrouting protocol kmen bdo ykoun established awla 
@@ -95,13 +99,15 @@ public class Reciever extends Thread {
                         ttl--;
                         p.header.TTL = ttl;
                         if (ttl > 0) {
-                            if (p.header.getDestinationAddress().equals(Inet4Address.getLocalHost().toString()) && p.header.getPortDestination() == port) {
+                            ///iza huwe zeto ana and and lhostname  !!!!!!
+                            if (p.header.getDestinationAddress().equals(Inet4Address.getLocalHost().toString()) && p.header.getPortDestination() == myport) {
                                 messageReceived = p.Message;
                                 System.out.println("*Received Message =" + messageReceived);
                                 System.out.println("*From             =" + p.header.getSourceAddress() + ":" + p.header.getPortSource());
 
                             } else {
                                 System.out.println("forwarding packet");
+                                ///b3tiha l ip wl host name  bdel get !!!!!
                                 RoutingTableInfo rtInfo = rt.getEntry(p.header.getPortDestination());
                                 if (rtInfo != null && rtInfo.activated == true && rtInfo.established == true) {
                                     ObjectOutputStream oos = rtInfo.portclass.oos;

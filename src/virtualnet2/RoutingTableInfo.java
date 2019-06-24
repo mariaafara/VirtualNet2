@@ -1,6 +1,8 @@
 package virtualnet2;
 
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  *
@@ -14,15 +16,26 @@ public class RoutingTableInfo implements Serializable {
     transient Port portclass;
     boolean activated;
     boolean established;
-
+    RoutingTableKey rtkey;
 //  transient
-    public RoutingTableInfo(int nextHop, int cost, int port, Port portclass, boolean activated, boolean established) {
+
+    //
+    public RoutingTableInfo(int nextHop, int cost, String nextHostname, int port, Port portclass, boolean activated, boolean established) throws UnknownHostException {
         this.nextHop = nextHop;
         this.cost = cost;
         this.port = port;
         this.portclass = portclass;
         this.activated = activated;
         this.established = established;
+        this.rtkey = new RoutingTableKey(InetAddress.getLocalHost(), nextHostname);
+    }
+
+    public RoutingTableKey getRtkey() {
+        return rtkey;
+    }
+
+    public void setRtkey(RoutingTableKey rtkey) {
+        this.rtkey = rtkey;
     }
 
     public boolean isEstablished() {

@@ -14,26 +14,28 @@ import java.net.InetAddress;
  */
 public class RoutingTableKey implements Serializable  {
 
-    int port;
+    String hostname;
     InetAddress ip;
 
-    public RoutingTableKey(InetAddress ip, int port) {
-        this.port = port;
+    public RoutingTableKey(InetAddress ip, String hostname) {
+        this.hostname=hostname;
         this.ip = ip;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
     }
 
     @Override
     public String toString() {
-        return "RoutingTableKey{" + "port=" + port + ", ip=" + ip + '}';
+        return "RoutingTableKey{" + "hostname=" + hostname + ", ip=" + ip + '}';
     }
 
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
+  
 
     public InetAddress getIp() {
         return ip;
@@ -55,7 +57,7 @@ public class RoutingTableKey implements Serializable  {
             return false;
         }
         RoutingTableKey other = (RoutingTableKey) o;
-        if (this.port != other.port) {
+        if (!this.hostname.equals(other.hostname)) {
             return false;
         }
         return true;
@@ -66,7 +68,7 @@ public class RoutingTableKey implements Serializable  {
         // uses roll no to verify the uniqueness 
         // of the object of Student class 
 
-        int ans = ip.hashCode() + port;
+        int ans = ip.hashCode() + hostname.hashCode();
         return ans;  //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -24,13 +24,18 @@ public class PortConnectionEstablish extends Thread {
 
     private RoutingTable rt;
 
-    public PortConnectionEstablish(int myport, InetAddress neighborip, int neighborport, Port p, RoutingTable rt) {
+    private String neighborhostname;
+    private String myhostname;
+
+    public PortConnectionEstablish(int myport, String myhostname, InetAddress neighborip, String neighborhostname, int neighborport, Port p, RoutingTable rt) {
 
         this.neighborport = neighborport;
         this.myport = myport;
         this.p = p;
         this.neighborip = neighborip;
         this.rt = rt;
+        this.neighborhostname = neighborhostname;
+        this.myhostname = myhostname;
     }
 
     @Override
@@ -47,7 +52,7 @@ public class PortConnectionEstablish extends Thread {
 
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 
-                objectOutputStream.writeObject(new Neighbor(InetAddress.getLocalHost(), myport));
+                objectOutputStream.writeObject(new Neighbor(InetAddress.getLocalHost(), myhostname, myport));
 
                 System.out.println("*sending my self as a neighbor to ip=" + InetAddress.getLocalHost() + " port=" + myport);
 
@@ -62,20 +67,20 @@ public class PortConnectionEstablish extends Thread {
                     p.setStreams(objectInputStream, objectOutputStream);
 
                     p.setconnectionEstablished(true);
-                    System.out.println("*connection is established at port " + myport + " with neighb = " + neighborip + " , " + neighborport);
+                    System.out.println("*connection is established at port " + myport + " with neighb = " + neighborhostname + " , " + neighborport);
                     //rt.addEntry(ip, port, 1 ,myport, p, true);
-                    rt.addEntry(neighborip, neighborport, 1, myport, p, true, false);
+                    rt.addEntry(neighborip, neighborhostname, neighborport, 1, myport, p, true, false);
 
                     ///sar jehez yst2bel 
                     //lneigh name hon bs krmel locally tssing bs b3den bdo ysir ip
                     System.out.println("\n*before initialize reciever at port " + myport + "\n");
-                    new Reciever(neighborip, neighborport, myport, p.getOis(), p.getOos(), rt).start();
+                    new Reciever(neighborip,neighborhostname, neighborport, myport,myhostname, p.getOis(), p.getOos(), rt).start();
                     System.out.println("\n*after initialize reciever at port " + myport + "\n");
                     System.out.println("\n*neig name " + neighborip + "," + neighborport + "\n");
                     rt.printTable("--after add true--");
                 } else {
                     //rt.addEntry(ip, port, 1 ,myport, p, true);
-                    rt.addEntry(neighborip, neighborport, 1, myport, p, false, false);
+                    rt.addEntry(neighborip, neighborhostname, neighborport, 1, myport, p, false, false);
 
                     System.out.println("*waiting a connection from " + neighborport);
                     //  rt.printTable("**Checking**");

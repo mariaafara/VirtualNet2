@@ -33,8 +33,9 @@ public class Port extends Thread {
     RoutingTable rt;
     ObjectInputStream ois;
     ObjectOutputStream oos;
+    String myhostname;
 
-    public Port( int myport, RoutingTable rt) {
+    public Port(int myport, String myhostname, RoutingTable rt) {
 
         System.out.println("*Port " + myport + " initialized");
 
@@ -42,9 +43,10 @@ public class Port extends Thread {
         this.myport = myport;
         this.socket = null;
         this.rt = rt;
-        portConnectionWait = new PortConnectionWait( myport, this, rt);
+        portConnectionWait = new PortConnectionWait(myhostname, myport, this, rt);
         this.ois = null;
         this.oos = null;
+        this.myhostname = myhostname;
     }
 
     public boolean isconnectionEstablished() {
@@ -126,10 +128,10 @@ public class Port extends Thread {
 //        PortConnectionEstablish pce = new PortConnectionEstablish(port, neighborAddress, neighborport, this, rt);
 //        pce.start();
 //    }
+    public void connect(InetAddress neighborAddress, String neighborhostname, int neighborport) {
 
-    public void connect(int port, InetAddress neighborAddress, int neighborport) {
-
-        PortConnectionEstablish pce = new PortConnectionEstablish( port, neighborAddress, neighborport, this, rt);
+        PortConnectionEstablish pce = new PortConnectionEstablish(myport, myhostname, neighborAddress, neighborhostname, neighborport, this, rt
+        );
         pce.start();
     }
 }

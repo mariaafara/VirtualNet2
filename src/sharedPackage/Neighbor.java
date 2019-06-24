@@ -13,15 +13,13 @@ public class Neighbor implements Serializable {
     public Integer neighborPort;
     public String neighborname;
 
-    public Neighbor(InetAddress neighborAddress, Integer neighborPort) {
+    public Neighbor(InetAddress neighborAddress,String neighborname, Integer neighborPort) {
         this.neighborAddress = neighborAddress;
+         this.neighborname = neighborname;
         this.neighborPort = neighborPort;
     }
 
-    public Neighbor(String neighborname, Integer neighborPort) {
-        this.neighborname = neighborname;
-        this.neighborPort = neighborPort;
-    }
+
 
     public String getNeighborname() {
         return neighborname;

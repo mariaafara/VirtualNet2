@@ -7,6 +7,7 @@ package virtualnet2;
 
 import java.io.ObjectOutputStream;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -24,14 +25,15 @@ public class RoutingTableUpdate extends Thread {
     private ObjectOutputStream oos;
     private RoutingTable rt;
     int recievedport;
+    String hostname;
 
-    public RoutingTableUpdate(RoutingTable recievedroutingtable, int myport, ObjectOutputStream oos, RoutingTable rt) {
+    public RoutingTableUpdate(RoutingTable recievedroutingtable, String hostname, int myport, ObjectOutputStream oos, RoutingTable rt) {
 
         this.recievedroutingtable = recievedroutingtable;
         this.myport = myport;
         this.oos = oos;
         this.rt = rt;
-
+        this.hostname = hostname;
     }
 
     /*
@@ -43,13 +45,15 @@ public class RoutingTableUpdate extends Thread {
             checkForUpdates();
         } catch (SocketException ex) {
             Logger.getLogger(RoutingTableUpdate.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(RoutingTableUpdate.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     /*
 	 * This method checks if it's own routing table needs to be updated
      */
-    public void checkForUpdates() throws SocketException {
+    public void checkForUpdates() throws SocketException, UnknownHostException {
 ///aw 3alock
         synchronized (this) {
             System.out.println("In check for updates method");
@@ -86,7 +90,7 @@ public class RoutingTableUpdate extends Thread {
                     //"Cost for this destination in received routing table is "  pair.getValue().cost
                     if (destCost > (1 + pair.getValue().cost)) {
                         //which is smaller than my cost for the destination
-                        rt.updateEntry(destAddress.getIp(), myport, 1 + pair.getValue().cost);
+                        rt.updateEntry(destAddress.getIp(),hostname, myport, 1 + pair.getValue().cost);
 
                         isUpdated = true;
 
@@ -98,7 +102,7 @@ public class RoutingTableUpdate extends Thread {
                     Port p = rt.getPortClass(myport);
                     recievedport = rt.getNextHop(myport);
 
-                    rt.addEntry(destAddress, recievedport, pair.getValue().cost + 1, myport, p, true,true);
+                    rt.addEntry(destAddress, hostname,recievedport, pair.getValue().cost + 1, myport, p, true, true);
                     isUpdated = true;
                     System.out.println("*updated");
                 }

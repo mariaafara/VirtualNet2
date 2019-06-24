@@ -26,6 +26,8 @@ import java.util.logging.Logger;
  */
 public class Router extends Thread {
 
+    String hostname;
+
     InetAddress ipAddress;
 
     public RoutingTable routingTable;
@@ -44,7 +46,9 @@ public class Router extends Thread {
 
         super.run();
         Scanner scn = new Scanner(System.in);
-
+        System.out.println("enter name of router.............");
+        String name = scn.nextLine();
+        setHostname(name);
         System.out.println("enter nbr ports..................");
         int nb = Integer.parseInt(scn.nextLine());
 
@@ -55,14 +59,14 @@ public class Router extends Thread {
         for (int i = 0; i < nb; i++) {
 
             try {
-                System.out.println("enter to establish connection....(myport nexthop).......");
+                System.out.println("enter to establish connection....(myport:neighname:nexthop).......");
                 String line = scn.nextLine();
-                StringTokenizer st = new StringTokenizer(line, " ");
+                StringTokenizer st = new StringTokenizer(line, ":");
                 int myport = Integer.parseInt(st.nextToken());
-               
+                String neighname = st.nextToken();
                 int nexthop = Integer.parseInt(st.nextToken());
 
-                initializeConnection(myport, InetAddress.getLocalHost(), nexthop);
+                initializeConnection(myport, InetAddress.getLocalHost(), neighname, nexthop);
             } catch (UnknownHostException ex) {
                 Logger.getLogger(Router.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -72,14 +76,14 @@ public class Router extends Thread {
             while (true) {
                 try {
                     System.out.println("enter a network :");
-                    String nexthop = scn.nextLine();
-                    if (nexthop.equals("end")) {
+                    String nextHost = scn.nextLine();
+                    if (nextHost.equals("end")) {
                         System.out.println("end");
                         initializeRoutingProtocol(networks);
                         continue;
                     }
-                    System.out.println("adding" + nexthop);
-                    networks.add(new RoutingTableKey(InetAddress.getLocalHost(), Integer.parseInt(nexthop)));
+                    System.out.println("adding" + nextHost);
+                    networks.add(new RoutingTableKey(InetAddress.getLocalHost(),nextHost));
                 } catch (UnknownHostException ex) {
                     Logger.getLogger(Router.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -100,28 +104,24 @@ public class Router extends Thread {
         routingTable = new RoutingTable();
 
         this.ipAddress = InetAddress.getLocalHost();
-
+        this.hostname = hostname;
     }
 
-    public Router(InetAddress ipAddress) {
-
-        networks = new ArrayList<RoutingTableKey>();
-
-        portConxs = new PortConxs();
-
-        routingTable = new RoutingTable();
-
-        this.ipAddress = ipAddress;
-
+    public String getHostname() {
+        return hostname;
     }
 
-    public void initializeConnection(int port, InetAddress neighboraddress, int neighborport) {
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    public void initializeConnection(int port, InetAddress neighboraddress, String neighborhostname, int neighborport) {
         synchronized (this) {
             if (!portConxs.containsPort(port)) {
                 System.out.println("*This port does not exists");
                 return;
             }
-            portConxs.getPortInstance(port).connect(port, neighboraddress, neighborport);
+            portConxs.getPortInstance(port).connect(neighboraddress, neighborhostname, neighborport);
         }
     }
 //ya name aw lip
@@ -141,7 +141,7 @@ public class Router extends Thread {
                 System.out.println("*This port exists");
                 return;
             }
-            Port portclass = new Port(port, routingTable);
+            Port portclass = new Port(port, hostname, routingTable);
 
             portConxs.addPort(port, portclass);//3m syv 3ndee lport
 
