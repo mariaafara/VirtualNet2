@@ -100,21 +100,21 @@ public class Reciever extends Thread {
                         p.header.TTL = ttl;
                         if (ttl > 0) {
                             ///iza huwe zeto ana and and lhostname  !!!!!!
-                            if (p.header.getDestinationAddress().equals(Inet4Address.getLocalHost().toString()) && p.header.getPortDestination() == myport) {
+                            if (p.header.getDestinationAddress().equals(Inet4Address.getLocalHost().toString()) && p.header.getDestinationHostname().equals(myhostname)) {
                                 messageReceived = p.Message;
                                 System.out.println("*Received Message =" + messageReceived);
-                                System.out.println("*From             =" + p.header.getSourceAddress() + ":" + p.header.getPortSource());
+                                System.out.println("*From             =" + p.header.getSourceAddress() + ":" + p.header.getSourceHostname());
 
                             } else {
                                 System.out.println("forwarding packet");
                                 ///b3tiha l ip wl host name  bdel get !!!!!
-                                RoutingTableInfo rtInfo = rt.getEntry(p.header.getPortDestination());
+                                RoutingTableInfo rtInfo = rt.getEntry(p.header.getDestination());
                                 if (rtInfo != null && rtInfo.activated == true && rtInfo.established == true) {
                                     ObjectOutputStream oos = rtInfo.portclass.oos;
 
                                     oos.writeObject(p);
                                 } else {
-                                    System.out.println("Destination " + p.header.getPortDestination() + " Doesnt exist Or Routing Didnt work yet..");
+                                    System.out.println("Destination " + p.header.getDestination().toString()+ " Doesnt exist Or Routing Didnt work yet..");
                                 }
 
                             }

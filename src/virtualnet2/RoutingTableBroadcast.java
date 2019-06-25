@@ -5,6 +5,7 @@
  */
 package virtualnet2;
 
+import sharedPackage.RoutingTableKey;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;

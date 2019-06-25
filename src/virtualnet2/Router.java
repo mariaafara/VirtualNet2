@@ -1,6 +1,7 @@
 package virtualnet2;
 //localtest2
 
+import sharedPackage.RoutingTableKey;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public class Router extends Thread {
         if (scn.nextLine().equals("start")) {
             while (true) {
                 try {
-                    System.out.println("enter a network :");
+                    System.out.println("enter a network host name:");
                     String nextHost = scn.nextLine();
                     if (nextHost.equals("end")) {
                         System.out.println("end");
@@ -104,7 +105,7 @@ public class Router extends Thread {
         routingTable = new RoutingTable();
 
         this.ipAddress = InetAddress.getLocalHost();
-        this.hostname = hostname;
+     
     }
 
     public String getHostname() {
@@ -124,17 +125,7 @@ public class Router extends Thread {
             portConxs.getPortInstance(port).connect(neighboraddress, neighborhostname, neighborport);
         }
     }
-//ya name aw lip
 
-//    public void initializeConnection(int port, InetAddress neighboraddress, int neighborport) {
-//        synchronized (this) {
-//            if (!portConxs.containsPort(port)) {
-//                System.out.println("*This port does not exists");
-//                return;
-//            }
-//            portConxs.getPortInstance(port).connect(port, neighboraddress, neighborport);
-//        }
-//    }
     public void initializePort(int port) {
         synchronized (this) {
             if (portConxs.containsPort(port)) {

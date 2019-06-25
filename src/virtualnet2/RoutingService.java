@@ -1,5 +1,6 @@
 package virtualnet2;
 
+import sharedPackage.RoutingTableKey;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ public class RoutingService extends Thread {
         ///Hon ma lezm n3ml establish la routing protocol la entry mana activated 
         for (int i = 0; i < networks.size(); i++) {
             System.out.println("networks looop\n");
+            
             if (routingTable.routingEntries.get(networks.get(i)).activated) {
                 routingTable.establishEntry(networks.get(i));
             }

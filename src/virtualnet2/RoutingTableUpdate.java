@@ -5,6 +5,7 @@
  */
 package virtualnet2;
 
+import sharedPackage.RoutingTableKey;
 import java.io.ObjectOutputStream;
 import java.net.SocketException;
 import java.net.UnknownHostException;

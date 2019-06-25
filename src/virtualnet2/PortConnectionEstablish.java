@@ -46,7 +46,7 @@ public class PortConnectionEstablish extends Thread {
 
             try {
 
-                System.out.println("*establishing connection with ip=" + neighborip + " port=" + neighborport);
+                System.out.println("*establishing connection with ip=" + neighborhostname + " port=" + neighborport);
                 socket = new Socket(neighborip, neighborport);
                 System.out.println("*socket : myport " + socket.getLocalPort() + " destport " + socket.getPort());
 
@@ -74,7 +74,10 @@ public class PortConnectionEstablish extends Thread {
                     ///sar jehez yst2bel 
                     //lneigh name hon bs krmel locally tssing bs b3den bdo ysir ip
                     System.out.println("\n*before initialize reciever at port " + myport + "\n");
+                    
                     new Reciever(neighborip,neighborhostname, neighborport, myport,myhostname, p.getOis(), p.getOos(), rt).start();
+                 
+                    
                     System.out.println("\n*after initialize reciever at port " + myport + "\n");
                     System.out.println("\n*neig name " + neighborip + "," + neighborport + "\n");
                     rt.printTable("--after add true--");
