@@ -102,14 +102,14 @@ public class RoutingTable implements Serializable {
     public void addEntry(InetAddress destIp, String hostname, int nextHop, int cost, int myport, Port portclass, boolean activated, boolean established) throws UnknownHostException {
         synchronized (lockRoutingTable) {
             RoutingTableKey ipPort = new RoutingTableKey(destIp, hostname);
-            this.routingEntries.put(ipPort, new RoutingTableInfo(nextHop, cost,hostname, myport, portclass, activated, established));
+            this.routingEntries.put(ipPort, new RoutingTableInfo(nextHop, cost, hostname, myport, portclass, activated, established));
         }
     }
 
     public void addEntry(RoutingTableKey ipPort, String hostname, int nextHop, int cost, int myport, Port portclass, boolean activated, boolean established) throws UnknownHostException {
         synchronized (lockRoutingTable) {
 
-            this.routingEntries.put(ipPort, new RoutingTableInfo(nextHop, cost,hostname, myport, portclass, activated, established));
+            this.routingEntries.put(ipPort, new RoutingTableInfo(nextHop, cost, hostname, myport, portclass, activated, established));
         }
     }
 //    public void addEntry(String routername, int nextHop, int cost, int myport, Port portclass, boolean activated, boolean established) {
@@ -143,7 +143,7 @@ public class RoutingTable implements Serializable {
         }
     }
 
-    public void deactivateEntry(InetAddress ip,String hostname) {
+    public void deactivateEntry(InetAddress ip, String hostname) {
         synchronized (lockRoutingTable) {
             RoutingTableKey ipHost = new RoutingTableKey(ip, hostname);
             routingEntries.get(ipHost).setActivated(false);
@@ -169,6 +169,16 @@ public class RoutingTable implements Serializable {
         }
     }
 
+    /*
+        * This method delets an entry from the routing table
+     */
+    public void deleteEntry(RoutingTableKey ipHost) {
+        synchronized (lockRoutingTable) {
+
+            this.routingEntries.remove(ipHost);
+        }
+    }
+
     public Port getPortClass(int myport) {
         Port p = null;
         for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry : routingEntries.entrySet()) {
@@ -183,7 +193,7 @@ public class RoutingTable implements Serializable {
     /*
 	 * this method updates cost to a given destination and its next hop
      */
-    public void updateEntry(InetAddress destNtwk,String hostname, int nxthopIp, int cost) {
+    public void updateEntry(InetAddress destNtwk, String hostname, int nxthopIp, int cost) {
         synchronized (lockRoutingTable) {
             RoutingTableKey ipHost = new RoutingTableKey(destNtwk, hostname);
             this.routingEntries.get(ipHost).setCost(cost);
@@ -228,11 +238,11 @@ public class RoutingTable implements Serializable {
         }
     }
 
-    public boolean isExistandNotActive(InetAddress ip,String hostname) {
+    public boolean isExistandNotActive(InetAddress ip, String hostname) {
         synchronized (lockRoutingTable) {
             boolean contains = false;
 
-            RoutingTableKey ipHost= new RoutingTableKey(ip, hostname);
+            RoutingTableKey ipHost = new RoutingTableKey(ip, hostname);
 
             //   System.out.println("\n\n* @ and port "+ipPort.ip+" , "+ipPort.port);
             if (routingEntries.containsKey(ipHost)) {

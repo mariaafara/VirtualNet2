@@ -16,11 +16,22 @@ public class FailedNode {
 
     InetAddress inetaddress;
     int port;
+    String hostname;
 ////complete failed or entry 
     //failedentry aw failedrouter
-    public FailedNode(InetAddress inetaddress, int port) {
+
+    public FailedNode(InetAddress inetaddress, String hostname, int port) {
         this.inetaddress = inetaddress;
         this.port = port;
+        this.hostname = hostname;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
     }
 
     public int getPort() {
