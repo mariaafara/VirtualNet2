@@ -17,27 +17,30 @@ public class RoutingTableInfo implements Serializable {
     transient Port portclass;
     boolean activated;
     boolean established;
-    RoutingTableKey rtkey;
+    RoutingTableKey nextipHost;
 //  transient
 
     //
-    public RoutingTableInfo(int nextHop, int cost, String nextHostname, int port, Port portclass, boolean activated, boolean established) throws UnknownHostException {
+    public RoutingTableInfo(int nextHop, int cost, RoutingTableKey nextipHost, int port, Port portclass, boolean activated, boolean established) throws UnknownHostException {
         this.nextHop = nextHop;
         this.cost = cost;
         this.port = port;
         this.portclass = portclass;
         this.activated = activated;
         this.established = established;
-        this.rtkey = new RoutingTableKey(InetAddress.getLocalHost(), nextHostname);
+        this.nextipHost = nextipHost;//new RoutingTableKey(InetAddress.getLocalHost(), nextHostname);
+    }
+//next ipHost //mtl nexthop => rtKey
+
+    public RoutingTableKey getNextipHost() {
+        return nextipHost;
     }
 
-    public RoutingTableKey getRtkey() {
-        return rtkey;
+    public void setNextipHost(RoutingTableKey nextipHost) {
+        this.nextipHost = nextipHost;
     }
 
-    public void setRtkey(RoutingTableKey rtkey) {
-        this.rtkey = rtkey;
-    }
+  
 
     public boolean isEstablished() {
         return established;

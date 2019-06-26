@@ -6,7 +6,6 @@
 package virtualnet2;
 
 import java.net.InetAddress;
-import java.util.ArrayList;
 
 /**
  *
@@ -20,6 +19,8 @@ public class FailedNode {
 ////complete failed or entry 
     //failedentry aw failedrouter
 
+    //ana router a m7et l b 
+    // aya dest wmin ma7eha  
     public FailedNode(InetAddress inetaddress, String hostname, int port) {
         this.inetaddress = inetaddress;
         this.port = port;

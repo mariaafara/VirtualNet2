@@ -41,9 +41,12 @@ public class FailedNodeRecieve extends Thread {
 ///!!!!!!!!!!!!!!!!!!!!!!!! commented newely
         //ArrayList<FailedNode> arrayfn = new ArrayList<>();
         for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry : rt.routingEntries.entrySet()) {
-
-            if (ipHost == entry.getValue().getRtkey()) {
-                rt.deleteEntry(entry.getValue().getRtkey());
+//router m7et l a 
+//btuslne failed nodem7t l a 
+//iza 3nde dest a w busal mn khlel l a 
+//failed node class
+            if (ipHost == entry.getValue().getNextipHost()) {
+                rt.deleteEntry(entry.getValue().getNextipHost());
                 //3m eb3t lentry le m7itaa
                 FailedNode newfn = new FailedNode(entry.getKey().getIp(), entry.getKey().getHostname(), entry.getValue().getPort());
                 //   arrayfn.add(newfn);

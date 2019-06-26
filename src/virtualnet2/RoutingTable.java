@@ -99,17 +99,17 @@ public class RoutingTable implements Serializable {
 	 * @param nextHop = nextHop IP address
 	 * @param cost = Cost to reach the destination
      */
-    public void addEntry(InetAddress destIp, String hostname, int nextHop, int cost, int myport, Port portclass, boolean activated, boolean established) throws UnknownHostException {
+    public void addEntry(InetAddress destIp, String desthostname, RoutingTableKey nextipHost, int nextHop, int cost, int myport, Port portclass, boolean activated, boolean established) throws UnknownHostException {
         synchronized (lockRoutingTable) {
-            RoutingTableKey ipPort = new RoutingTableKey(destIp, hostname);
-            this.routingEntries.put(ipPort, new RoutingTableInfo(nextHop, cost, hostname, myport, portclass, activated, established));
+            RoutingTableKey ipPort = new RoutingTableKey(destIp, desthostname);
+            this.routingEntries.put(ipPort, new RoutingTableInfo(nextHop, cost, nextipHost, myport, portclass, activated, established));
         }
     }
 
-    public void addEntry(RoutingTableKey ipPort, String hostname, int nextHop, int cost, int myport, Port portclass, boolean activated, boolean established) throws UnknownHostException {
+    public void addEntry(RoutingTableKey ipPort, RoutingTableKey nextipHost, int nextHop, int cost, int myport, Port portclass, boolean activated, boolean established) throws UnknownHostException {
         synchronized (lockRoutingTable) {
 
-            this.routingEntries.put(ipPort, new RoutingTableInfo(nextHop, cost, hostname, myport, portclass, activated, established));
+            this.routingEntries.put(ipPort, new RoutingTableInfo(nextHop, cost, nextipHost, myport, portclass, activated, established));
         }
     }
 //    public void addEntry(String routername, int nextHop, int cost, int myport, Port portclass, boolean activated, boolean established) {
@@ -131,6 +131,23 @@ public class RoutingTable implements Serializable {
             }
 
             return 0;
+        }
+
+    }
+
+    ///next rtKey
+    public RoutingTableKey getNextipHost(int myport) {
+        synchronized (lockRoutingTable) {
+
+            // return routingEntries.get(ipPort).nextHop;
+            for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry : routingEntries.entrySet()) {
+
+                if (entry.getValue().port == myport) {
+                    return entry.getValue().nextipHost;
+                }
+            }
+
+            return null;
         }
 
     }
@@ -191,22 +208,26 @@ public class RoutingTable implements Serializable {
     }
 
     /*
-	 * this method updates cost to a given destination and its next hop
+	 * this method updates cost to a given destination and its next hop  int nxthopIp,
      */
-    public void updateEntry(InetAddress destNtwk, String hostname, int nxthopIp, int cost) {
+    public void updateEntry(InetAddress destNtwk, String desthostname, int cost) {
         synchronized (lockRoutingTable) {
-            RoutingTableKey ipHost = new RoutingTableKey(destNtwk, hostname);
+            RoutingTableKey ipHost = new RoutingTableKey(destNtwk, desthostname);
+
             this.routingEntries.get(ipHost).setCost(cost);
-            this.routingEntries.get(ipHost).setNextHop(nxthopIp);
+            //this.routingEntries.get(ipHost).setNextHop(nxthopIp);
         }
     }
-//this method updates the cost and next hop used when updating routing table only
 
-//    public void updateEntry(String destNtwk, int nxthopIp, int cost) {
+    /*
+	 * this method updates cost to a given destination and its next hop
+     */
+//    public void updateEntry(InetAddress destNtwk, String hostname, int nxthopIp, InetAddress nxtip, String nexthostname, int cost) {
 //        synchronized (lockRoutingTable) {
-//            this.routingEntries.get(destNtwk).setCost(cost);
-//            this.routingEntries.get(destNtwk).setNextHop(nxthopIp);
-//
+//            RoutingTableKey ipHost = new RoutingTableKey(destNtwk, hostname);
+//            this.routingEntries.get(ipHost).setCost(cost);
+//            this.routingEntries.get(ipHost).setNextHop(nxthopIp);
+//            this.routingEntries.get(ipHost).setRtkey(new RoutingTableKey(nxtip, nexthostname));
 //        }
 //    }
 //this method checks if it contains its port
@@ -338,11 +359,11 @@ public class RoutingTable implements Serializable {
             Iterator<HashMap.Entry<RoutingTableKey, RoutingTableInfo>> routingEntriesIterator = routingEntries.entrySet().iterator();
 
 //            InetAddress destAddress;
-            String destAddress;
+            String destAddress, nextipHost;
             System.out.print("----------------   Routing Table " + hint + " -----------------------------------------" + "\n");
-            System.out.print("-----------|----------------|----------------|---------|----------|-------------|------" + "\n");
-            System.out.print("-----------|  Dest Network  |  Next Hop Port |   Cost  |  myport  |  Activated  |  Established |------" + "\n");
-            System.out.print("-----------|----------------|----------------|---------|----------|-------------|--------------|-" + "\n");
+            System.out.print("-----------|--------------------|--------------------|----------------|----------|-------------|-------------|--------------|------" + "\n");
+            System.out.print("-----------|  Dest Network      |  next ip-Host      |  Next Hop Port |   Cost   |  myport     |  Activated  |  Established |------" + "\n");
+            System.out.print("-----------|--------------------|--------------------|----------------|----------|-------------|-------------|--------------|-------" + "\n");
 
             while (routingEntriesIterator.hasNext()) {
 
@@ -350,18 +371,20 @@ public class RoutingTable implements Serializable {
                 HashMap.Entry<RoutingTableKey, RoutingTableInfo> pair = (HashMap.Entry<RoutingTableKey, RoutingTableInfo>) routingEntriesIterator.next();
 
                 destAddress = pair.getKey().getIp().getHostAddress() + "-" + pair.getKey().getHostname();
+                nextipHost = pair.getValue().getNextipHost().getIp().getHostAddress() + "-" + pair.getValue().getNextipHost().getHostname();
                 RoutingTableInfo destForwardingInfo = (RoutingTableInfo) pair.getValue();
 //destAddress.getHostAddress()
-                System.out.print("-----------|\t" + destAddress + "\t    |\t");//bs ntb3 linet address btbi3to 3m berj3 forword slash bas destAddress.getHostName() 3m trj3 aw2et msln one.one.one.
+                System.out.print("-----------|  " + destAddress + "   |");//bs ntb3 linet address btbi3to 3m berj3 forword slash bas destAddress.getHostName() 3m trj3 aw2et msln one.one.one.
+                System.out.print(" " + nextipHost + "    | ");
                 System.out.print(" " + destForwardingInfo.nextHop + "\t    |    ");
-                System.out.print(destForwardingInfo.cost + "      |   ");
-                System.out.print(destForwardingInfo.port + "   |    ");
+                System.out.print(destForwardingInfo.cost + "    |   ");
+                System.out.print(destForwardingInfo.port + "       |    ");
                 System.out.print(destForwardingInfo.activated + "   |    ");
                 System.out.print(destForwardingInfo.established + "\t|------");
 
                 System.out.println();
             }
-            System.out.print("-----------|----------------|----------------|---------|----------|-------------|------------|--" + "\n");
+            System.out.print("-----------|--------------------|--------------------|----------------|----------|-------------|-------------|--------------|-------" + "\n");
             System.out.print("---------------------------------------------------------------------------------------" + "\n");
 
         }

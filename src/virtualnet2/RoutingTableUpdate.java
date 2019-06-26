@@ -60,29 +60,22 @@ public class RoutingTableUpdate extends Thread {
             System.out.println("In check for updates method");
 
             boolean isUpdated = false;
-            //InetAddress destAddress;
+
             RoutingTableKey destAddress;
 
             int destCost;
             //gets the port of which the router sent the RT  from.
-//            recieveport = connections.getNeighbor(port).getNeighborPort();
 
             // Iterate through the neighbor's routing table
-            // Iterator<HashMap.Entry<InetAddress, RoutingTableInfo>> routingEntriesIterator = recievedroutingtable.routingEntries.entrySet().iterator();
             Iterator<HashMap.Entry<RoutingTableKey, RoutingTableInfo>> routingEntriesIterator = recievedroutingtable.routingEntries.entrySet().iterator();
-            //  HashMap.Entry<InetAddress, RoutingTableInfo> pair = (HashMap.Entry<InetAddress, RoutingTableInfo>) routingEntriesIterator.next();
 
             while (routingEntriesIterator.hasNext()) {
                 //fetching routing table as pairs
-                //    HashMap.Entry<InetAddress, RoutingTableInfo> pair = (HashMap.Entry<InetAddress, RoutingTableInfo>) routingEntriesIterator.next();
                 HashMap.Entry<RoutingTableKey, RoutingTableInfo> pair = (HashMap.Entry<RoutingTableKey, RoutingTableInfo>) routingEntriesIterator.next();
 
-//                destAddress = (InetAddress) pair.getKey();
                 destAddress = (RoutingTableKey) pair.getKey();
 
                 //"Checking if my routing table has an entry for "  destAddress.getHostAddress()
-                //Client.myRoutingTable.routingEntries.containsKey(destAddress) ? true or false
-//                if (rt.routingEntries.containsKey(destAddress)) {
                 if (rt.routingEntries.containsKey(destAddress)) {
 
                     destCost = rt.routingEntries.get(destAddress).cost;
@@ -91,19 +84,20 @@ public class RoutingTableUpdate extends Thread {
                     //"Cost for this destination in received routing table is "  pair.getValue().cost
                     if (destCost > (1 + pair.getValue().cost)) {
                         //which is smaller than my cost for the destination
-                        rt.updateEntry(destAddress.getIp(),hostname, myport, 1 + pair.getValue().cost);
+
+                        rt.updateEntry(destAddress.getIp(), destAddress.getHostname(), 1 + pair.getValue().cost);
 
                         isUpdated = true;
 
                     }
 
                 } else//it does not contain it so add it 
-                //iza next hop nl row mano myport y3ne mano directly connected 3lye
-                if (pair.getValue().nextHop != myport) {
+                //iza next hop bdl row mano myport y3ne mano directly connected 3lye
+                if (pair.getValue().nextHop != myport) {//hy krmel iza msh anaa krmell ma zid 7allle
                     Port p = rt.getPortClass(myport);
                     recievedport = rt.getNextHop(myport);
-
-                    rt.addEntry(destAddress, hostname,recievedport, pair.getValue().cost + 1, myport, p, true, true);
+                    RoutingTableKey nextipHost = rt.getNextipHost(myport);
+                    rt.addEntry(destAddress, nextipHost, recievedport, pair.getValue().cost + 1, myport, p, true, true);
                     isUpdated = true;
                     System.out.println("*updated");
                 }

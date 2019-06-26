@@ -8,6 +8,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sharedPackage.RoutingTableKey;
 
 /**
  *
@@ -69,7 +70,7 @@ public class PortConnectionEstablish extends Thread {
                     p.setconnectionEstablished(true);
                     System.out.println("*connection is established at port " + myport + " with neighb = " + neighborhostname + " , " + neighborport);
                     //rt.addEntry(ip, port, 1 ,myport, p, true);
-                    rt.addEntry(neighborip, neighborhostname, neighborport, 1, myport, p, true, false);
+                    rt.addEntry(neighborip, neighborhostname,new RoutingTableKey(neighborip, neighborhostname), neighborport, 1, myport, p, true, false);
 
                     ///sar jehez yst2bel 
                     //lneigh name hon bs krmel locally tssing bs b3den bdo ysir ip
@@ -83,7 +84,7 @@ public class PortConnectionEstablish extends Thread {
                     rt.printTable("--after add true--");
                 } else {
                     //rt.addEntry(ip, port, 1 ,myport, p, true);
-                    rt.addEntry(neighborip, neighborhostname, neighborport, 1, myport, p, false, false);
+                    rt.addEntry(neighborip, neighborhostname, new RoutingTableKey(neighborip, neighborhostname),neighborport, 1, myport, p, false, false);
 
                     System.out.println("*waiting a connection from " + neighborport);
                     //  rt.printTable("**Checking**");
