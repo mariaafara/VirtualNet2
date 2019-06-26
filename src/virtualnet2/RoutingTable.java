@@ -183,6 +183,7 @@ public class RoutingTable implements Serializable {
         synchronized (lockRoutingTable) {
             RoutingTableKey ipHost = new RoutingTableKey(ip, hostname);
             this.routingEntries.remove(ipHost);
+         
         }
     }
 

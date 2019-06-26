@@ -1,10 +1,12 @@
 package virtualnet2;
 //localtest2
 
+import java.io.IOException;
 import sharedPackage.RoutingTableKey;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -73,6 +75,7 @@ public class Router extends Thread {
             }
 
         }
+        
         if (scn.nextLine().equals("start")) {
             while (true) {
                 try {
@@ -81,12 +84,28 @@ public class Router extends Thread {
                     if (nextHost.equals("end")) {
                         System.out.println("end");
                         initializeRoutingProtocol(networks);
-                        continue;
+                        break;
                     }
                     System.out.println("adding" + nextHost);
-                    networks.add(new RoutingTableKey(InetAddress.getLocalHost(),nextHost));
+                    networks.add(new RoutingTableKey(InetAddress.getLocalHost(), nextHost));
                 } catch (UnknownHostException ex) {
                     Logger.getLogger(Router.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+        }
+        System.out.println("enter 'stop' to stop working");
+        if (scn.nextLine().equals("stop")) {
+            for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry2 : routingTable.routingEntries.entrySet()) {
+
+                if (entry2.getValue().cost == 1) {
+                    try {
+                        FailedNode newfn = new FailedNode(entry2.getKey(), new RoutingTableKey(ipAddress, hostname));
+                        System.out.print("\n broadcast " + newfn + " to " + entry2.getKey());
+                        entry2.getValue().portclass.getOos().writeObject(newfn);
+                    } catch (IOException ex) {
+                        Logger.getLogger(Router.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
 
@@ -105,7 +124,7 @@ public class Router extends Thread {
         routingTable = new RoutingTable();
 
         this.ipAddress = InetAddress.getLocalHost();
-     
+
     }
 
     public String getHostname() {

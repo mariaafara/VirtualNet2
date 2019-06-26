@@ -5,6 +5,7 @@
  */
 package virtualnet2;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 import sharedPackage.RoutingTableKey;
 
@@ -12,7 +13,7 @@ import sharedPackage.RoutingTableKey;
  *
  * @author maria afara
  */
-public class FailedNode {
+public class FailedNode implements Serializable{
 
     InetAddress inetaddress;
     int port;
@@ -30,12 +31,16 @@ public class FailedNode {
         this.hostname = hostname;
     }
 
+    //////destination=> nextiphost , myKey=>myipHost
     public FailedNode(RoutingTableKey Destination, RoutingTableKey myKey) {
         this.Destination=Destination;
         this.myKey=myKey;
     }
-    
-    
+//       public FailedNode(RoutingTableKey nextiphost, RoutingTableKey myiphost) {
+//        this.nextiphost=nextiphost;
+//        this.myipHost=myipHost;
+//    }
+//    
     public RoutingTableKey getDestination(){
         return Destination;
     }
@@ -54,6 +59,11 @@ public class FailedNode {
 
     public int getPort() {
         return port;
+    }
+
+    @Override
+    public String toString() {
+        return "FailedNode{" + "Destination=" + Destination + ", myKey=" + myKey + '}';
     }
 
     public void setPort(int port) {
