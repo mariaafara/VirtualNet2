@@ -24,31 +24,38 @@ public class FailedNodeRecieve extends Thread {
     FailedNode fn;//the one recieved
     Object recievedObject;
     private RoutingTable rt;
+    RoutingTableKey myRTK;
 
-    public FailedNodeRecieve(Object recievedObject, RoutingTable rt) {
+    public FailedNodeRecieve(Object recievedObject, RoutingTable rt, RoutingTableKey myRTK) {
 
         this.rt = rt;
         this.recievedObject = recievedObject;
+        this.myRTK=myRTK;
     }
 
     @Override
     public void run() {
 
         fn = recieveFailedNode(recievedObject);
-        RoutingTableKey ipHost = new RoutingTableKey(fn.getInetaddress(), fn.getHostname());
-//hon bde 23ml delete lal entry le bel table 3nde le lkey le 2ela huwe l ip lal failed node
-//m3 w7ad n lportet le 2ela le huwe ha ykoun lnext hop bel nsbe ele m3 hay lnode
-///!!!!!!!!!!!!!!!!!!!!!!!! commented newely
+        //    RoutingTableKey ipHost = new RoutingTableKey(fn.getInetaddress(), fn.getHostname());
+        RoutingTableKey dest = fn.getDestination();
+        RoutingTableKey nextHope = fn.getMyKey();
+
+        //hon bde 23ml delete lal entry le bel table 3nde le lkey le 2ela huwe l ip lal failed node
+        //m3 w7ad n lportet le 2ela le huwe ha ykoun lnext hop bel nsbe ele m3 hay lnode
+        ///!!!!!!!!!!!!!!!!!!!!!!!! commented newely
         //ArrayList<FailedNode> arrayfn = new ArrayList<>();
         for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry : rt.routingEntries.entrySet()) {
-//router m7et l a 
-//btuslne failed nodem7t l a 
-//iza 3nde dest a w busal mn khlel l a 
-//failed node class
-            if (ipHost == entry.getValue().getNextipHost()) {
-                rt.deleteEntry(entry.getValue().getNextipHost());
+            //router m7et l a 
+            //btuslne failed nodem7t l a 
+            //iza 3nde dest a w busal mn khlel l a 
+            //failed node class
+            if (dest.equals(entry.getKey()) && nextHope.equals(entry.getValue().getNextipHost())) {
+             //   rt.deleteEntry(entry.getValue().getNextipHost());
+                rt.deleteEntry(entry.getKey());
                 //3m eb3t lentry le m7itaa
-                FailedNode newfn = new FailedNode(entry.getKey().getIp(), entry.getKey().getHostname(), entry.getValue().getPort());
+           //     FailedNode newfn = new FailedNode(entry.getKey().getIp(), entry.getKey().getHostname(), entry.getValue().getPort());
+                FailedNode newfn = new FailedNode(dest,myRTK);
                 //   arrayfn.add(newfn);
                 for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry2 : rt.routingEntries.entrySet()) {
 

@@ -6,6 +6,7 @@
 package virtualnet2;
 
 import java.net.InetAddress;
+import sharedPackage.RoutingTableKey;
 
 /**
  *
@@ -19,12 +20,28 @@ public class FailedNode {
 ////complete failed or entry 
     //failedentry aw failedrouter
 
+    RoutingTableKey Destination,  myKey;
+    
     //ana router a m7et l b 
     // aya dest wmin ma7eha  
     public FailedNode(InetAddress inetaddress, String hostname, int port) {
         this.inetaddress = inetaddress;
         this.port = port;
         this.hostname = hostname;
+    }
+
+    public FailedNode(RoutingTableKey Destination, RoutingTableKey myKey) {
+        this.Destination=Destination;
+        this.myKey=myKey;
+    }
+    
+    
+    public RoutingTableKey getDestination(){
+        return Destination;
+    }
+    
+        public RoutingTableKey getMyKey(){
+        return myKey;
     }
 
     public String getHostname() {

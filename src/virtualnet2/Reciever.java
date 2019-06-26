@@ -15,6 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sharedPackage.Packet;
+import sharedPackage.RoutingTableKey;
 
 /**
  *
@@ -89,7 +90,8 @@ public class Reciever extends Thread {
                     }
                 } else if (recievedObject instanceof FailedNode) {
                     //lzm nt2kad hon iza lzm lrouting protocol kmen bdo ykoun established awla 
-                    new FailedNodeRecieve(recievedObject, rt).start();
+                    
+                    new FailedNodeRecieve(recievedObject, rt, new RoutingTableKey(Inet4Address.getLocalHost(), myhostname)).start();
                 } else if (recievedObject instanceof Packet) {
                     Packet p = (Packet) recievedObject;
                     String messageReceived;
