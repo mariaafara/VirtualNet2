@@ -75,7 +75,7 @@ public class Router extends Thread {
             }
 
         }
-        
+
         if (scn.nextLine().equals("start")) {
             while (true) {
                 try {
@@ -101,14 +101,29 @@ public class Router extends Thread {
                 if (entry2.getValue().cost == 1) {
                     try {
                         FailedNode newfn = new FailedNode(entry2.getKey(), new RoutingTableKey(ipAddress, hostname));
-                        System.out.print("\n broadcast " + newfn + " to " + entry2.getKey());
+                        System.out.print("\n*broadcast " + newfn + " to " + entry2.getKey());
                         entry2.getValue().portclass.getOos().writeObject(newfn);
+
                     } catch (IOException ex) {
                         Logger.getLogger(Router.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
+            //////fi hon big problem 
+            ///// bnsbe lal connectios lmftu7in ben l tafet wll neighbors le ela 
+            for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry2 : routingTable.routingEntries.entrySet()) {
 
+                if (entry2.getValue().cost == 1) {
+                    try {
+                        System.out.print("\n*closing cnx with " + entry2.getKey());
+                        entry2.getValue().portclass.getSocket().close();
+
+                    } catch (IOException ex) {
+                        Logger.getLogger(Router.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+            this.stop();
         }
         while (true) {
         }

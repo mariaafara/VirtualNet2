@@ -57,7 +57,7 @@ public class RoutingTableUpdate extends Thread {
     public void checkForUpdates() throws SocketException, UnknownHostException {
 ///aw 3alock
         synchronized (this) {
-            System.out.println("In check for updates method");
+     //       System.out.println("In check for updates method");
 
             boolean isUpdated = false;
 

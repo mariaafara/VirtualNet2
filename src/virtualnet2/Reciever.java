@@ -48,7 +48,7 @@ public class Reciever extends Thread {
 //    }
 
     public Reciever(InetAddress neighip, String neighhostname, int neighport, int myport, String myhostname, ObjectInputStream ois, ObjectOutputStream oos, RoutingTable rt) {
-        System.out.println("\n************\n");
+        //  System.out.println("\n************\n");
         System.out.println("*reciever initialized");
         this.myport = myport;
         this.ois = ois;
@@ -56,7 +56,7 @@ public class Reciever extends Thread {
         this.rt = rt;
         this.neighip = neighip;
         this.neighport = neighport;
-        this.myhostname=myhostname;
+        this.myhostname = myhostname;
         this.neighhostname = neighhostname;
     }
 
@@ -69,7 +69,7 @@ public class Reciever extends Thread {
             int i = 1;
             while (true) {
 
-                System.out.println("*waiting to recieve object   " + i + "from " + neighport);
+                System.out.println("*waiting to recieve object   " + i + " from " + neighport);
                 //System.out.println("*reciever* socket :myport " + socket.getLocalPort() + " destport " + socket.getPort());
                 //     
 
@@ -80,23 +80,24 @@ public class Reciever extends Thread {
 
                 i++;
 
-                System.out.println("*recieved object =" + recievedObject);
+              //  System.out.println("*recieved object =" + recievedObject);
+                
                 if (recievedObject instanceof RoutingTable) {
                     if (rt.isEstablishedEntry(neighip, neighhostname)) {
 
                         System.out.println("*recieved routing table");
 
-                        new RoutingTableRecieve(recievedObject, myport,myhostname, ois, oos, rt).start();
+                        new RoutingTableRecieve(recievedObject, myport, myhostname, ois, oos, rt).start();
                     }
                 } else if (recievedObject instanceof FailedNode) {
                     //lzm nt2kad hon iza lzm lrouting protocol kmen bdo ykoun established awla 
-                     System.out.print("\n*recieved a failed node");
-                    new FailedNodeRecieve(recievedObject, rt, new RoutingTableKey(Inet4Address.getLocalHost(), myhostname)).start();
+                    System.out.print("*recieved a failed node");
+                    new FailedNodeRecieve(recievedObject, rt, new RoutingTableKey(InetAddress.getLocalHost(), myhostname)).start();
                 } else if (recievedObject instanceof Packet) {
                     Packet p = (Packet) recievedObject;
                     String messageReceived;
                     if (p.header.getHeaderCheksum().equals(p.header.getChecksum(p.header.cheksumInput()))) {
-                        System.out.println("Cheksum verified");
+                        System.out.println("*Cheksum verified");
                         int ttl = p.header.getTTL();
                         ttl--;
                         p.header.TTL = ttl;
@@ -108,7 +109,7 @@ public class Reciever extends Thread {
                                 System.out.println("*From             =" + p.header.getSourceAddress() + ":" + p.header.getSourceHostname());
 
                             } else {
-                                System.out.println("forwarding packet");
+                                System.out.println("*forwarding packet");
                                 ///b3tiha l ip wl host name  bdel get !!!!!
                                 RoutingTableInfo rtInfo = rt.getEntry(p.header.getDestination());
                                 if (rtInfo != null && rtInfo.activated == true && rtInfo.established == true) {
@@ -116,7 +117,7 @@ public class Reciever extends Thread {
 
                                     oos.writeObject(p);
                                 } else {
-                                    System.out.println("Destination " + p.header.getDestination().toString()+ " Doesnt exist Or Routing Didnt work yet..");
+                                    System.out.println("*Destination " + p.header.getDestination().toString() + " Doesnt exist Or Routing Didnt work yet..");
                                 }
 
                             }
@@ -125,9 +126,9 @@ public class Reciever extends Thread {
                             System.out.println("Packet TTL exceeded, therefore the message is dropped!");
                         }
                     } else {
-                        System.out.println("Cheksum not equal, there's an alteration of the message");
-                        System.out.println("Initial Cheksum =" + p.header.getHeaderCheksum());
-                        System.out.println("Current Cheksum =" + p.header.getChecksum(p.header.cheksumInput()));
+                        System.out.println("*Cheksum not equal, there's an alteration of the message");
+                        System.out.println("*Initial Cheksum =" + p.header.getHeaderCheksum());
+                        System.out.println("*Current Cheksum =" + p.header.getChecksum(p.header.cheksumInput()));
 
                     }
 
