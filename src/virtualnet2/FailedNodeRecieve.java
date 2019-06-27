@@ -5,6 +5,7 @@
  */
 package virtualnet2;
 
+import sharedPackage.FailedNode;
 import java.io.IOException;
 import sharedPackage.RoutingTableKey;
 import java.io.ObjectInputStream;

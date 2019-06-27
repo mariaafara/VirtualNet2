@@ -1,6 +1,7 @@
 package virtualnet2;
 //localtest2
 
+import sharedPackage.FailedNode;
 import java.io.IOException;
 import sharedPackage.RoutingTableKey;
 import java.net.InetAddress;

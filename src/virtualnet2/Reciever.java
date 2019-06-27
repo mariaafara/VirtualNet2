@@ -5,6 +5,7 @@
  */
 package virtualnet2;
 
+import sharedPackage.FailedNode;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
