@@ -91,8 +91,12 @@ public class Reciever extends Thread {
                 } else if (recievedObject instanceof FailedNode) {
                     //lzm nt2kad hon iza lzm lrouting protocol kmen bdo ykoun established awla 
                     System.out.print("*recieved a failed node");
+                    FailedNode fn=(FailedNode) recievedObject;
+                    System.out.println("\n*"+fn.toString());
                     new FailedNodeRecieve(recievedObject, rt, new RoutingTableKey(InetAddress.getLocalHost(), myhostname)).start();
-                    this.stop();
+                  
+                  
+                    
                 } else if (recievedObject instanceof Packet) {
                     Packet p = (Packet) recievedObject;
                     String messageReceived;
@@ -139,6 +143,7 @@ public class Reciever extends Thread {
                 Thread.sleep(2000);
             }
         } catch (IOException ex) {
+            stopRecieving();
             Logger.getLogger(Reciever.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Reciever.class.getName()).log(Level.SEVERE, null, ex);

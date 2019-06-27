@@ -98,6 +98,8 @@ public class Router extends Thread {
         System.out.println("enter 'stop' to stop working");
 
         if (scn.nextLine().equals("stop")) {
+            FailedNode mefn = new FailedNode(new RoutingTableKey(ipAddress, hostname), new RoutingTableKey(ipAddress, hostname));
+
             for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry2 : routingTable.routingEntries.entrySet()) {
 
                 if (entry2.getValue().cost == 1) {
@@ -109,7 +111,7 @@ public class Router extends Thread {
                         System.out.print("\n*broadcast " + newfn + "\n*to " + entry2.getKey());
                         ///hyda be 2lb tene loop
                         for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry3 : routingTable.routingEntries.entrySet()) {
-
+                            entry3.getValue().portclass.getOos().writeObject(mefn);
                             entry3.getValue().portclass.getOos().writeObject(newfn);
                         }
                     } catch (IOException ex) {

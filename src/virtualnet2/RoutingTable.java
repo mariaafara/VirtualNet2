@@ -203,7 +203,7 @@ public class RoutingTable implements Serializable {
             RoutingTableKey nextipHost,RoutingTableKey myipHost) {
         synchronized (lockRoutingTable) {
             ArrayList<FailedNode> arrayfn = new ArrayList<>();
-
+            System.out.println("**");
             for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry : routingEntries.entrySet()) {
                 //router m7et l a 
                 //btuslne failed nodem7t l a 
