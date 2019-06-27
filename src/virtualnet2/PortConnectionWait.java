@@ -88,7 +88,7 @@ public class PortConnectionWait extends Thread {
                     ///sar jehez yst2bel 
                     reciever = new Reciever(neighbor.getNeighborAddress(), neighbor.getNeighborname(), neighbor.getNeighborPort(), myport, myhostname, p.getOis(), p.getOos(), rt);
                     reciever.start();
-                    p.addReciever(reciever);
+                    p.setReciever(reciever);
 
                     System.out.println("*true was sent");
 

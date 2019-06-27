@@ -76,7 +76,7 @@ public class PortConnectionEstablish extends Thread {
                     //   System.out.println("\n*before initialize reciever at port " + myport + "\n");
                     reciever = new Reciever(neighborip, neighborhostname, neighborport, myport, myhostname, p.getOis(), p.getOos(), rt);
                     reciever.start();
-                    p.addReciever(reciever);
+                    p.setReciever(reciever);
 
                     //   System.out.println("\n*after initialize reciever at port " + myport + "\n");
                     //   System.out.println("\n*neig name " + neighborip + "," + neighborport + "\n");

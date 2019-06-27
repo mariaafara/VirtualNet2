@@ -210,7 +210,8 @@ public class RoutingTable implements Serializable {
                 //iza 3nde dest a w busal mn khlel l a 
                 //failed node class
                 //kenet m7tuta and
-                if (dest.equals(entry.getKey()) || nextipHost.equals(entry.getValue().getNextipHost())) {
+                //nextipHost.equals(entry.getValue().getNextipHost())
+                if (dest.equals(entry.getKey()) && nextipHost.equals(entry.getValue().getNextipHost())) {
                     //   rt.deleteEntry(entry.getValue().getNextipHost());
                     System.out.println("*before delete");
                     routingEntries.remove(entry.getKey());

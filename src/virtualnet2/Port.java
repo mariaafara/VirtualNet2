@@ -21,7 +21,7 @@ public class Port extends Thread {
 
     boolean connectionEstablished;
     Socket socket;
-    ArrayList<Reciever> reciever;
+    Reciever reciever;
     int myport;
     PortConnectionWait portConnectionWait;
     PortConnectionEstablish portConnectionEstablish;
@@ -39,7 +39,7 @@ public class Port extends Thread {
     public Port(int myport, String myhostname, RoutingTable rt) {
 
         System.out.println("*Port " + myport + " initialized");
-        reciever = new ArrayList<>();
+
         this.connectionEstablished = false;
         this.myport = myport;
         this.socket = null;
@@ -50,17 +50,15 @@ public class Port extends Thread {
         this.myhostname = myhostname;
     }
 
-    public ArrayList<Reciever> getRecievers() {
+    public Reciever getRecievers() {
         synchronized (lockconnectionEstablished) {
             return reciever;
         }
     }
 
-    ///ahhhh  lrecieverrr shit asde lport mno common ben ltnen fa msh zbta
-    public void addReciever(Reciever reciever) {
+    public void setReciever(Reciever reciever) {
         synchronized (lockconnectionEstablished) {
-            this.reciever.add(reciever);
-            System.out.println("\n*added a reciever");
+            this.reciever = reciever;
         }
     }
 
@@ -91,11 +89,11 @@ public class Port extends Thread {
     }
 
     public void setSocket(Socket socket) throws IOException {
-  //      System.out.println("in setScoket method2 for port " + myport + " before snchronized");
+        //      System.out.println("in setScoket method2 for port " + myport + " before snchronized");
 
         synchronized (lockSocket) {
             this.socket = socket;
-          //  System.out.println("*2*in setScoket method2 for port " + myport + " after ");
+            //  System.out.println("*2*in setScoket method2 for port " + myport + " after ");
 
             //System.out.println("*2*in setScoket method2 for port " + myport + " after snchronized after streams");
         }

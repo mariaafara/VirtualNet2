@@ -96,15 +96,22 @@ public class Router extends Thread {
 
         }
         System.out.println("enter 'stop' to stop working");
+
         if (scn.nextLine().equals("stop")) {
             for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry2 : routingTable.routingEntries.entrySet()) {
 
                 if (entry2.getValue().cost == 1) {
                     try {
+                        /////hon/////
+//lezm eb3t lkel jar eno m7eet lkel                        
                         FailedNode newfn = new FailedNode(entry2.getKey(), new RoutingTableKey(ipAddress, hostname));
-                        System.out.print("\n*broadcast " + newfn + "\n*to " + entry2.getKey());
-                        entry2.getValue().portclass.getOos().writeObject(newfn);
 
+                        System.out.print("\n*broadcast " + newfn + "\n*to " + entry2.getKey());
+                        ///hyda be 2lb tene loop
+                        for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry3 : routingTable.routingEntries.entrySet()) {
+
+                            entry3.getValue().portclass.getOos().writeObject(newfn);
+                        }
                     } catch (IOException ex) {
                         Logger.getLogger(Router.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -112,19 +119,19 @@ public class Router extends Thread {
             }
             //////fi hon big problem 
             ///// bnsbe lal connectios lmftu7in ben l tafet wll neighbors le ela 
-
+//step 1
             routingService.routingTableBroadcast.stopBroadcast();
 
             for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry2 : routingTable.routingEntries.entrySet()) {
 
                 if (entry2.getValue().cost == 1) {
                     try {
-                        //stop recieving then stop cnxs (close socket)
-                        ArrayList<Reciever> recievers = entry2.getValue().portclass.reciever;
-                        System.out.println("\n*size of recievers " + recievers.size());
-                        for (int j = 0; j < recievers.size(); j++) {
-                            recievers.get(j).stopRecieving();
-                        }
+                        ///////////////stop recieving then stop cnxs (close socket)
+                        Reciever reciver = entry2.getValue().portclass.reciever;
+                        ///////////////
+
+                        reciver.stopRecieving();
+
                         System.out.print("\n*closing cnx with " + entry2.getKey());
                         entry2.getValue().portclass.getSocket().close();
                         entry2.getValue().portclass.portConnectionWait.stopWaitingForConnection();
