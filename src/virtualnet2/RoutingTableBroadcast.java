@@ -79,4 +79,10 @@ public class RoutingTableBroadcast extends Thread {
         }
 
     }
+
+     public void stopBroadcast() {
+        System.out.println("\n*stoped Broadcasting");
+        this.stop();
+    }
+
 }

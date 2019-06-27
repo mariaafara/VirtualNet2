@@ -4,6 +4,7 @@ import sharedPackage.RoutingTableKey;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -183,7 +184,7 @@ public class RoutingTable implements Serializable {
         synchronized (lockRoutingTable) {
             RoutingTableKey ipHost = new RoutingTableKey(ip, hostname);
             this.routingEntries.remove(ipHost);
-         
+
         }
     }
 
@@ -194,6 +195,36 @@ public class RoutingTable implements Serializable {
         synchronized (lockRoutingTable) {
 
             this.routingEntries.remove(ipHost);
+        }
+    }
+//method that deletess the failednode and all the nodes that are reached through this failed node recieved
+    //it rturns an arraylist of all the removed entries to broadcast to the neighbors later on in the code
+    public ArrayList<FailedNode> deleteFailedNodes(RoutingTableKey dest,
+            RoutingTableKey nextipHost,RoutingTableKey myipHost) {
+        synchronized (lockRoutingTable) {
+            ArrayList<FailedNode> arrayfn = new ArrayList<>();
+
+            for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry : routingEntries.entrySet()) {
+                //router m7et l a 
+                //btuslne failed nodem7t l a 
+                //iza 3nde dest a w busal mn khlel l a 
+                //failed node class
+                //kenet m7tuta and
+                if (dest.equals(entry.getKey()) || nextipHost.equals(entry.getValue().getNextipHost())) {
+                    //   rt.deleteEntry(entry.getValue().getNextipHost());
+                    System.out.println("*before delete");
+                    routingEntries.remove(entry.getKey());
+                    System.out.println("*after delete");
+
+                    //3m eb3t lentry le m7itaa
+                    //     FailedNode newfn = new FailedNode(entry.getKey().getIp(), entry.getKey().getHostname(), entry.getValue().getPort());
+                    FailedNode newfn = new FailedNode(dest, myipHost);
+                    System.out.print("\n" + newfn);
+                    arrayfn.add(newfn);
+
+                }
+            }
+            return arrayfn;
         }
     }
 
@@ -361,10 +392,10 @@ public class RoutingTable implements Serializable {
 
 //            InetAddress destAddress;
             String destAddress, nextipHost;
-            System.out.print("----------------   Routing Table " + hint + " -----------------------------------------" + "\n");
+            System.out.print("----------------   Routing Table " + hint + " -------------------------------------------------------------------------------------" + "\n");
             System.out.print("-----------|--------------------|--------------------|----------------|----------|-------------|-------------|--------------|------" + "\n");
             System.out.print("-----------|  Dest Network      |  next ip-Host      |  Next Hop Port |   Cost   |  myport     |  Activated  |  Established |------" + "\n");
-            System.out.print("-----------|--------------------|--------------------|----------------|----------|-------------|-------------|--------------|-------" + "\n");
+            System.out.print("-----------|--------------------|--------------------|----------------|----------|-------------|-------------|--------------|------" + "\n");
 
             while (routingEntriesIterator.hasNext()) {
 
@@ -386,7 +417,7 @@ public class RoutingTable implements Serializable {
                 System.out.println();
             }
             System.out.print("-----------|--------------------|--------------------|----------------|----------|-------------|-------------|--------------|-------" + "\n");
-            System.out.print("---------------------------------------------------------------------------------------" + "\n");
+            System.out.print("------------------------------------------------------------------------------------------------------------------------------------" + "\n");
 
         }
     }

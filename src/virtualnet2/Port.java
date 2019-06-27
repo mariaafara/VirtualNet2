@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -20,7 +21,7 @@ public class Port extends Thread {
 
     boolean connectionEstablished;
     Socket socket;
-
+    ArrayList<Reciever> reciever;
     int myport;
     PortConnectionWait portConnectionWait;
     PortConnectionEstablish portConnectionEstablish;
@@ -38,7 +39,7 @@ public class Port extends Thread {
     public Port(int myport, String myhostname, RoutingTable rt) {
 
         System.out.println("*Port " + myport + " initialized");
-
+        reciever = new ArrayList<>();
         this.connectionEstablished = false;
         this.myport = myport;
         this.socket = null;
@@ -47,6 +48,20 @@ public class Port extends Thread {
         this.ois = null;
         this.oos = null;
         this.myhostname = myhostname;
+    }
+
+    public ArrayList<Reciever> getRecievers() {
+        synchronized (lockconnectionEstablished) {
+            return reciever;
+        }
+    }
+
+    ///ahhhh  lrecieverrr shit asde lport mno common ben ltnen fa msh zbta
+    public void addReciever(Reciever reciever) {
+        synchronized (lockconnectionEstablished) {
+            this.reciever.add(reciever);
+            System.out.println("\n*added a reciever");
+        }
     }
 
     public boolean isconnectionEstablished() {
@@ -76,11 +91,11 @@ public class Port extends Thread {
     }
 
     public void setSocket(Socket socket) throws IOException {
-        System.out.println("in setScoket method2 for port " + myport + " before snchronized");
+  //      System.out.println("in setScoket method2 for port " + myport + " before snchronized");
 
         synchronized (lockSocket) {
             this.socket = socket;
-            System.out.println("*2*in setScoket method2 for port " + myport + " after ");
+          //  System.out.println("*2*in setScoket method2 for port " + myport + " after ");
 
             //System.out.println("*2*in setScoket method2 for port " + myport + " after snchronized after streams");
         }

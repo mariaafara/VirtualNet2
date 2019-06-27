@@ -40,6 +40,7 @@ public class Router extends Thread {
     PortConxs portConxs;
 
     ArrayList<RoutingTableKey> networks;
+    RoutingService routingService;
 
     /*
      * Constructor 
@@ -101,7 +102,7 @@ public class Router extends Thread {
                 if (entry2.getValue().cost == 1) {
                     try {
                         FailedNode newfn = new FailedNode(entry2.getKey(), new RoutingTableKey(ipAddress, hostname));
-                        System.out.print("\n*broadcast " + newfn + " to " + entry2.getKey());
+                        System.out.print("\n*broadcast " + newfn + "\n*to " + entry2.getKey());
                         entry2.getValue().portclass.getOos().writeObject(newfn);
 
                     } catch (IOException ex) {
@@ -111,23 +112,42 @@ public class Router extends Thread {
             }
             //////fi hon big problem 
             ///// bnsbe lal connectios lmftu7in ben l tafet wll neighbors le ela 
+
+            routingService.routingTableBroadcast.stopBroadcast();
+
             for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry2 : routingTable.routingEntries.entrySet()) {
 
                 if (entry2.getValue().cost == 1) {
                     try {
+                        //stop recieving then stop cnxs (close socket)
+                        ArrayList<Reciever> recievers = entry2.getValue().portclass.reciever;
+                        System.out.println("\n*size of recievers " + recievers.size());
+                        for (int j = 0; j < recievers.size(); j++) {
+                            recievers.get(j).stopRecieving();
+                        }
                         System.out.print("\n*closing cnx with " + entry2.getKey());
                         entry2.getValue().portclass.getSocket().close();
+                        entry2.getValue().portclass.portConnectionWait.stopWaitingForConnection();
+                        //stoping reciving on the adjacent ports where the cnx between them is stoped(finished) due to the failure in one node
 
                     } catch (IOException ex) {
                         Logger.getLogger(Router.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
+            //stopRouter();
             this.stop();
+
         }
         while (true) {
         }
 
+    }
+
+    public void stopRouter() {
+
+        this.stop();
+        routingService.routingTableBroadcast.stopBroadcast();
     }
 
     public Router() throws UnknownHostException {
@@ -186,7 +206,8 @@ public class Router extends Thread {
 //    }
     public void initializeRoutingProtocol(ArrayList<RoutingTableKey> networks) {
 
-        new RoutingService(routingTable, networks).start();
+        routingService = new RoutingService(routingTable, networks);
+        routingService.start();
         System.out.println("*initializeRoutingProtocol");
     }
 

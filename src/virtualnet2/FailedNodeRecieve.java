@@ -44,34 +44,17 @@ public class FailedNodeRecieve extends Thread {
         //hon bde 23ml delete lal entry le bel table 3nde le lkey le 2ela huwe l ip lal failed node
         //m3 w7ad n lportet le 2ela le huwe ha ykoun lnext hop bel nsbe ele m3 hay lnode
         ///!!!!!!!!!!!!!!!!!!!!!!!! commented newely
-        ArrayList<FailedNode> arrayfn = new ArrayList<>();
-        for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry : rt.routingEntries.entrySet()) {
-            //router m7et l a 
-            //btuslne failed nodem7t l a 
-            //iza 3nde dest a w busal mn khlel l a 
-            //failed node class
-            //kenet m7tuta and
-            if (dest.equals(entry.getKey()) || nextipHost.equals(entry.getValue().getNextipHost())) {
-                //   rt.deleteEntry(entry.getValue().getNextipHost());
-                System.out.println("*before delete");
-                rt.deleteEntry(entry.getKey());
-                System.out.println("*after delete");
+        
+        
+        ArrayList<FailedNode> arrayfn = rt.deleteFailedNodes(dest, nextipHost, myRTK);
 
-                //3m eb3t lentry le m7itaa
-                //     FailedNode newfn = new FailedNode(entry.getKey().getIp(), entry.getKey().getHostname(), entry.getValue().getPort());
-                FailedNode newfn = new FailedNode(dest, myRTK);
-                System.out.print("\n" + newfn);
-                arrayfn.add(newfn);
-
-            }
-        }
         for (int i = 0; i < arrayfn.size(); i++) {
             for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry2 : rt.routingEntries.entrySet()) {
                 System.out.println("*now broadcasting");
                 if (entry2.getValue().cost == 1) {
                     try {
                         //lneighbors
-                        System.out.print("\n *broadcast newfn to " + entry2.getKey());
+                        System.out.print("\n*broadcast newfn to " + entry2.getKey());
                         entry2.getValue().portclass.getOos().writeObject(arrayfn.get(i));
                     } catch (IOException ex) {
                         Logger.getLogger(FailedNodeRecieve.class.getName()).log(Level.SEVERE, null, ex);

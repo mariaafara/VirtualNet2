@@ -23,7 +23,7 @@ public class PortConnectionWait extends Thread {
     int myport;
 
     RoutingTable rt;
-
+    private Reciever reciever;
     private String myhostname;
 
     public PortConnectionWait(String myhostname, int myport, Port p, RoutingTable rt) {
@@ -55,7 +55,7 @@ public class PortConnectionWait extends Thread {
                 socket = serversocket.accept();
 
                 // rt.printTable("**Checking**");
-                System.out.println("*socket :myport " + socket.getLocalPort() + " destport " + socket.getPort());
+              //  System.out.println("*socket :myport " + socket.getLocalPort() + " destport " + socket.getPort());
 
                 System.out.println("*connection accepteed at port " + myport);
 
@@ -67,18 +67,18 @@ public class PortConnectionWait extends Thread {
 
                 if (rt.isExistandNotActive(neighbor.neighborAddress, neighbor.neighborname)) {
 
-                    System.out.println("before activateEntry");
-                    System.out.println("\n*neigh @ and port* " + neighbor.neighborAddress + " " + neighbor.neighborPort);
+                    //  System.out.println("before activateEntry");
+                    //  System.out.println("\n*neigh @ and port* " + neighbor.neighborAddress + " " + neighbor.neighborPort);
                     rt.activateEntry(neighbor.neighborAddress, neighbor.neighborname);
 
-                    System.out.println("after activateEntry and before set socket");
+                    //  System.out.println("after activateEntry and before set socket");
                     System.out.println("\n");
                     rt.printTable("--after add activation--");
                     System.out.println("\n");
 
                     p.setSocket(socket);
                     p.setStreams(objectInputStream, objectOutputStream);
-                    System.out.println("after setSocket");
+                    //  System.out.println("after setSocket");
 
                     p.setconnectionEstablished(true);
 
@@ -86,7 +86,9 @@ public class PortConnectionWait extends Thread {
                     objectOutputStream.flush();
 
                     ///sar jehez yst2bel 
-                    new Reciever(neighbor.getNeighborAddress(), neighbor.getNeighborname(), neighbor.getNeighborPort(), myport, myhostname, p.getOis(), p.getOos(), rt).start();
+                    reciever = new Reciever(neighbor.getNeighborAddress(), neighbor.getNeighborname(), neighbor.getNeighborPort(), myport, myhostname, p.getOis(), p.getOos(), rt);
+                    reciever.start();
+                    p.addReciever(reciever);
 
                     System.out.println("*true was sent");
 
@@ -108,5 +110,11 @@ public class PortConnectionWait extends Thread {
             }
 
         }
+    }
+
+    public void stopWaitingForConnection() {
+        System.out.println("\n*stoped Waiting For Connection");
+        this.stop();
+
     }
 }

@@ -69,7 +69,7 @@ public class Reciever extends Thread {
             int i = 1;
             while (true) {
 
-                System.out.println("*waiting to recieve object   " + i + " from " + neighport);
+                System.out.println("*waiting to recieve object " + i + " from " + neighport);
                 //System.out.println("*reciever* socket :myport " + socket.getLocalPort() + " destport " + socket.getPort());
                 //     
 
@@ -80,8 +80,7 @@ public class Reciever extends Thread {
 
                 i++;
 
-              //  System.out.println("*recieved object =" + recievedObject);
-                
+                //  System.out.println("*recieved object =" + recievedObject);
                 if (recievedObject instanceof RoutingTable) {
                     if (rt.isEstablishedEntry(neighip, neighhostname)) {
 
@@ -147,5 +146,10 @@ public class Reciever extends Thread {
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(Reciever.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public void stopRecieving() {
+        System.out.println("\n*stoped Recieving at port " + myport);
+        this.stop();
     }
 }

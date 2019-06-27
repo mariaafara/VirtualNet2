@@ -33,7 +33,7 @@ public class RoutingTableSend extends Thread {
     public void run() {
 
         // publish routing table here.
-        System.out.println("*SendingRoutingTable");
+      //  System.out.println("*SendingRoutingTable");
 
         rt.printTable("Sending");
         //send myRoutingTable to neighbor

@@ -29,7 +29,7 @@ public class RoutingTableRecieve extends Thread {
 
     public RoutingTableRecieve(Object recievedObject, int port, String hostname, ObjectInputStream ois, ObjectOutputStream oos, RoutingTable rt) {
 
-        System.out.println("routing table recieve initialized");
+   //     System.out.println("routing table recieve initialized");
         this.port = port;
         this.hostname=hostname;
         this.ois = ois;

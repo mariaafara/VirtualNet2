@@ -8,6 +8,7 @@ package virtualnet2;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import sharedPackage.RoutingTableKey;
 
 /**
  *
@@ -20,16 +21,24 @@ public class VirtualNet2 {
      */
     public static void main(String[] args) throws InterruptedException, UnknownHostException {
 //        HashMap<RoutingTableKey, Integer> h = new HashMap<>();
-//        h.put(new RoutingTableKey(InetAddress.getLocalHost(), 11), 0);
-//        RoutingTableKey t = new RoutingTableKey(InetAddress.getLocalHost(), 11);
-//        
+//        h.put(new RoutingTableKey(InetAddress.getLocalHost(), "v"), 0);
+//        h.put(new RoutingTableKey(InetAddress.getLocalHost(), "i"), 0);
+//        h.put(new RoutingTableKey(InetAddress.getLocalHost(), "c"), 0);
+//
+//        System.out.println("*" + h.toString());
+//
+//        RoutingTableKey t = new RoutingTableKey(InetAddress.getLocalHost(), "i");
+//
+//        h.remove(t);
+//        System.out.println("after remove");
+//
+//        System.out.println("*" + h.toString());
+
 //        if (h.containsKey(t)) {
 //            System.out.println("yes");
 //        } else {
 //            System.out.println("no");
 //        }
-        //f2();
-        //f3();
          f1();
     }
 

@@ -19,6 +19,7 @@ public class RoutingService extends Thread {
 
     RoutingTable routingTable;
     ArrayList<RoutingTableKey> networks;
+    public RoutingTableBroadcast routingTableBroadcast;
 
     public RoutingService(RoutingTable routingTable, ArrayList< RoutingTableKey> networks) {
 
@@ -40,8 +41,8 @@ public class RoutingService extends Thread {
         //ktir important he shi 
         ///Hon ma lezm n3ml establish la routing protocol la entry mana activated 
         for (int i = 0; i < networks.size(); i++) {
-            System.out.println("networks looop\n");
-            
+            // System.out.println("networks looop\n");
+
             if (routingTable.routingEntries.get(networks.get(i)).activated) {
                 routingTable.establishEntry(networks.get(i));
             }
@@ -61,9 +62,10 @@ public class RoutingService extends Thread {
 //                new Reciever(entry.getKey(), entry.getValue().port, entry.getValue().portclass.getOis(), entry.getValue().portclass.getOos(), routingTable).start();
 //            }
 //        }
-        System.out.println("*in RoutingService before broadcast");
-
-        new RoutingTableBroadcast(routingTable).start();
+        routingTableBroadcast = new RoutingTableBroadcast(routingTable);
+        routingTableBroadcast.start();
+        System.out.println("\n*start broadcast");
     }
 
+  
 }
