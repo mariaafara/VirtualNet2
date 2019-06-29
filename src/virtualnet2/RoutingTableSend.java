@@ -47,9 +47,8 @@ public class RoutingTableSend extends Thread {
 
         try {
 
-            //  ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
             //   oos.reset();
-//            oos.writeObject(RT);
+            //oos.writeObject(RT);
 //What is going on here is that ObjectOutputStream detects that you are 
 //        writing the same object every time. Each time theSet is written, 
 //a "shared reference" to the object is written so that the same object is deserialized each time. 
