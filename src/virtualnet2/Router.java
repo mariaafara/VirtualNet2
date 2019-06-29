@@ -106,15 +106,20 @@ public class Router extends Thread {
                 if (entry2.getValue().cost == 1) {
                     try {
                         /////hon/////
-//lezm eb3t lkel jar eno m7eet lkel                        
-                        FailedNode newfn = new FailedNode(entry2.getKey(), new RoutingTableKey(ipAddress, hostname));
+                        //lezm eb3t lkel jar eno m7eet lkel                        
 
-                        System.out.print("\n*broadcast " + newfn + "\n*to " + entry2.getKey());
+                        System.out.print("\n*broadcast ");
                         ///hyda be 2lb tene loop
+                        int i = 0;
                         for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry3 : routingTable.routingEntries.entrySet()) {
-                            entry3.getValue().portclass.getOos().writeObject(mefn);
-                            entry3.getValue().portclass.getOos().writeObject(newfn);
+                            FailedNode newfn = new FailedNode(entry3.getKey(), new RoutingTableKey(ipAddress, hostname));
+                            if (i == 0) {
+                                entry2.getValue().portclass.getOos().writeObject(mefn);
+                            }
+                            i++;
+                            entry2.getValue().portclass.getOos().writeObject(newfn);
                         }
+
                     } catch (IOException ex) {
                         Logger.getLogger(Router.class.getName()).log(Level.SEVERE, null, ex);
                     }
