@@ -5,6 +5,7 @@
  */
 package virtualnet2;
 
+import sharedPackage.FailedNode;
 import java.io.IOException;
 import sharedPackage.RoutingTableKey;
 import java.io.ObjectInputStream;
@@ -44,23 +45,22 @@ public class FailedNodeRecieve extends Thread {
         //hon bde 23ml delete lal entry le bel table 3nde le lkey le 2ela huwe l ip lal failed node
         //m3 w7ad n lportet le 2ela le huwe ha ykoun lnext hop bel nsbe ele m3 hay lnode
         ///!!!!!!!!!!!!!!!!!!!!!!!! commented newely
-        
-        
         ArrayList<FailedNode> arrayfn = rt.deleteFailedNodes(dest, nextipHost, myRTK);
 
-        for (int i = 0; i < arrayfn.size(); i++) {
-            for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry2 : rt.routingEntries.entrySet()) {
-                System.out.println("*now broadcasting");
-                if (entry2.getValue().cost == 1) {
-                    try {
-                        //lneighbors
+        for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry2 : rt.routingEntries.entrySet()) {
+            System.out.println("*now broadcasting");
+            if (entry2.getValue().cost == 1) {
+                try {
+                    //lneighbors
+                    for (int i = 0; i < arrayfn.size(); i++) {
                         System.out.print("\n*broadcast newfn to " + entry2.getKey());
                         entry2.getValue().portclass.getOos().writeObject(arrayfn.get(i));
-                    } catch (IOException ex) {
-                        Logger.getLogger(FailedNodeRecieve.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                } catch (IOException ex) {
+                    Logger.getLogger(FailedNodeRecieve.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+
         }
         System.out.print("\n");
         rt.printTable("After Deleting Failed Node  ");

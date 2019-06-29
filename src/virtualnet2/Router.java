@@ -1,6 +1,7 @@
 package virtualnet2;
 //localtest2
 
+import sharedPackage.FailedNode;
 import java.io.IOException;
 import sharedPackage.RoutingTableKey;
 import java.net.InetAddress;
@@ -204,15 +205,7 @@ public class Router extends Thread {
 
     }
 
-//    public void initializeRoutingProtocol() {
-//   
-//        new RoutingService(routingTable).start();
-//        System.out.println("*initializeRoutingProtocol");
-//    }
-//    public void initializeRoutingProtocol(ArrayList<InetAddress> networks) {
-//        new RoutingService(routingTable).start();
-//        System.out.println("*initializeRoutingProtocol");
-//    }
+    
     public void initializeRoutingProtocol(ArrayList<RoutingTableKey> networks) {
 
         routingService = new RoutingService(routingTable, networks);
