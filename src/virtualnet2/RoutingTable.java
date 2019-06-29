@@ -261,12 +261,14 @@ public class RoutingTable implements Serializable {
     /*
 	 * this method updates cost to a given destination and its next hop  int nxthopIp,
      */
-    public void updateEntry(InetAddress destNtwk, String desthostname, int cost) {
+    public void updateEntry(InetAddress destNtwk, String desthostname, RoutingTableKey nextipHost,int nexthop, int cost) {
         synchronized (lockRoutingTable) {
             RoutingTableKey ipHost = new RoutingTableKey(destNtwk, desthostname);
+            //    RoutingTableKey nextipHost = new RoutingTableKey(nextdestNtwk, nextdesthostname);
             this.myObjDate = LocalTime.now();
             this.routingEntries.get(ipHost).setCost(cost);
-            //this.routingEntries.get(ipHost).setNextHop(nxthopIp);
+              this.routingEntries.get(ipHost).setNextipHost(nextipHost);
+            this.routingEntries.get(ipHost).setNextHop(nexthop);
         }
     }
 

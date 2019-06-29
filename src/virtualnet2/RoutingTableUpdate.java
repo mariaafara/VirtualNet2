@@ -5,6 +5,7 @@
  */
 package virtualnet2;
 
+import java.io.IOException;
 import sharedPackage.RoutingTableKey;
 import java.io.ObjectOutputStream;
 import java.net.SocketException;
@@ -48,16 +49,18 @@ public class RoutingTableUpdate extends Thread {
             Logger.getLogger(RoutingTableUpdate.class.getName()).log(Level.SEVERE, null, ex);
         } catch (UnknownHostException ex) {
             Logger.getLogger(RoutingTableUpdate.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(RoutingTableUpdate.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     /*
 	 * This method checks if it's own routing table needs to be updated
      */
-    public void checkForUpdates() throws SocketException, UnknownHostException {
+    public void checkForUpdates() throws SocketException, UnknownHostException, IOException {
 ///aw 3alock
         synchronized (this) {
-     //       System.out.println("In check for updates method");
+            //       System.out.println("In check for updates method");
 
             boolean isUpdated = false;
 
@@ -84,8 +87,12 @@ public class RoutingTableUpdate extends Thread {
                     //"Cost for this destination in received routing table is "  pair.getValue().cost
                     if (destCost > (1 + pair.getValue().cost)) {
                         //which is smaller than my cost for the destination
+                        Port p = rt.getPortClass(myport);
+                        recievedport = rt.getNextHop(myport);
+                        //nexthop
+                        RoutingTableKey nextipHost = rt.getNextipHost(myport);
 
-                        rt.updateEntry(destAddress.getIp(), destAddress.getHostname(), 1 + pair.getValue().cost);
+                        rt.updateEntry(destAddress.getIp(), destAddress.getHostname(), nextipHost, recievedport, 1 + pair.getValue().cost);
 
                         isUpdated = true;
 
@@ -112,6 +119,7 @@ public class RoutingTableUpdate extends Thread {
 
                         if (entry.getValue().cost == 1) {
                             new RoutingTableSend(oos, rt).start();
+                            entry.getValue().portclass.getOos().reset();
                         }
                     }
 
