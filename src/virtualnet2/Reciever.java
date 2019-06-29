@@ -78,7 +78,7 @@ public class Reciever extends Thread {
                 //iza packet jey mn netwrok 3nde ye w3mltlo estbalish bst2bla 
                 //iza wslne msg wl src mno directly cnnected 3lye mb3ml shi b2lomfina nst2bla
               //  System.out.println("\n\n"+ois.available()+"\n\n");
-                recievedObject = ois.readUnshared();
+                recievedObject = ois.readObject();
                 i++;
 
                 //  System.out.println("*recieved object =" + recievedObject);
