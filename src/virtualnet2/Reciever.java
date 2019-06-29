@@ -77,8 +77,8 @@ public class Reciever extends Thread {
                 //hon oset lcnctions
                 //iza packet jey mn netwrok 3nde ye w3mltlo estbalish bst2bla 
                 //iza wslne msg wl src mno directly cnnected 3lye mb3ml shi b2lomfina nst2bla
+              //  System.out.println("\n\n"+ois.available()+"\n\n");
                 recievedObject = ois.readObject();
-
                 i++;
 
                 //  System.out.println("*recieved object =" + recievedObject);
@@ -92,12 +92,10 @@ public class Reciever extends Thread {
                 } else if (recievedObject instanceof FailedNode) {
                     //lzm nt2kad hon iza lzm lrouting protocol kmen bdo ykoun established awla 
                     System.out.print("*recieved a failed node");
-                    FailedNode fn=(FailedNode) recievedObject;
-                    System.out.println("\n*"+fn.toString());
+                    FailedNode fn = (FailedNode) recievedObject;
+                    System.out.println("\n*" + fn.toString());
                     new FailedNodeRecieve(recievedObject, rt, new RoutingTableKey(InetAddress.getLocalHost(), myhostname)).start();
-                  
-                  
-                    
+
                 } else if (recievedObject instanceof Packet) {
                     Packet p = (Packet) recievedObject;
                     String messageReceived;
@@ -144,7 +142,7 @@ public class Reciever extends Thread {
                 Thread.sleep(2000);
             }
         } catch (IOException ex) {
-            stopRecieving();
+           // stopRecieving();
             Logger.getLogger(Reciever.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Reciever.class.getName()).log(Level.SEVERE, null, ex);

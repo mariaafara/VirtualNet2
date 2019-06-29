@@ -46,12 +46,17 @@ public class RoutingTableSend extends Thread {
     private void sendRoutingTable(RoutingTable RT) {
 
         try {
-            
-            //  ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 
-            oos.writeObject(RT);
+            //  ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            //   oos.reset();
+//            oos.writeObject(RT);
+//What is going on here is that ObjectOutputStream detects that you are 
+//        writing the same object every time. Each time theSet is written, 
+//a "shared reference" to the object is written so that the same object is deserialized each time. 
+//In this case you should use writeUnshared(Object) which will bypass this 
+//mechanism, instead of writeObject(Object).
+            oos.writeUnshared(RT);
             oos.flush();
-            oos.reset();
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -31,6 +31,12 @@ public class RoutingTable implements Serializable {
     transient final Object lockPortconxs = new Object();
     LocalTime myObjDate;
 
+    public HashMap<RoutingTableKey, RoutingTableInfo> getRoutingEntries() {
+        synchronized (lockRoutingTable) {
+            return routingEntries;
+        }
+    }
+
     public RoutingTable() {
 
 //            routingEntries = new HashMap<InetAddress, RoutingTableInfo>();
