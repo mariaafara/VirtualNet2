@@ -92,7 +92,7 @@ public class RoutingTableUpdate extends Thread {
                         //nexthop
                         RoutingTableKey nextipHost = rt.getNextipHost(myport);
 
-                        rt.updateEntry(destAddress.getIp(), destAddress.getHostname(), nextipHost, recievedport, 1 + pair.getValue().cost);
+                        rt.updateEntry(destAddress.getIp(), destAddress.getHostname(), nextipHost, recievedport,p, 1 + pair.getValue().cost);
 
                         isUpdated = true;
 
