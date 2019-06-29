@@ -4,7 +4,11 @@ import sharedPackage.RoutingTableKey;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -18,17 +22,21 @@ public class RoutingTable implements Serializable {
 //    HashMap<InetAddress, RoutingTableInfo> routingEntries;
 //    HashMap<Integer, RoutingTableInfo> routingEntries;
     // HashMap<String, RoutingTableInfo> routingEntries;
+    // Create a date object
     HashMap<RoutingTableKey, RoutingTableInfo> routingEntries;
 
     //transient krmel ma ynb3to lobjects manon serilizable kmn 
     transient final Object lockRoutingTable = new Object();
     transient final Object lockPortconxs = new Object();
+    LocalTime myObjDate;
 
     public RoutingTable() {
 
 //            routingEntries = new HashMap<InetAddress, RoutingTableInfo>();
 //            routingEntries = new HashMap<String, RoutingTableInfo>();
         routingEntries = new HashMap<>();
+        this.myObjDate = LocalTime.now();
+        // Display the current date
 
     }
 //if itcontain this network with the ip and port set the established boolean to true
@@ -104,12 +112,13 @@ public class RoutingTable implements Serializable {
         synchronized (lockRoutingTable) {
             RoutingTableKey ipPort = new RoutingTableKey(destIp, desthostname);
             this.routingEntries.put(ipPort, new RoutingTableInfo(nextHop, cost, nextipHost, myport, portclass, activated, established));
+            this.myObjDate = LocalTime.now();
         }
     }
 
     public void addEntry(RoutingTableKey ipPort, RoutingTableKey nextipHost, int nextHop, int cost, int myport, Port portclass, boolean activated, boolean established) throws UnknownHostException {
         synchronized (lockRoutingTable) {
-
+            this.myObjDate = LocalTime.now();
             this.routingEntries.put(ipPort, new RoutingTableInfo(nextHop, cost, nextipHost, myport, portclass, activated, established));
         }
     }
@@ -184,7 +193,7 @@ public class RoutingTable implements Serializable {
         synchronized (lockRoutingTable) {
             RoutingTableKey ipHost = new RoutingTableKey(ip, hostname);
             this.routingEntries.remove(ipHost);
-
+            this.myObjDate = LocalTime.now();
         }
     }
 
@@ -193,14 +202,15 @@ public class RoutingTable implements Serializable {
      */
     public void deleteEntry(RoutingTableKey ipHost) {
         synchronized (lockRoutingTable) {
-
+            this.myObjDate = LocalTime.now();
             this.routingEntries.remove(ipHost);
         }
     }
 //method that deletess the failednode and all the nodes that are reached through this failed node recieved
     //it rturns an arraylist of all the removed entries to broadcast to the neighbors later on in the code
+
     public ArrayList<FailedNode> deleteFailedNodes(RoutingTableKey dest,
-            RoutingTableKey nextipHost,RoutingTableKey myipHost) {
+            RoutingTableKey nextipHost, RoutingTableKey myipHost) {
         synchronized (lockRoutingTable) {
             ArrayList<FailedNode> arrayfn = new ArrayList<>();
             System.out.println("**");
@@ -225,6 +235,7 @@ public class RoutingTable implements Serializable {
 
                 }
             }
+            this.myObjDate = LocalTime.now();
             return arrayfn;
         }
     }
@@ -246,7 +257,7 @@ public class RoutingTable implements Serializable {
     public void updateEntry(InetAddress destNtwk, String desthostname, int cost) {
         synchronized (lockRoutingTable) {
             RoutingTableKey ipHost = new RoutingTableKey(destNtwk, desthostname);
-
+            this.myObjDate = LocalTime.now();
             this.routingEntries.get(ipHost).setCost(cost);
             //this.routingEntries.get(ipHost).setNextHop(nxthopIp);
         }
@@ -396,6 +407,8 @@ public class RoutingTable implements Serializable {
             System.out.print("----------------   Routing Table " + hint + " -------------------------------------------------------------------------------------" + "\n");
             System.out.print("-----------|--------------------|--------------------|----------------|----------|-------------|-------------|--------------|------" + "\n");
             System.out.print("-----------|  Dest Network      |  next ip-Host      |  Next Hop Port |   Cost   |  myport     |  Activated  |  Established |------" + "\n");
+            System.out.print("-----------|--------------------|--------------------|----------------|----------|-------------|-------------|--------------|------" + "\n");
+            System.out.print("---------------------------------------Last updated" + this.myObjDate + "--------------------------------------------------------------------" + "\n");
             System.out.print("-----------|--------------------|--------------------|----------------|----------|-------------|-------------|--------------|------" + "\n");
 
             while (routingEntriesIterator.hasNext()) {

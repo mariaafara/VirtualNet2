@@ -33,8 +33,7 @@ public class RoutingTableSend extends Thread {
     public void run() {
 
         // publish routing table here.
-      //  System.out.println("*SendingRoutingTable");
-
+        //  System.out.println("*SendingRoutingTable");
         rt.printTable("Sending");
         //send myRoutingTable to neighbor
         sendRoutingTable(rt);
@@ -47,11 +46,12 @@ public class RoutingTableSend extends Thread {
     private void sendRoutingTable(RoutingTable RT) {
 
         try {
+            
             //  ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 
             oos.writeObject(RT);
             oos.flush();
-           // oos.reset();
+            oos.reset();
 
         } catch (IOException e) {
             e.printStackTrace();
