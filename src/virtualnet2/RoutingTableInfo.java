@@ -92,6 +92,8 @@ public class RoutingTableInfo implements Serializable {
     public void setPortclass(Port portclass) {
         this.portclass = portclass;
     }
+    
+    
 
     @Override
     public String toString() {

@@ -28,14 +28,16 @@ public class RoutingTableUpdate extends Thread {
     private RoutingTable rt;
     int recievedport;
     String hostname;
+    Port myPP;
 
-    public RoutingTableUpdate(RoutingTable recievedroutingtable, String hostname, int myport, ObjectOutputStream oos, RoutingTable rt) {
+    public RoutingTableUpdate(RoutingTable recievedroutingtable, String hostname, int myport, ObjectOutputStream oos, RoutingTable rt, Port myPP) {
 
         this.recievedroutingtable = recievedroutingtable;
         this.myport = myport;
         this.oos = oos;
         this.rt = rt;
         this.hostname = hostname;
+        this.myPP=myPP;
     }
 
     /*
@@ -85,6 +87,7 @@ public class RoutingTableUpdate extends Thread {
 
                     //"Cost for this destination in my routing table is "  destCost
                     //"Cost for this destination in received routing table is "  pair.getValue().cost
+                    // !!! BDO TOZBITT
                     if (destCost > (1 + pair.getValue().cost)) {
                         //which is smaller than my cost for the destination
                         Port p = rt.getPortClass(myport);
@@ -118,8 +121,9 @@ public class RoutingTableUpdate extends Thread {
                     for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry : rt.routingEntries.entrySet()) {
 
                         if (entry.getValue().cost == 1) {
-                            new RoutingTableSend(oos, rt).start();
-                            entry.getValue().portclass.getOos().reset();
+                            //new RoutingTableSend(oos, rt).start();
+                            myPP.write(rt);
+                            rt.printTable("Sending");
                         }
                     }
 

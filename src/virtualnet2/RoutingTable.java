@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-
+import java.util.Map;
 /**
  * this class represents the routing table which is a hash map
  *
@@ -221,13 +221,13 @@ public class RoutingTable implements Serializable {
         synchronized (lockRoutingTable) {
             ArrayList<FailedNode> arrayfn = new ArrayList<>();
             System.out.println("**");
-            for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry : routingEntries.entrySet()) {
-                //router m7et l a 
-                //btuslne failed nodem7t l a 
-                //iza 3nde dest a w busal mn khlel l a 
-                //failed node class
-                //kenet m7tuta and
-                //nextipHost.equals(entry.getValue().getNextipHost())
+            
+            
+            Map<RoutingTableKey, RoutingTableInfo> tempRT = new HashMap<RoutingTableKey, RoutingTableInfo>();
+            tempRT.putAll(routingEntries);
+            Iterator<Map.Entry<RoutingTableKey, RoutingTableInfo>> itr = tempRT.entrySet().iterator();
+            while (itr.hasNext()) {
+                Map.Entry<RoutingTableKey, RoutingTableInfo> entry = itr.next();
                 if (dest.equals(entry.getKey()) && nextipHost.equals(entry.getValue().getNextipHost())) {
                     //   rt.deleteEntry(entry.getValue().getNextipHost());
                     System.out.println("*before delete");
@@ -237,11 +237,33 @@ public class RoutingTable implements Serializable {
                     //3m eb3t lentry le m7itaa
                     //     FailedNode newfn = new FailedNode(entry.getKey().getIp(), entry.getKey().getHostname(), entry.getValue().getPort());
                     FailedNode newfn = new FailedNode(dest, myipHost);
-                    System.out.print("\n" + newfn);
+                    System.out.println("\n" + newfn);
                     arrayfn.add(newfn);
 
                 }
             }
+            
+//            for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry : routingEntries.entrySet()) {
+//                //router m7et l a 
+//                //btuslne failed nodem7t l a 
+//                //iza 3nde dest a w busal mn khlel l a 
+//                //failed node class
+//                //kenet m7tuta and
+//                //nextipHost.equals(entry.getValue().getNextipHost())
+//                if (dest.equals(entry.getKey()) && nextipHost.equals(entry.getValue().getNextipHost())) {
+//                    //   rt.deleteEntry(entry.getValue().getNextipHost());
+//                    System.out.println("*before delete");
+//                    routingEntries.remove(entry.getKey());
+//                    System.out.println("*after delete");
+//
+//                    //3m eb3t lentry le m7itaa
+//                    //     FailedNode newfn = new FailedNode(entry.getKey().getIp(), entry.getKey().getHostname(), entry.getValue().getPort());
+//                    FailedNode newfn = new FailedNode(dest, myipHost);
+//                    System.out.print("\n" + newfn);
+//                    arrayfn.add(newfn);
+//
+//                }
+//            }
             this.myObjDate = LocalTime.now();
             return arrayfn;
         }
@@ -261,14 +283,14 @@ public class RoutingTable implements Serializable {
     /*
 	 * this method updates cost to a given destination and its next hop  int nxthopIp,
      */
-    public void updateEntry(InetAddress destNtwk, String desthostname, RoutingTableKey nextipHost,int nexthop,Port p, int cost) {
+    public void updateEntry(InetAddress destNtwk, String desthostname, RoutingTableKey nextipHost, int nexthop, Port p, int cost) {
         synchronized (lockRoutingTable) {
             RoutingTableKey ipHost = new RoutingTableKey(destNtwk, desthostname);
             //    RoutingTableKey nextipHost = new RoutingTableKey(nextdestNtwk, nextdesthostname);
             this.myObjDate = LocalTime.now();
             this.routingEntries.get(ipHost).setCost(cost);
-              this.routingEntries.get(ipHost).setNextipHost(nextipHost);
-                this.routingEntries.get(ipHost).setPortclass(p);
+            this.routingEntries.get(ipHost).setNextipHost(nextipHost);
+            this.routingEntries.get(ipHost).setPortclass(p);
             this.routingEntries.get(ipHost).setNextHop(nexthop);
         }
     }

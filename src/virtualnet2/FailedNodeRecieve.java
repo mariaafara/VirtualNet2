@@ -8,9 +8,6 @@ package virtualnet2;
 import sharedPackage.FailedNode;
 import java.io.IOException;
 import sharedPackage.RoutingTableKey;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -26,8 +23,9 @@ public class FailedNodeRecieve extends Thread {
     Object recievedObject;
     private RoutingTable rt;
     RoutingTableKey myRTK;
+    boolean canReceive;
 
-    public FailedNodeRecieve(Object recievedObject, RoutingTable rt, RoutingTableKey myRTK) {
+    public FailedNodeRecieve(Object recievedObject, RoutingTable rt, RoutingTableKey myRTK, boolean canReceive) {
 
         this.rt = rt;
         this.recievedObject = recievedObject;
@@ -46,7 +44,10 @@ public class FailedNodeRecieve extends Thread {
         //m3 w7ad n lportet le 2ela le huwe ha ykoun lnext hop bel nsbe ele m3 hay lnode
         ///!!!!!!!!!!!!!!!!!!!!!!!! commented newely
         ArrayList<FailedNode> arrayfn = rt.deleteFailedNodes(dest, nextipHost, myRTK);
-
+        System.out.println("----------------" + arrayfn.size());
+        if(arrayfn.size() > 0){
+             new threadStopReceiveRT(canReceive, 15000).start();
+        }
         for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry2 : rt.routingEntries.entrySet()) {
             System.out.println("*now broadcasting");
             if (entry2.getValue().cost == 1) {

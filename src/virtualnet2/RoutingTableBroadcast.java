@@ -42,7 +42,7 @@ public class RoutingTableBroadcast extends Thread {
         while (true) {
             try {
                 //       System.out.println("*in broadcast infinte loop");
-                HashMap<RoutingTableKey, RoutingTableInfo> temproutingEntries = routingTable.getRoutingEntries();
+                   HashMap<RoutingTableKey, RoutingTableInfo> temproutingEntries=routingTable.getRoutingEntries();
 
                 for (HashMap.Entry<RoutingTableKey, RoutingTableInfo> entry : temproutingEntries.entrySet()) {
 //fina bala condition lcost krml bel awal hne bs neighs bs iza static zydin shi afdl condion lcost krml hek
@@ -50,13 +50,11 @@ public class RoutingTableBroadcast extends Thread {
 //l is established y3ne he lentry mn domn dekhlin bl routing protocol (le n3tet ka network bl configurations)
                     //     System.out.println("*in broadcast before  RoutingTableSend");
                     if (entry.getValue().cost == 1 && entry.getValue().portclass.isconnectionEstablished() && entry.getValue().isEstablished()) {
-
-                        {
-                            new RoutingTableSend(entry.getValue().portclass.getOos(), routingTable).start();
-                            entry.getValue().portclass.getOos().reset();
-
-                        }
+                    //    new RoutingTableSend(entry.getValue().portclass.getOos(), routingTable).start();
                         //      System.out.println("*in broadcast after RoutingTableSend ");
+                      //  entry.getValue().portclass.getOos().reset();
+                      entry.getValue().portclass.write(routingTable);
+                      routingTable.printTable("Sending");
                     }
 
                 }
@@ -83,13 +81,13 @@ public class RoutingTableBroadcast extends Thread {
                 Logger.getLogger(RoutingTableBroadcast.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
                 Logger.getLogger(RoutingTableBroadcast.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            } 
 
         }
 
     }
 
-    public void stopBroadcast() {
+     public void stopBroadcast() {
         System.out.println("\n*stoped Broadcasting");
         this.stop();
     }

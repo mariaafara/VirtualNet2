@@ -86,7 +86,7 @@ public class PortConnectionWait extends Thread {
                     objectOutputStream.flush();
 
                     ///sar jehez yst2bel 
-                    reciever = new Reciever(neighbor.getNeighborAddress(), neighbor.getNeighborname(), neighbor.getNeighborPort(), myport, myhostname, p.getOis(), p.getOos(), rt);
+                    reciever = new Reciever(neighbor.getNeighborAddress(), neighbor.getNeighborname(), neighbor.getNeighborPort(), myport, myhostname, p.getOis(), p.getOos(), rt, p);
                     reciever.start();
                     p.setReciever(reciever);
 

@@ -210,7 +210,6 @@ public class Router extends Thread {
 
     }
 
-    
     public void initializeRoutingProtocol(ArrayList<RoutingTableKey> networks) {
 
         routingService = new RoutingService(routingTable, networks);

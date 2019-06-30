@@ -36,6 +36,9 @@ public class Reciever extends Thread {
     InetAddress neighip;
     String neighhostname;
     String myhostname;
+    Port myPortt;
+
+    boolean canReceive = true;
 //    public Reciever(InetAddress neighip, String myname, int myport, ObjectInputStream ois, ObjectOutputStream oos, RoutingTable rt) {
 //
 //        System.out.println("*reciever initialized");
@@ -48,7 +51,7 @@ public class Reciever extends Thread {
 //
 //    }
 
-    public Reciever(InetAddress neighip, String neighhostname, int neighport, int myport, String myhostname, ObjectInputStream ois, ObjectOutputStream oos, RoutingTable rt) {
+    public Reciever(InetAddress neighip, String neighhostname, int neighport, int myport, String myhostname, ObjectInputStream ois, ObjectOutputStream oos, RoutingTable rt, Port myPortt) {
         //  System.out.println("\n************\n");
         System.out.println("*reciever initialized");
         this.myport = myport;
@@ -59,6 +62,7 @@ public class Reciever extends Thread {
         this.neighport = neighport;
         this.myhostname = myhostname;
         this.neighhostname = neighhostname;
+        this.myPortt = myPortt;
     }
 
     @Override
@@ -77,24 +81,30 @@ public class Reciever extends Thread {
                 //hon oset lcnctions
                 //iza packet jey mn netwrok 3nde ye w3mltlo estbalish bst2bla 
                 //iza wslne msg wl src mno directly cnnected 3lye mb3ml shi b2lomfina nst2bla
-              //  System.out.println("\n\n"+ois.available()+"\n\n");
+                //  System.out.println("\n\n"+ois.available()+"\n\n");
                 recievedObject = ois.readObject();
                 i++;
 
                 //  System.out.println("*recieved object =" + recievedObject);
                 if (recievedObject instanceof RoutingTable) {
-                    if (rt.isEstablishedEntry(neighip, neighhostname)) {
-
-                        System.out.println("*recieved routing table");
-
-                        new RoutingTableRecieve(recievedObject, myport, myhostname, ois, oos, rt).start();
+                     System.out.println("*recieved routing table");
+                    if (canReceive) {
+                        if (rt.isEstablishedEntry(neighip, neighhostname)) {
+                            
+                            new RoutingTableRecieve(recievedObject, myport, myhostname, ois, oos, rt, myPortt).start();
+                            
+                        }else{
+                            System.out.println("Discarding routing table");
+                        }
+                    }else{
+                        System.out.println("Discarding routing table");
                     }
                 } else if (recievedObject instanceof FailedNode) {
                     //lzm nt2kad hon iza lzm lrouting protocol kmen bdo ykoun established awla 
                     System.out.print("*recieved a failed node");
                     FailedNode fn = (FailedNode) recievedObject;
                     System.out.println("\n*" + fn.toString());
-                    new FailedNodeRecieve(recievedObject, rt, new RoutingTableKey(InetAddress.getLocalHost(), myhostname)).start();
+                    new FailedNodeRecieve(recievedObject, rt, new RoutingTableKey(InetAddress.getLocalHost(), myhostname), canReceive).start();
 
                 } else if (recievedObject instanceof Packet) {
                     Packet p = (Packet) recievedObject;
@@ -142,14 +152,18 @@ public class Reciever extends Thread {
                 Thread.sleep(2000);
             }
         } catch (IOException ex) {
-           // stopRecieving();
+            // stopRecieving();
             Logger.getLogger(Reciever.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(" " + neighport);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Reciever.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(" " + neighport);
         } catch (InterruptedException ex) {
             Logger.getLogger(Reciever.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(" " + neighport);
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(Reciever.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(" " + neighport);
         }
     }
 

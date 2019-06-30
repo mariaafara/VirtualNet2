@@ -127,6 +127,14 @@ public class Port extends Thread {
             this.oos = oos;
         }
     }
+    
+    public void write(Object o) throws IOException{
+        synchronized(this){
+            oos.writeObject(o);
+            oos.reset();
+            oos.flush();
+        }
+    }
 
     @Override
     public void run() {
