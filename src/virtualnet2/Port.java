@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -20,6 +21,7 @@ public class Port extends Thread {
 
     boolean connectionEstablished;
     Socket socket;
+    Reciever reciever;
     int myport;
     PortConnectionWait portConnectionWait;
     PortConnectionEstablish portConnectionEstablish;
@@ -32,8 +34,9 @@ public class Port extends Thread {
     RoutingTable rt;
     ObjectInputStream ois;
     ObjectOutputStream oos;
+    String myhostname;
 
-    public Port(int myport, RoutingTable rt) {
+    public Port(int myport, String myhostname, RoutingTable rt) {
 
         System.out.println("*Port " + myport + " initialized");
 
@@ -41,9 +44,22 @@ public class Port extends Thread {
         this.myport = myport;
         this.socket = null;
         this.rt = rt;
-        portConnectionWait = new PortConnectionWait(myport, this, rt);
+        portConnectionWait = new PortConnectionWait(myhostname, myport, this, rt);
         this.ois = null;
         this.oos = null;
+        this.myhostname = myhostname;
+    }
+
+    public Reciever getRecievers() {
+        synchronized (lockconnectionEstablished) {
+            return reciever;
+        }
+    }
+
+    public void setReciever(Reciever reciever) {
+        synchronized (lockconnectionEstablished) {
+            this.reciever = reciever;
+        }
     }
 
     public boolean isconnectionEstablished() {
@@ -73,11 +89,11 @@ public class Port extends Thread {
     }
 
     public void setSocket(Socket socket) throws IOException {
-        System.out.println("in setScoket method2 for port " + myport + " before snchronized");
+        //      System.out.println("in setScoket method2 for port " + myport + " before snchronized");
 
         synchronized (lockSocket) {
             this.socket = socket;
-            System.out.println("*2*in setScoket method2 for port " + myport + " after ");
+            //  System.out.println("*2*in setScoket method2 for port " + myport + " after ");
 
             //System.out.println("*2*in setScoket method2 for port " + myport + " after snchronized after streams");
         }
@@ -111,6 +127,14 @@ public class Port extends Thread {
             this.oos = oos;
         }
     }
+    
+    public void write(Object o) throws IOException{
+        synchronized(this){
+            oos.writeObject(o);
+            oos.reset();
+            oos.flush();
+        }
+    }
 
     @Override
     public void run() {
@@ -120,15 +144,15 @@ public class Port extends Thread {
 
     }
 
-    public void connect(int port, InetAddress neighborAddress, int neighborport) {
+//    public void connect(int port, InetAddress neighborAddress, int neighborport) {
+//
+//        PortConnectionEstablish pce = new PortConnectionEstablish(port, neighborAddress, neighborport, this, rt);
+//        pce.start();
+//    }
+    public void connect(InetAddress neighborAddress, String neighborhostname, int neighborport) {
 
-        PortConnectionEstablish pce = new PortConnectionEstablish(port, neighborAddress, neighborport, this, rt);
-        pce.start();
-    }
-
-    public void connect(int port, String neighname, InetAddress neighborAddress, int neighborport) {
-
-        PortConnectionEstablish pce = new PortConnectionEstablish(port, neighname, neighborAddress, neighborport, this, rt);
+        PortConnectionEstablish pce = new PortConnectionEstablish(myport, myhostname, neighborAddress, neighborhostname, neighborport, this, rt
+        );
         pce.start();
     }
 }

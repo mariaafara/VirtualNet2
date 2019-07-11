@@ -1,5 +1,8 @@
 package virtualnet2;
 
+import sharedPackage.RoutingTableKey;
+import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /*
@@ -8,17 +11,20 @@ import java.util.HashMap;
  * and open the template in the editor.
  */
 /**
+ * there is no need t use this thread anymore
  *
  * @author maria afara
  */
 public class RoutingService extends Thread {
 
-    //private PortConxs portConxs;
     RoutingTable routingTable;
+    ArrayList<RoutingTableKey> networks;
+    public RoutingTableBroadcast routingTableBroadcast;
 
-    public RoutingService(RoutingTable routingTable) {
+    public RoutingService(RoutingTable routingTable, ArrayList< RoutingTableKey> networks) {
 
-        //  this.portConxs = portConxs;
+        this.networks = networks;
+
         this.routingTable = routingTable;
 
     }
@@ -30,23 +36,36 @@ public class RoutingService extends Thread {
     public void run() {
 
         super.run();
+        //establishing the routing protocol for  the networks 
+        //assigned i.e allowing broadcasting and recieving routing table from only those networks
+        //ktir important he shi 
+        ///Hon ma lezm n3ml establish la routing protocol la entry mana activated 
+        for (int i = 0; i < networks.size(); i++) {
+            // System.out.println("networks looop\n");
+
+            if (routingTable.routingEntries.get(networks.get(i)).activated) {
+                routingTable.establishEntry(networks.get(i));
+            }
+        }
 
         //sar kel port 3ndo sender w reciever
         //allow to recieve objects at each port
-        for (HashMap.Entry<String, RoutingTableInfo> entry : routingTable.routingEntries.entrySet()) {
-            System.out.println("*in RoutingService in hashmap loop ");
-            //fina bala lcondition kermel bel awal bs neighbors mwjudin bl table
-            if (entry.getValue().cost == 1) {
-
-                System.out.println("*socket in reciever local= " + entry.getValue().portclass.getSocket().getLocalPort() + " port=" + entry.getValue().portclass.getSocket().getPort());
-
-                System.out.println("*run reciever for the port " + entry.getKey());
-
-                new Reciever(entry.getKey(), entry.getValue().port, entry.getValue().portclass.getOis(), entry.getValue().portclass.getOos(), routingTable).start();
-            }
-        }
-        System.out.println("*in RoutingService before broadcast");
-        new RoutingTableBroadcast(routingTable).start();
+//        for (HashMap.Entry<String, RoutingTableInfo> entry : routingTable.routingEntries.entrySet()) {
+//            System.out.println("*in RoutingService in hashmap loop ");
+//            //fina bala lcondition kermel bel awal bs neighbors mwjudin bl table
+//            if (entry.getValue().cost == 1) {
+//
+//                System.out.println("*socket in reciever local= " + entry.getValue().portclass.getSocket().getLocalPort() + " port=" + entry.getValue().portclass.getSocket().getPort());
+//
+//                System.out.println("*run reciever for the port " + entry.getKey());
+//
+//                new Reciever(entry.getKey(), entry.getValue().port, entry.getValue().portclass.getOis(), entry.getValue().portclass.getOos(), routingTable).start();
+//            }
+//        }
+        routingTableBroadcast = new RoutingTableBroadcast(routingTable);
+        routingTableBroadcast.start();
+        System.out.println("\n*start broadcast");
     }
 
+  
 }

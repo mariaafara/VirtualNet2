@@ -1,6 +1,10 @@
 package virtualnet2;
 
+import sharedPackage.RoutingTableKey;
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.time.LocalTime;
 
 /**
  *
@@ -13,14 +17,40 @@ public class RoutingTableInfo implements Serializable {
     int port;
     transient Port portclass;
     boolean activated;
+    boolean established;
+    RoutingTableKey nextipHost;
 //  transient
 
-    public RoutingTableInfo(int nextHop, int cost, int port, Port portclass, boolean activated) {
+    //
+    public RoutingTableInfo(int nextHop, int cost, RoutingTableKey nextipHost, int port, Port portclass, boolean activated, boolean established) throws UnknownHostException {
         this.nextHop = nextHop;
         this.cost = cost;
         this.port = port;
         this.portclass = portclass;
         this.activated = activated;
+        this.established = established;
+        this.nextipHost = nextipHost;//new RoutingTableKey(InetAddress.getLocalHost(), nextHostname);
+    }
+//next ipHost //mtl nexthop => rtKey
+
+    public RoutingTableKey getNextipHost() {
+        return nextipHost;
+    }
+
+    public void setNextipHost(RoutingTableKey nextipHost) {
+        this.nextipHost = nextipHost;
+    }
+
+  
+
+    public boolean isEstablished() {
+        return established;
+    }
+
+    public void setEstablished(boolean established) {
+        System.out.println("setestablish entry for " + established + "\n");
+
+        this.established = established;
     }
 
     public int getNextHop() {
@@ -62,6 +92,8 @@ public class RoutingTableInfo implements Serializable {
     public void setPortclass(Port portclass) {
         this.portclass = portclass;
     }
+    
+    
 
     @Override
     public String toString() {
